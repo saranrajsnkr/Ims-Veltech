@@ -1,0 +1,164 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<h2>Available Internships</h2>
+
+<div class="company-list">
+    {% for company in companies %}
+    <div class="company-card">
+        <h3>{{ company.name }}</h3>
+        <p><strong>Required Skills:</strong> {{ company.skill_required }}</p>
+        <p><strong>Location:</strong> {{ company.location }}</p>
+        <p><strong>Vacancies:</strong> {{ company.vacancy }}</p>
+        {% if company.vacancy > 0 %}
+        <a href="{% url 'apply_to_company' company.id %}" class="btn">Apply</a>
+        {% else %}
+        <p style="color: red;">No Vacancies</p>
+        {% endif %}
+    </div>
+    {% endfor %}
+    <style>/* Internship Listings Styles */
+h2 {
+    font-family: 'Poppins', sans-serif;
+    font-size: 2.2rem;
+    font-weight: 600;
+    color: #1e293b;
+    margin-bottom: 1.8rem;
+    text-align: center;
+    position: relative;
+    padding-bottom: 1rem;
+}
+
+h2::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 4px;
+    background: linear-gradient(to right, var(--primary), var(--accent));
+    border-radius: 2px;
+}
+
+.company-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 2rem;
+    margin-top: 1.5rem;
+}
+
+.company-card {
+    background: white;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    padding: 1.8rem;
+    transition: var(--transition);
+    border: 1px solid var(--light-gray);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+}
+
+.company-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
+}
+
+.company-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background: linear-gradient(to right, var(--primary), var(--accent));
+}
+
+.company-card h3 {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--primary);
+    margin-bottom: 1.2rem;
+    padding-bottom: 0.8rem;
+    border-bottom: 2px solid var(--light-gray);
+}
+
+.company-card p {
+    margin-bottom: 0.8rem;
+    font-size: 1.05rem;
+    display: flex;
+    align-items: flex-start;
+}
+
+.company-card p strong {
+    min-width: 130px;
+    color: var(--secondary);
+    font-weight: 500;
+}
+
+.company-card .btn {
+    margin-top: 1.5rem;
+    align-self: flex-start;
+    padding: 0.8rem 2rem;
+    font-size: 1.05rem;
+    font-weight: 500;
+    background: var(--primary);
+    transition: all 0.3s ease;
+}
+
+.company-card .btn:hover {
+    background: var(--primary-dark);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(37, 99, 235, 0.4);
+}
+
+.company-card p[style*="color: red"] {
+    margin-top: 1.5rem;
+    padding: 0.8rem 1.2rem;
+    background: rgba(239, 68, 68, 0.08);
+    border-radius: 8px;
+    font-weight: 500;
+    border-left: 3px solid var(--error);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .company-list {
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 1.5rem;
+    }
+    
+    .company-card {
+        padding: 1.5rem;
+    }
+    
+    h2 {
+        font-size: 1.9rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .company-list {
+        grid-template-columns: 1fr;
+    }
+    
+    .company-card p {
+        flex-direction: column;
+        gap: 0.3rem;
+    }
+    
+    .company-card p strong {
+        min-width: auto;
+    }
+    
+    h2 {
+        font-size: 1.7rem;
+    }
+}
+    </style>
+</div>
+{% endblock %}

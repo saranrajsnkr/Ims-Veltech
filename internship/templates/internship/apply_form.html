@@ -1,0 +1,174 @@
+{% extends 'base.html' %} {% block content %}
+<h2>Apply to {{ company.name }}</h2>
+<form method="POST">
+  {% csrf_token %}
+  <input type="text" name="name" placeholder="Your Name" required / style="text-transform: capitalize;"><br /><br />
+  <input
+    type="text"
+    name="roll_number"
+    placeholder="Roll Number"
+    required
+    maxlength="8"
+    minlength="8"
+    style="text-transform: uppercase;"
+  /><br /><br />
+  <input type="email" name="email" placeholder="Email" required /><br /><br />
+  <input
+    type="text"
+    name="mobile_number"
+    placeholder="Mobile Number"
+    required
+  /><br /><br />
+  <input
+    type="text"
+    name="department"
+    placeholder="Department"
+    required
+  /><br /><br />
+
+  <button type="submit">Submit Application</button>
+</form>
+<style>
+/* Application Form Styles */
+h2 {
+    font-family: 'Poppins', sans-serif;
+    font-size: 2rem;
+    font-weight: 600;
+    color: var(--primary-dark);
+    text-align: center;
+    margin-bottom: 2rem;
+    position: relative;
+    padding-bottom: 1rem;
+}
+
+h2::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 4px;
+    background: linear-gradient(to right, var(--primary), var(--accent));
+    border-radius: 2px;
+}
+
+form {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 2.5rem;
+    background: white;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    position: relative;
+    overflow: hidden;
+}
+
+form::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 6px;
+    background: linear-gradient(to right, var(--primary), var(--accent));
+}
+
+input[type="text"],
+input[type="email"] {
+    width: 100%;
+    padding: 1.2rem 1.5rem;
+    border: 2px solid var(--light-gray);
+    border-radius: 8px;
+    font-family: 'Roboto', sans-serif;
+    font-size: 1.05rem;
+    color: var(--secondary);
+    transition: var(--transition);
+    background-color: #f8fafc;
+    margin-bottom: 1.5rem;
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.15);
+    background-color: white;
+}
+
+.input-group {
+    position: relative;
+    margin-bottom: 2rem;
+}
+
+.input-group label {
+    position: absolute;
+    top: -10px;
+    left: 15px;
+    background: white;
+    padding: 0 8px;
+    font-size: 0.9rem;
+    color: var(--primary);
+    font-weight: 500;
+    z-index: 1;
+}
+
+button[type="submit"] {
+    display: block;
+    width: 100%;
+    background: linear-gradient(to right, var(--primary), var(--accent));
+    color: white;
+    padding: 1.2rem;
+    border: none;
+    border-radius: 8px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    box-shadow: 0 6px 15px rgba(37, 99, 235, 0.35);
+    margin-top: 1rem;
+}
+
+button[type="submit"]:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(37, 99, 235, 0.45);
+}
+
+button[type="submit"]:active {
+    transform: translateY(0);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    form {
+        padding: 2rem;
+    }
+    
+    h2 {
+        font-size: 1.8rem;
+    }
+}
+
+@media (max-width: 480px) {
+    form {
+        padding: 1.5rem;
+    }
+    
+    h2 {
+        font-size: 1.6rem;
+    }
+    
+    input[type="text"],
+    input[type="email"] {
+        padding: 1rem;
+        font-size: 1rem;
+    }
+    
+    button[type="submit"] {
+        padding: 1rem;
+        font-size: 1rem;
+    }
+}
+</style>
+{% endblock %}
