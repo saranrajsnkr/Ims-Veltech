@@ -6,6 +6,10 @@ class Company(models.Model):
     skill_required = models.TextField()
     location = models.CharField(max_length=100, blank=True, null=True)
     vacancy = models.PositiveIntegerField()
+    
+    class Meta:
+        verbose_name_plural = "Companies"  # ✅ Correct plural
+
 
     def __str__(self):
         return self.name
