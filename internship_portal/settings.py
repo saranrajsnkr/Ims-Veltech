@@ -9,7 +9,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-REPLACE_THIS_WITH_A_SECURE_KEY'
 
 # ⚠️ DEBUG OFF for production
-DEBUG = False
+DEBUG = True  # Set to False in production
 
 # Allowed hosts
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost']  # Add domain/IP in production
@@ -29,6 +29,59 @@ INSTALLED_APPS = [
     # Your app
     'internship',
 ]
+
+JAZZMIN_SETTINGS = {
+    "site_title": "Internship Portal Admin",
+    "site_header": "VelTech Internship Portal",
+    "site_brand": "VelTech",
+    "site_logo": "images/LOGO.png",  # Path to your logo in /static/images/
+    "login_logo": "images/VELTECH.png",
+    "welcome_sign": "Welcome to VelTech Internship Admin Panel",
+    "copyright": "VelTech",
+
+    # Top menu links
+    "topmenu_links": [
+        {"name": "Dashboard", "url": "admin:index", "permissions": ["auth.view_user"]},
+        {"name": "Company List", "model": "internship.company"},
+        {"name": "Student List", "model": "internship.student"},
+    ],
+
+    # User menu (top right corner)
+    "usermenu_links": [
+        {"name": "Support", "url": "https://veltech.edu.in/support", "new_window": True},
+    ],
+
+    # Side menu (app ordering)
+    "order_with_respect_to": ["auth", "internship"],
+
+    # App icons
+    "icons": {
+        "auth": "fas fa-users-cog",
+        "auth.user": "fas fa-user",
+        "auth.group": "fas fa-users",
+        "internship.company": "fas fa-building",
+        "internship.student": "fas fa-user-graduate",
+    },
+
+    # Theme and layout options
+    "show_sidebar": True,
+    "navigation_expanded": True,
+    "hide_apps": [],
+    "hide_models": [],
+    "changeform_format": "horizontal_tabs",  # or "collapsible", "single"
+
+    # UI tweaks
+    "custom_css": "css/admin_custom.css",  # Optional
+    "custom_js": "js/admin_custom.js",     # Optional
+    "use_google_fonts_cdn": True,
+    "changeform_format_overrides": {
+        "auth.user": "collapsible",
+    },
+
+    "language_chooser": False,
+}
+
+
 
 # Middleware
 MIDDLEWARE = [
