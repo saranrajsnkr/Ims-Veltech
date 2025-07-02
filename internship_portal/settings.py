@@ -10,6 +10,9 @@ load_dotenv()
 # Base directory
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+load_dotenv(BASE_DIR / '.env')  # ✅ Load the .env file here
+
+
 # Secret key (replace in production)
 SECRET_KEY = os.getenv('SECRET_KEY', 'unsafe-default-key')
 
@@ -123,7 +126,7 @@ WSGI_APPLICATION = 'internship_portal.wsgi.application'
 # Database (SQLite for dev)
 
 DATABASES = {
-    'default': dj_database_url.parse(os.getenv('DATABASE_URL'))
+    'default': dj_database_url.parse(os.getenv("DATABASE_URL"))
 }
 
 

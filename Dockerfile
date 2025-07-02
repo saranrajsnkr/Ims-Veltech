@@ -14,6 +14,8 @@ RUN pip install --upgrade pip && pip install -r requirements.txt
 
 # Copy project
 COPY . /code/
+COPY .env /code/.env
+
 
 # Collect static files
 RUN python manage.py collectstatic --noinput
