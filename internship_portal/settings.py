@@ -1,19 +1,23 @@
 from pathlib import Path
 from django.contrib.messages import constants as messages
 import os
+from decouple import config, Csv
+import dj_database_url
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Base directory
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Secret key (replace in production)
-SECRET_KEY = 'django-insecure-REPLACE_THIS_WITH_A_SECURE_KEY'
+SECRET_KEY = os.getenv('SECRET_KEY', 'unsafe-default-key')
 
 # ⚠️ DEBUG OFF for production
-DEBUG = True  # Set to False in production
+DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
 
 # Allowed hosts
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost']  # Add domain/IP in production
-
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '127.0.0.1').split(',')
 # Installed apps
 INSTALLED_APPS = [
     'import_export',
@@ -117,12 +121,11 @@ TEMPLATES = [
 WSGI_APPLICATION = 'internship_portal.wsgi.application'
 
 # Database (SQLite for dev)
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    'default': dj_database_url.parse(os.getenv('DATABASE_URL'))
 }
+
 
 # Password validators
 AUTH_PASSWORD_VALIDATORS = [
