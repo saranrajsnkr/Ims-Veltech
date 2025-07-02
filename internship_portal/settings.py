@@ -124,10 +124,13 @@ TEMPLATES = [
 WSGI_APPLICATION = 'internship_portal.wsgi.application'
 
 # Database (SQLite for dev)
-
 DATABASES = {
-    'default': dj_database_url.parse(os.getenv("DATABASE_URL"))
-}
+        'default': dj_database_url.config(
+            default=os.environ.get("DATABASE_URL"),
+            conn_max_age=600,
+            ssl_require=not DEBUG  # Disable SSL in local dev only
+        )
+    }
 
 
 # Password validators
@@ -151,24 +154,10 @@ LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'Asia/Kolkata'
 USE_I18N = True
 USE_TZ = True
-
-# ✅ Static files settings
-# Where collected static files will live
-STATIC_ROOT = BASE_DIR / "staticfiles"
-
-# Folder with your development static assets
-STATICFILES_DIRS = [
-    BASE_DIR / "static",
-]
-
 STATIC_URL = '/static/'
-
-# Enable WhiteNoise static file compression and caching (recommended)
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
-  # This is where collectstatic will store static files
-
-# Collect your static files before deploying with:
-# python manage.py collectstatic
+STATICFILES_DIRS = [BASE_DIR / "static"]  # Source static files during development
+STATIC_ROOT = BASE_DIR / "staticfiles"  # Collected static files for production
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'  # Enable caching and compression
 
 # ✅ Message tags
 MESSAGE_TAGS = {
