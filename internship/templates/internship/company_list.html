@@ -8,6 +8,7 @@
     {% for company in companies %}
     <div class="company-card">
         <h3>{{ company.name }}</h3>
+        <p><strong>Fees :</strong> {{ company.fees }}</p>
         <p><strong>Required Skills :</strong> {{ company.skill_required }}</p>
         <p><strong>Location :</strong> {{ company.location }}</p>
         <p><strong>Vacancies Available:</strong> {{ company.vacancy }}</p>

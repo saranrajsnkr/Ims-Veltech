@@ -711,6 +711,9 @@
             background-color: #2563eb;
         }
 
+        tr{
+            display: none;
+        }
 
 
 

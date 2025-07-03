@@ -16,7 +16,6 @@ def apply_to_company(request, company_id):
     if request.method == 'POST':
         name = request.POST.get('name')
         roll = request.POST.get('roll_number').lower()  # normalize case
-        email = request.POST.get('email')
         mobile = request.POST.get('mobile_number')
         department = request.POST.get('department')
 
@@ -28,7 +27,6 @@ def apply_to_company(request, company_id):
             student = Student.objects.create(
                 name=name,
                 roll_number=roll,
-                email=email,
                 mobile_number=mobile,
                 department=department,
                 applied_company=company

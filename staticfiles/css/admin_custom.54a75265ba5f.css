@@ -713,6 +713,9 @@
 
 
 
+        .col-md-6.col-sm-12{
+            display: none;
+        }
 
         #recent-actions-module {
             display: none;
