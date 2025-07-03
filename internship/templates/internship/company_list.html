@@ -8,9 +8,9 @@
     {% for company in companies %}
     <div class="company-card">
         <h3>{{ company.name }}</h3>
-        <p><strong>Required Skills:</strong> {{ company.skill_required }}</p>
-        <p><strong>Location:</strong> {{ company.location }}</p>
-        <p><strong>Vacancies:</strong> {{ company.vacancy }}</p>
+        <p><strong>Required Skills :</strong> {{ company.skill_required }}</p>
+        <p><strong>Location :</strong> {{ company.location }}</p>
+        <p><strong>Vacancies Available:</strong> {{ company.vacancy }}</p>
         {% if company.vacancy > 0 %}
         <a href="{% url 'apply_to_company' company.id %}" class="btn">Apply</a>
         {% else %}
