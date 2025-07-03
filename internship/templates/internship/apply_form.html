@@ -34,8 +34,23 @@
     placeholder="Department"
     required
   /><br /><br />
+<button type="submit">Submit Application</button>
+</form>
 
-  <button type="submit">Submit Application</button>
+<script>
+  const form = document.querySelector('form');
+  const button = form.querySelector('button[type="submit"]');
+
+  form.addEventListener('submit', function (e) {
+    // Check if form is valid before disabling the button
+    if (form.checkValidity()) {
+      button.disabled = true;
+      button.innerText = 'Applying...';
+    }
+  });
+</script>
+</script>
+
 </form>
 <style>
   /* Application Form Styles */

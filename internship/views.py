@@ -23,8 +23,9 @@ def apply_to_company(request, company_id):
         department = request.POST.get('department')
 
         # ✅ Check if vacancies are left
+        # ✅ Updated friendly message here
         if company.vacancy <= 0:
-            messages.error(request, "No vacancies left!")
+            messages.error(request, "🚫 Vacancy was filled. Please apply for another company.")
             return redirect('company_list')
 
         # ✅ Prevent duplicate roll number for this company
