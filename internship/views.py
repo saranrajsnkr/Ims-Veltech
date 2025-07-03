@@ -5,7 +5,9 @@ from django.core.exceptions import ValidationError
 from django.db import IntegrityError
 from django.db.models import F
 from django.db import transaction, IntegrityError
-
+import psutil
+from django.http import JsonResponse
+import os
 
 
 def company_list(request):
@@ -56,3 +58,17 @@ def apply_to_company(request, company_id):
             return redirect('company_list')
 
     return render(request, 'internship/apply_form.html', {'company': company})
+
+
+
+def performance_view(request):
+    pid = os.getpid()
+    p = psutil.Process(pid)
+
+    cpu = p.cpu_percent(interval=0.5)
+    memory = p.memory_info().rss / 1024 ** 2  # in MB
+
+    return JsonResponse({
+        "cpu_usage_percent": f"{cpu:.2f}",
+        "memory_usage_mb": f"{memory:.2f}"
+    })
