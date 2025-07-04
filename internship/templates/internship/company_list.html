@@ -1,27 +1,60 @@
-{% extends 'base.html' %}
-{% load static %}
-
-{% block content %}
+{% extends 'base.html' %} {% load static %} {% block content %}
+<button class="btn" onclick="window.location.href='{% url 'check_application_status' %}'" type="submit"> 
+  Check Application Status
+</button>
 <h2>Available Internships</h2>
 
+
+<style>
+  button[type="submit"] {
+    display: block;
+    background: linear-gradient(to right, var(--primary), var(--accent));
+    color: white;
+    padding: 0.8rem 1.2rem;
+    border: none;
+    border-radius: 8px;
+    font-family: "Poppins", sans-serif;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    box-shadow: 0 6px 15px rgba(37, 99, 235, 0.35);
+    margin-top: 1rem;
+  }
+
+  button[type="submit"]:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(37, 99, 235, 0.45);
+  }
+
+  button[type="submit"]:active {
+    transform: translateY(0);
+  }
+</style>
+
+{% if has_vacancy %}
 <div class="company-list">
-    {% for company in companies %}
-    <div class="company-card">
-        <h3>{{ company.name }}</h3>
-        <p><strong>Fees :</strong> {{ company.fees }}</p>
-        <p><strong>Required Skills :</strong> {{ company.skill_required }}</p>
-        <p><strong>Location :</strong> {{ company.location }}</p>
-        <p><strong>Vacancies Available:</strong> {{ company.vacancy }}</p>
-        {% if company.vacancy > 0 %}
-        <a href="{% url 'apply_to_company' company.id %}" class="btn">Apply</a>
-        {% else %}
-        <p style="color: red;">No Vacancies</p>
-        {% endif %}
-    </div>
-    {% endfor %}
-    <style>/* Internship Listings Styles */
-h2 {
-    font-family: 'Poppins', sans-serif;
+  {% for company in companies %}
+  <div class="company-card">
+    <h3>{{ company.name }}</h3>
+    <p><strong>Fees :</strong> {{ company.fees }}</p>
+    <p><strong>Required Skills :</strong> {{ company.skill_required }}</p>
+    <p><strong>Location :</strong> {{ company.location }}</p>
+    <p><strong>Vacancies Available:</strong> {{ company.vacancy }}</p>
+    <a href="{% url 'apply_to_company' company.id %}" class="btn">Apply</a>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<p style="display: block; text-align: center; font-weight: bold; color: red">
+  All companies are filled.<br />Please wait until the announcement is made in the WhatsApp group.
+</p>
+{% endif %}
+
+<style>
+  /* Internship Listings Styles */
+  h2 {
+    font-family: "Poppins", sans-serif;
     font-size: 2.2rem;
     font-weight: 600;
     color: #1e293b;
@@ -29,9 +62,9 @@ h2 {
     text-align: center;
     position: relative;
     padding-bottom: 1rem;
-}
+  }
 
-h2::after {
+  h2::after {
     content: "";
     position: absolute;
     bottom: 0;
@@ -41,16 +74,16 @@ h2::after {
     height: 4px;
     background: linear-gradient(to right, var(--primary), var(--accent));
     border-radius: 2px;
-}
+  }
 
-.company-list {
+  .company-list {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
     gap: 2rem;
     margin-top: 1.5rem;
-}
+  }
 
-.company-card {
+  .company-card {
     background: white;
     border-radius: var(--border-radius);
     box-shadow: var(--box-shadow);
@@ -61,14 +94,14 @@ h2::after {
     flex-direction: column;
     position: relative;
     overflow: hidden;
-}
+  }
 
-.company-card:hover {
+  .company-card:hover {
     transform: translateY(-8px);
     box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
-}
+  }
 
-.company-card::before {
+  .company-card::before {
     content: "";
     position: absolute;
     top: 0;
@@ -76,32 +109,32 @@ h2::after {
     width: 100%;
     height: 5px;
     background: linear-gradient(to right, var(--primary), var(--accent));
-}
+  }
 
-.company-card h3 {
-    font-family: 'Poppins', sans-serif;
+  .company-card h3 {
+    font-family: "Poppins", sans-serif;
     font-size: 1.5rem;
     font-weight: 600;
     color: var(--primary);
     margin-bottom: 1.2rem;
     padding-bottom: 0.8rem;
     border-bottom: 2px solid var(--light-gray);
-}
+  }
 
-.company-card p {
+  .company-card p {
     margin-bottom: 0.8rem;
     font-size: 1.05rem;
     display: flex;
     align-items: flex-start;
-}
+  }
 
-.company-card p strong {
+  .company-card p strong {
     min-width: 130px;
     color: var(--primary);
     font-weight: 500;
-}
+  }
 
-.company-card .btn {
+  .company-card .btn {
     margin-top: 1.5rem;
     align-self: flex-start;
     padding: 0.8rem 2rem;
@@ -109,57 +142,57 @@ h2::after {
     font-weight: 500;
     background: var(--primary);
     transition: all 0.3s ease;
-}
+  }
 
-.company-card .btn:hover {
+  .company-card .btn:hover {
     background: var(--primary-dark);
     transform: translateY(-3px);
     box-shadow: 0 6px 15px rgba(37, 99, 235, 0.4);
-}
+  }
 
-.company-card p[style*="color: red"] {
+  .company-card p[style*="color: red"] {
     margin-top: 1.5rem;
     padding: 0.8rem 1.2rem;
     background: rgba(239, 68, 68, 0.08);
     border-radius: 8px;
     font-weight: 500;
     border-left: 3px solid var(--error);
-}
+  }
 
-/* Responsive Design */
-@media (max-width: 768px) {
+  /* Responsive Design */
+  @media (max-width: 768px) {
     .company-list {
-        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-        gap: 1.5rem;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.5rem;
     }
-    
+
     .company-card {
-        padding: 1.5rem;
+      padding: 1.5rem;
     }
-    
-    h2 {
-        font-size: 1.9rem;
-    }
-}
 
-@media (max-width: 480px) {
-    .company-list {
-        grid-template-columns: 1fr;
-    }
-    
-    .company-card p {
-        flex-direction: column;
-        gap: 0.3rem;
-    }
-    
-    .company-card p strong {
-        min-width: auto;
-    }
-    
     h2 {
-        font-size: 1.7rem;
+      font-size: 1.9rem;
     }
-}
-    </style>
-</div>
+  }
+
+  @media (max-width: 480px) {
+    .company-list {
+      grid-template-columns: 1fr;
+    }
+
+    .company-card p {
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+
+    .company-card p strong {
+      min-width: auto;
+    }
+
+    h2 {
+      font-size: 1.7rem;
+    }
+  }
+</style>
+
 {% endblock %}

@@ -29,6 +29,7 @@ class CompanyAdmin(admin.ModelAdmin):
 class StudentAdmin(admin.ModelAdmin):
     list_display = ('name', 'roll_number','department' ,'applied_company')
     search_fields = ('name', 'roll_number')
+    list_filter = ('applied_company',)
     actions = ["export_as_csv"]
 
     def export_as_csv(self, request, queryset):

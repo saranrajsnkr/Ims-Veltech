@@ -7,5 +7,7 @@ urlpatterns = [
     path('', views.company_list, name='company_list'),
     path('apply/<int:company_id>/', views.apply_to_company, name='apply_to_company'),
     path("server-stats/", performance_view, name="performance"),
+    path('check-status/', views.check_application_status, name='check_application_status'),
+
 
 ]
