@@ -27,7 +27,7 @@ class CompanyAdmin(admin.ModelAdmin):
 
 @admin.register(Student)
 class StudentAdmin(admin.ModelAdmin):
-    list_display = ('name', 'roll_number', 'applied_company')
+    list_display = ('name', 'roll_number','department' ,'applied_company')
     search_fields = ('name', 'roll_number')
     actions = ["export_as_csv"]
 
