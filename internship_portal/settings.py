@@ -99,6 +99,10 @@ JAZZMIN_SETTINGS = {
     },
 
     "language_chooser": False,
+    "hide_models": [
+        "auth.User",
+        "auth.Group",
+    ]
 }
 
 

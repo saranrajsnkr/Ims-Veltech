@@ -11,7 +11,18 @@ from django.contrib import messages
 @admin.register(Company)
 class CompanyAdmin(admin.ModelAdmin):
     list_display = ('name', 'skill_required', 'vacancy')
-    search_fields = ('name',)
+    actions = None  # disables action choices
+
+    def get_actions(self, request):
+        # this removes the entire action box including Go and "x of y selected"
+        return {}
+
+    def changelist_view(self, request, extra_context=None):
+        # This removes the selection checkboxes next to rows
+        request.GET = request.GET.copy()
+        if '_selected_action' in request.GET:
+            del request.GET['_selected_action']
+        return super().changelist_view(request, extra_context=extra_context)
 
 
 @admin.register(Student)
