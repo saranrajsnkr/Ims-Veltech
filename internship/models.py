@@ -6,9 +6,9 @@ class Company(models.Model):
     cgpa=models.CharField(max_length=100, blank=True, null=True)
     fees = models.CharField(max_length=20, blank=False, null=True)
     duration= models.CharField(max_length=50, blank=False, null=True)
-    domain = models.CharField(max_length=1000, blank=False, null=True)
-    description = models.TextField(max_length=100, blank=False, null=True)
-    skill_required = models.TextField(max_length=100, blank=False, null=True)
+    domain = models.CharField(max_length=100, blank=False, null=True)
+    description = models.TextField(max_length=1000, blank=False, null=True)
+    skill_required = models.TextField(max_length=1000, blank=False, null=True)
     location = models.CharField(max_length=100, blank=False, null=True)
     vacancy = models.PositiveIntegerField()
 
