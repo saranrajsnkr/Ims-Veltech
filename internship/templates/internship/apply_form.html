@@ -11,7 +11,7 @@
   maxlength="5"
   inputmode="numeric"
   required
-  title="Enter exactly 5 digits"
+  title="VTU Number should be exactly 5 digits"
 /><br /><br />
 
 
@@ -29,7 +29,10 @@
     placeholder="Mobile Number"
     required
     maxlength="10"
-    minlength="10"
+    pattern="\d{10}"
+    inputmode="numeric"
+    title="Mobile Number should be exactly 10 digits"
+
   /><br /><br />
 <label for="department"></label>
 <select name="department" id="department" required>
