@@ -54,7 +54,9 @@
     {%endif%} {%if company.domain%}
     <p><strong>Domain :</strong> {{ company.domain }}</p>
     {%endif%}
+    {%if company.skill_required%}
     <p><strong>Required Skills :</strong> {{ company.skill_required }}</p>
+    {%endif%}
     {%if company.description%}
     <p><strong>Description :</strong> {{ company.description }}</p>
     {%endif%}
