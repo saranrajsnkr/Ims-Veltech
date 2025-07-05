@@ -34,6 +34,10 @@ def apply_to_company(request, company_id):
 
         # Prevent duplicate application
         if Student.objects.filter(roll_number=roll, applied_company=company).exists():
+            messages.error(request, "You have already applied to this company.")
+            return redirect('company_list')
+        
+        if Student.objects.filter(roll_number=roll,).exists():
             messages.error(request, "You have already applied with this VTU number.")
             return redirect('company_list')
 
