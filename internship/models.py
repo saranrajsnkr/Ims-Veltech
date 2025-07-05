@@ -22,14 +22,12 @@ class Company(models.Model):
 
 class Student(models.Model):
     name = models.CharField(max_length=100)
-    roll_number = models.CharField(max_length=20)
+    roll_number = models.CharField(max_length=20, unique=True)  # ✅ Unique roll number
     mobile_number = models.CharField(max_length=15, blank=True, null=True)
     department = models.CharField(max_length=100, blank=True, null=True)
     applied_company = models.ForeignKey(Company, on_delete=models.CASCADE, blank=True, null=True)
     fee = models.CharField(max_length=20, blank=True, null=True)
 
-    class Meta:
-        unique_together = ('roll_number', 'applied_company')  # ✅ Prevent duplicate submissions per company
 
     def clean(self):
         # ✅ Prevent applying to full company (only for new objects)
