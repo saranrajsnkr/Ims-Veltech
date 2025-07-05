@@ -1,11 +1,12 @@
 from django.db import models
 from django.core.exceptions import ValidationError
 
+
 class Company(models.Model):
     name = models.CharField(max_length=100)
-    cgpa=models.CharField(max_length=100, blank=True, null=True)
+    cgpa = models.CharField(max_length=100, blank=True, null=True)
     fees = models.CharField(max_length=20, blank=False, null=True)
-    duration= models.CharField(max_length=50, blank=False, null=True)
+    duration = models.CharField(max_length=50, blank=False, null=True)
     domain = models.CharField(max_length=100, blank=False, null=True)
     description = models.TextField(max_length=1000, blank=False, null=True)
     skill_required = models.TextField(max_length=1000, blank=False, null=True)
@@ -31,14 +32,18 @@ class Student(models.Model):
         unique_together = ('roll_number', 'applied_company')  # ✅ Prevent duplicate submissions per company
 
     def clean(self):
-        # Only on creation
+        # ✅ Prevent applying to full company (only for new objects)
         if not self.pk and self.applied_company and self.applied_company.vacancy <= 0:
             raise ValidationError("No vacancies available for this company.")
 
     def save(self, *args, **kwargs):
-        self.roll_number = self.roll_number.lower()  # Normalize roll number
-        self.full_clean()  # Ensures `clean()` runs before saving
+        # ✅ Normalize roll number
+        self.roll_number = self.roll_number.lower()
 
+        # ✅ Run clean() logic
+        self.full_clean()
+
+        # ✅ Auto-fill fee from company if not given
         if self.applied_company and not self.fee:
             self.fee = self.applied_company.fees
 

@@ -1,11 +1,10 @@
 import csv
-from django.contrib import admin
+from django.contrib import admin, messages
 from .models import Company, Student
 from django.http import HttpResponse
-from .admin_forms import CsvImportForm  # if you saved it separately
 from django.shortcuts import render, redirect
-from django.contrib import messages
-
+from .admin_forms import CsvImportForm  # Make sure you have this form
+from django.db.models import F
 
 
 @admin.register(Company)
@@ -14,11 +13,11 @@ class CompanyAdmin(admin.ModelAdmin):
     actions = None  # disables action choices
 
     def get_actions(self, request):
-        # this removes the entire action box including Go and "x of y selected"
+        # Remove the bulk action box
         return {}
 
     def changelist_view(self, request, extra_context=None):
-        # This removes the selection checkboxes next to rows
+        # Remove selection checkboxes
         request.GET = request.GET.copy()
         if '_selected_action' in request.GET:
             del request.GET['_selected_action']
@@ -27,10 +26,11 @@ class CompanyAdmin(admin.ModelAdmin):
 
 @admin.register(Student)
 class StudentAdmin(admin.ModelAdmin):
-    list_display = ('name', 'roll_number','department' ,'applied_company')
+    list_display = ('name', 'roll_number', 'department', 'applied_company')
     search_fields = ('name', 'roll_number')
     list_filter = ('applied_company',)
     actions = ["export_as_csv"]
+    change_list_template = "admin/internship/student/changelist.html"
 
     def export_as_csv(self, request, queryset):
         response = HttpResponse(content_type="text/csv")
@@ -38,25 +38,22 @@ class StudentAdmin(admin.ModelAdmin):
         writer = csv.writer(response)
 
         # CSV Header
-        writer.writerow(['Name', 'Roll Number',  'Mobile Number', 'Department', 'Applied Company', 'Fee'])
+        writer.writerow(['Name', 'Roll Number', 'Mobile Number', 'Department', 'Applied Company', 'Fee'])
 
-        # CSV Data
-        for log in queryset:
+        # CSV Rows
+        for student in queryset:
             writer.writerow([
-                log.name,
-                log.roll_number,
-                log.mobile_number,
-                log.department,
-                log.applied_company.name if log.applied_company else '',
-                log.fee if log.fee else '',
+                student.name,
+                student.roll_number,
+                student.mobile_number,
+                student.department,
+                student.applied_company.name if student.applied_company else '',
+                student.fee if student.fee else '',
             ])
 
         return response
-    
 
     export_as_csv.short_description = "Export Selected Students to CSV"
-    
-    change_list_template = "admin/internship/student/changelist.html"
 
     def get_urls(self):
         from django.urls import path
@@ -68,9 +65,9 @@ class StudentAdmin(admin.ModelAdmin):
 
     def upload_csv(self, request):
         if request.method == "POST":
-            csv_file = request.FILES["csv_upload"]
-            if not csv_file.name.endswith('.csv'):
-                messages.error(request, "This is not a CSV file")
+            csv_file = request.FILES.get("csv_upload")
+            if not csv_file or not csv_file.name.endswith('.csv'):
+                messages.error(request, "Please upload a valid CSV file.")
                 return redirect("..")
 
             try:
@@ -79,20 +76,39 @@ class StudentAdmin(admin.ModelAdmin):
 
                 for row in reader:
                     try:
-                        student = Student.objects.create(
+                        # Normalize fields
+                        roll = row['Roll Number'].strip().lower()
+                        company_name = row['Applied Company'].strip()
+
+                        # Get company
+                        try:
+                            company = Company.objects.get(name__iexact=company_name)
+                        except Company.DoesNotExist:
+                            self.message_user(request, f"Company '{company_name}' not found. Row skipped.", level=messages.WARNING)
+                            continue
+
+                        # Duplicate check
+                        if Student.objects.filter(roll_number=roll, applied_company=company).exists():
+                            self.message_user(request, f"Duplicate: {roll} already applied to {company.name}. Skipping.", level=messages.WARNING)
+                            continue
+
+                        # Create student
+                        Student.objects.create(
                             name=row['Name'].strip(),
-                            roll_number=row['Roll Number'].strip().lower(),
+                            roll_number=roll,
                             mobile_number=row.get('Mobile Number', '').strip(),
                             department=row.get('Department', '').strip(),
-                            applied_company=Company.objects.get(name__iexact=row['Applied Company'].strip()),
+                            applied_company=company,
                             fee=row.get('Fee', '').strip()
                         )
-                    except Company.DoesNotExist:
-                        self.message_user(request, f"Company '{row['Applied Company']}' not found. Row skipped.", level=messages.WARNING)
+
+                        # Reduce vacancy
+                        company.vacancy = F('vacancy') - 1
+                        company.save()
+                        company.refresh_from_db()
+
                     except Exception as e:
                         self.message_user(request, f"Error importing row: {row} → {e}", level=messages.ERROR)
-
-
 
                 messages.success(request, "CSV file has been processed successfully.")
                 return redirect("..")
@@ -101,7 +117,7 @@ class StudentAdmin(admin.ModelAdmin):
                 messages.error(request, f"Error processing file: {e}")
                 return redirect("..")
 
+        # GET request – show upload form
         form = CsvImportForm()
         payload = {"form": form}
         return render(request, "admin/csv_upload.html", payload)
-
