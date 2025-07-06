@@ -6,6 +6,12 @@
 >
   Check Application Status
 </button>
+
+{% if announcement.message1 and announcement.is_message1_active %}
+  <div class="announcement-box">
+    <p style="display: block; text-align: center; font-weight: bold; color: {{ announcement.message1_color }}" >{{ announcement.message1 }}</p>
+  </div>
+{% endif %}
 <h2>Available Internships</h2>
 
 <style>
@@ -66,11 +72,73 @@
   </div>
   {% endfor %}
 </div>
+{% elif announcement.message2 and announcement.is_message2_active %}
+  <div class="announcement-box">
+    <p style="display: block; text-align: center; font-weight: bold; color: {{ announcement.message2_color }}" >{{ announcement.message2 }}</p>
+  </div>
 {% else %}
-<p style="display: block; text-align: center; font-weight: bold; color: red">
-  All companies are filled.<br />Please wait until the announcement is made in
-  the WhatsApp group.
+<p id="no-vacancy-msg" style="display: block; text-align: center; font-weight: bold; color: red">
+  All companies are filled.
 </p>
+<p id="enrollment-message" style="display: block; text-align: center; font-weight: bold;"></p>
+
+<script>
+  function getFormattedDate(date) {
+    return date.toLocaleDateString('en-IN', {
+      day: '2-digit',
+      month: 'long',
+      year: 'numeric'
+    });
+  }
+
+  function updateEnrollmentMessage() {
+    const now = new Date();
+    const day = now.getDay(); // Sunday = 0
+    const hour = now.getHours();
+    const messageElement = document.getElementById("enrollment-message");
+    const noVacancyMessage = document.getElementById("no-vacancy-msg");
+    let message = "";
+    let displayDate;
+
+    if (day === 0) {
+      // Sunday
+      const tomorrow = new Date(now);
+      tomorrow.setDate(now.getDate() + 1);
+      displayDate = getFormattedDate(tomorrow);
+      message = `The next enrollment will be open tomorrow (${displayDate}) from 10 AM to 1 PM.`;
+      messageElement.style.color = "red";
+      noVacancyMessage.style.display = "block"; // Optionally show "All companies are filled."
+    } else if (day >= 1 && day <= 6) {
+      if (hour >= 10 && hour < 13) {
+        // Between 10 AM and 1 PM
+        message = "Company will be added soon.";
+        messageElement.style.color = "green";
+        noVacancyMessage.style.display = "none"; // Hide "All companies are filled."
+      } else if (hour < 10) {
+        // Before 10 AM
+        displayDate = getFormattedDate(now);
+        message = `The next enrollment will be today (${displayDate}) from 10 AM to 1 PM.`;
+        messageElement.style.color = "red";
+        noVacancyMessage.style.display = "block";
+      } else {
+        // After 1 PM
+        const tomorrow = new Date(now);
+        tomorrow.setDate(now.getDate() + 1);
+        displayDate = getFormattedDate(tomorrow);
+        message = `The next enrollment will be open tomorrow (${displayDate}) from 10 AM to 1 PM.`;
+        messageElement.style.color = "red";
+        noVacancyMessage.style.display = "block";
+      }
+    }
+
+    messageElement.textContent = message;
+  }
+
+  updateEnrollmentMessage(); // Run on load
+</script>
+
+
+
 {% endif %}
 
 <style>

@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Company, Student
+from .models import Company, Student , Announcement
 from django.contrib import messages
 from django.db import transaction, IntegrityError
 from django.db.models import F
@@ -9,10 +9,12 @@ import os
 
 
 def company_list(request):
-    companies_with_vacancy = Company.objects.filter(vacancy__gt=0)
+    companies_with_vacancy = Company.objects.filter(vacancy__gt=0,active=True)
+    announcement = Announcement.objects.first()
     context = {
         'companies': companies_with_vacancy,
         'has_vacancy': companies_with_vacancy.exists(),
+        'announcement': announcement,
     }
     return render(request, 'internship/company_list.html', context)
 
@@ -29,16 +31,16 @@ def apply_to_company(request, company_id):
 
         # Prevent application if no vacancies
         if company.vacancy <= 0:
-            messages.error(request, "Vacancy was filled. Please apply for another company.")
+            messages.error(request, "Vacancy was filled. Please apply for another company.",extra_tags='user')
             return redirect('company_list')
 
         # Prevent duplicate application
         if Student.objects.filter(roll_number=roll, applied_company=company).exists():
-            messages.error(request, "You have already applied to this company.")
+            messages.error(request, "You have already applied to this company.",extra_tags='user')
             return redirect('company_list')
         
         if Student.objects.filter(roll_number=roll).exists():
-            messages.error(request, "You have already applied with this VTU number.")
+            messages.error(request, "You have already applied with this VTU number.",extra_tags='user')
             return redirect('company_list')
 
         try:
@@ -56,11 +58,11 @@ def apply_to_company(request, company_id):
             company.save()
             company.refresh_from_db()
 
-            messages.success(request, "Applied successfully!")
+            messages.success(request, "Applied successfully!", extra_tags='user')
             return redirect('company_list')
 
         except IntegrityError:
-            messages.error(request, "You have already applied or something went wrong. Please check your VTU on the application status page.")
+            messages.error(request, "You have already applied or something went wrong. Please check your VTU on the application status page.", extra_tags='user')
             return redirect('company_list')
 
     return render(request, 'internship/apply_form.html', {'company': company})

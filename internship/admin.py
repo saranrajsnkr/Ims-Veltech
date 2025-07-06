@@ -1,6 +1,6 @@
 import csv
 from django.contrib import admin, messages
-from .models import Company, Student
+from .models import Company, Student , Announcement , SiteSetting
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from .admin_forms import CsvImportForm  # Make sure you have this form
@@ -121,3 +121,22 @@ class StudentAdmin(admin.ModelAdmin):
         form = CsvImportForm()
         payload = {"form": form}
         return render(request, "admin/csv_upload.html", payload)
+
+
+@admin.register(SiteSetting)
+class SiteSettingAdmin(admin.ModelAdmin):
+    list_display = ['maintenance_mode']
+
+    def has_add_permission(self, request):
+        # Only allow adding if no announcement exists
+        return not Announcement.objects.exists()
+
+@admin.register(Announcement)
+class AnnouncementAdmin(admin.ModelAdmin):
+    list_display = ['message1','is_message1_active','message2','is_message2_active']
+    
+
+
+    def has_add_permission(self, request):
+        # Only allow adding if no announcement exists
+        return not Announcement.objects.exists()

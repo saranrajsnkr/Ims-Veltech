@@ -12,6 +12,7 @@ class Company(models.Model):
     skill_required = models.TextField(max_length=1000, blank=True, null=True)
     location = models.CharField(max_length=100, blank=False, null=True)
     vacancy = models.PositiveIntegerField()
+    active = models.BooleanField("Active", default=False)
 
     class Meta:
         verbose_name_plural = "Companies"
@@ -49,3 +50,44 @@ class Student(models.Model):
 
     def __str__(self):
         return f"{self.name} - {self.applied_company.name if self.applied_company else 'N/A'}"
+
+
+
+MESSAGE_COLOR_CHOICES = [
+    ('green', 'Success - Green'),
+    ('blue', 'Info - Blue'),
+    ('orange', 'Warning - Orange'),
+    ('red', 'Error - Red'),
+]
+
+class SiteSetting(models.Model):
+    maintenance_mode = models.BooleanField(default=False)
+
+    def __str__(self):
+        return "Site Settings"
+
+    class Meta:
+        verbose_name = "Site Setting"
+        verbose_name_plural = "Site Settings"
+
+
+
+
+class Announcement(models.Model):
+    message1 = models.TextField("Message 1", max_length=500, blank=True, null=True)
+    is_message1_active = models.BooleanField("Show Message 1", default=False)
+    message1_color = models.CharField("Message 1 Color", max_length=10, choices=MESSAGE_COLOR_CHOICES, default='green')
+
+
+    message2 = models.TextField("Message 2", max_length=500, blank=True, null=True)
+    is_message2_active = models.BooleanField("Show Message 2", default=False)
+    message2_color = models.CharField("Message 2 Color", max_length=10, choices=MESSAGE_COLOR_CHOICES, default='orange')
+
+
+    def __str__(self):
+        return "Announcements"
+
+    class Meta:
+        verbose_name = "Announcement"
+        verbose_name_plural = "Announcements"
+

@@ -64,13 +64,14 @@ This portal ensures a simple and organized way for students to apply for interns
     </header>
 
     <main class="main-container">
-      {% if messages %}
-        <div class="messages">
-          {% for message in messages %}
-            <div class="alert {{ message.tags }}">{{ message }}</div>
-          {% endfor %}
-        </div>
-      {% endif %}
+    <div class="messages">
+      {% for message in messages %}
+        {% if 'user' in message.tags %}
+          <div class="alert {{ message.tags }}">{{ message }}</div>
+        {% endif %}
+      {% endfor %}
+    </div>
+
 
       {% block content %}
       <!-- Page-specific content will go here -->
@@ -165,7 +166,7 @@ header {
 h1 {
   font-family: 'Poppins', sans-serif;
   font-weight: 600;
-  font-size: 2rem;
+    font-size: 2rem;
   text-align: center;
   color: #1e293b;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
@@ -219,43 +220,43 @@ h1 {
   font-size: 1.5rem;
 }
 
-.alert.success {
+.alert.user.success {
   background-color: rgba(16, 185, 129, 0.15);
   border-left: 4px solid var(--success);
   color: #047857;
 }
 
-.alert.success::before {
+.alert.user.success::before {
   content: "\f058"; /* fa-circle-check */
 }
 
-.alert.error {
+.alert.user.error {
   background-color: rgba(239, 68, 68, 0.15);
   border-left: 4px solid var(--error);
   color: #b91c1c;
 }
 
-.alert.error::before {
+.alert.user.error::before {
   content: "\f057"; /* fa-circle-xmark */
 }
 
-.alert.warning {
+.alert.user.warning {
   background-color: rgba(245, 158, 11, 0.15);
   border-left: 4px solid var(--warning);
   color: #b45309;
 }
 
-.alert.warning::before {
+.alert.user.warning::before {
   content: "\f071"; /* fa-triangle-exclamation */
 }
 
-.alert.info {
+.alert.user.info {
   background-color: rgba(59, 130, 246, 0.15);
   border-left: 4px solid var(--info);
   color: #1d4ed8;
 }
 
-.alert.info::before {
+.alert.user.info::before {
   content: "\f05a"; /* fa-circle-info */
 }
 
