@@ -1,49 +1,69 @@
 {% extends 'base.html' %} {% load static %} {% block content %}
-<button
-  class="btn"
-  onclick="window.location.href='{% url 'check_application_status' %}'"
-  type="submit"
->
-  Check Application Status
-</button>
+<div class="button-container">
+  <button
+    class="btn"
+    onclick="window.location.href='{% url 'check_application_status' %}'"
+    type="submit"
+  >
+    Check Application Status
+  </button>
+  <button
+    class="btn"
+    type="submit"
+    onclick="window.location.href='https://www.support.veltech.intern.saran-developer.me/'"
+  >
+    Support
+  </button>
+</div>
 
 {% if announcement.message1 and announcement.is_message1_active %}
-  <div class="announcement-box">
-    <p style="display: block; text-align: center; font-weight: bold; color: {{ announcement.message1_color }}" >{{ announcement.message1 }}</p>
-  </div>
+<div class="announcement-box">
+  <p
+    style="display: block; text-align: center; font-weight: bold; color: {{ announcement.message1_color }}"
+  >
+    {{ announcement.message1 }}
+  </p>
+</div>
 {% endif %}
 <h2>Available Internships</h2>
 
 <style>
-  button[type="submit"] {
-    position: relative;
-    left: 50%;
-    transform: translateX(-50%) translateY(0px);
-    background: linear-gradient(to right, var(--primary), var(--accent));
-    color: white;
-    padding: 0.8rem 1.2rem;
-    border: none;
-    border-radius: 8px;
-    font-family: "Poppins", sans-serif;
-    font-size: 0.8rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: var(--transition);
-    box-shadow: 0 6px 15px rgba(37, 99, 235, 0.35);
-    margin-top: 1rem;
-    bottom: 10px; /* You can remove this if using 'top' instead */
-    margin-top: 25px;
-    margin-bottom: 5px;
-  }
+.button-container {
+  display: flex;
+  justify-content: center;
+  gap: 20px; /* spacing between buttons */
+  margin-top: 50px;
+}
 
-  button[type="submit"]:hover {
-    transform: translateX(-50%) translateY(-3px);
-    box-shadow: 0 10px 25px rgba(37, 99, 235, 0.45);
-  }
+/* Common style for both buttons */
+button[type="submit"] {
+  width: 220px; /* Set a fixed width */
+  text-align: center;
+  background: linear-gradient(to right, var(--primary), var(--accent));
+  color: white;
+  padding: 0.8rem 1.2rem;
+  border: none;
+  border-radius: 8px;
+  font-family: "Poppins", sans-serif;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  box-shadow: 0 6px 15px rgba(37, 99, 235, 0.35);
+  margin-top: 0px;
+  margin-bottom: 25px;
+}
 
-  button[type="submit"]:active {
-    transform: translateX(-50%) translateY(0px);
-  }
+/* Hover and active effects */
+button[type="submit"]:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(37, 99, 235, 0.45);
+}
+
+button[type="submit"]:active {
+  transform: translateY(0px);
+}
+
 </style>
 
 {% if has_vacancy %}
@@ -59,11 +79,9 @@
     <p><strong>Duration :</strong> {{ company.duration }}</p>
     {%endif%} {%if company.domain%}
     <p><strong>Domain :</strong> {{ company.domain }}</p>
-    {%endif%}
-    {%if company.skill_required%}
+    {%endif%} {%if company.skill_required%}
     <p><strong>Required Skills :</strong> {{ company.skill_required }}</p>
-    {%endif%}
-    {%if company.description%}
+    {%endif%} {%if company.description%}
     <p><strong>Description :</strong> {{ company.description }}</p>
     {%endif%}
     <p><strong>Location :</strong> {{ company.location }}</p>
@@ -73,21 +91,31 @@
   {% endfor %}
 </div>
 {% elif announcement.message2 and announcement.is_message2_active %}
-  <div class="announcement-box">
-    <p style="display: block; text-align: center; font-weight: bold; color: {{ announcement.message2_color }}" >{{ announcement.message2 }}</p>
-  </div>
+<div class="announcement-box">
+  <p
+    style="display: block; text-align: center; font-weight: bold; color: {{ announcement.message2_color }}"
+  >
+    {{ announcement.message2 }}
+  </p>
+</div>
 {% else %}
-<p id="no-vacancy-msg" style="display: block; text-align: center; font-weight: bold; color: red">
+<p
+  id="no-vacancy-msg"
+  style="display: block; text-align: center; font-weight: bold; color: red"
+>
   All companies are filled.
 </p>
-<p id="enrollment-message" style="display: block; text-align: center; font-weight: bold;"></p>
+<p
+  id="enrollment-message"
+  style="display: block; text-align: center; font-weight: bold"
+></p>
 
 <script>
   function getFormattedDate(date) {
-    return date.toLocaleDateString('en-IN', {
-      day: '2-digit',
-      month: 'long',
-      year: 'numeric'
+    return date.toLocaleDateString("en-IN", {
+      day: "2-digit",
+      month: "long",
+      year: "numeric",
     });
   }
 
@@ -136,8 +164,6 @@
 
   updateEnrollmentMessage(); // Run on load
 </script>
-
-
 
 {% endif %}
 
