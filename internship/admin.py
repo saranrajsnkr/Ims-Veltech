@@ -1,6 +1,6 @@
 import csv
 from django.contrib import admin, messages
-from .models import Company, Student , Announcement , SiteSetting
+from .models import Company, Student , Announcement , SiteSetting , UserReport , InternshipApplication
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from .admin_forms import CsvImportForm  # Make sure you have this form
@@ -140,3 +140,62 @@ class AnnouncementAdmin(admin.ModelAdmin):
     def has_add_permission(self, request):
         # Only allow adding if no announcement exists
         return not Announcement.objects.exists()
+
+from django.contrib import admin
+from .models import UserReport
+
+@admin.register(UserReport)
+class UserReportAdmin(admin.ModelAdmin):
+    list_display = ('name', 'roll_number', 'email', 'submitted_at')
+    search_fields = ('name', 'roll_number', 'email')
+    list_filter = ('submitted_at',)
+
+    # 🚫 Disable Add
+    def has_add_permission(self, request):
+        return False
+
+    # 🚫 Disable Edit
+    def has_change_permission(self, request, obj=None):
+        return False
+
+    # # 🚫 Disable Delete
+    # def has_delete_permission(self, request, obj=None):
+    #     return False
+  
+
+from django.contrib import admin
+from .models import InternshipApplication
+
+@admin.register(InternshipApplication)
+class InternshipApplicationAdmin(admin.ModelAdmin):
+    list_display = ("student_name", "vtu_number", "industry_name", "application_approved", "submitted_at")
+
+    def get_readonly_fields(self, request, obj=None):
+        if obj:  # editing an existing object
+            all_fields = [field.name for field in obj._meta.fields]
+            return [f for f in all_fields if f not in ("application_approved", "approval_message")]
+        return []  # allow editing all fields while creating a new object
+
+
+    fieldsets = (
+        ('Student Details', {
+            'fields': ('student_name', 'vtu_number', 'department', 'email', 'contact_number')
+        }),
+        ('Industry Details', {
+            'fields': (
+                'industry_name', 'industry_location', 'domain_of_work',
+                'industry_category', 'industry_website', 'industry_email', 'industry_phone_number' , 'referal_person_name', 'referal_person_designation' , 'referal_person_email', 'referal_person_phone_number'
+            )
+        }),
+        ('Stipend & Fees', {
+            'fields': ('stipend_provided', 'stipend_amount', 'fees_required', 'fees_amount')
+        }),
+        ('Meta', {
+            'fields': ('submitted_at',),
+        }),
+        
+        ('Approval Status', {
+            'fields': ('application_approved', 'approval_message'),
+        }),
+    )
+

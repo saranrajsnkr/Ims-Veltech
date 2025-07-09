@@ -1,11 +1,18 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Company, Student , Announcement
+from .models import Company, Student , Announcement , UserReport , InternshipApplication
 from django.contrib import messages
 from django.db import transaction, IntegrityError
 from django.db.models import F
 from django.http import JsonResponse
 import psutil
 import os
+from .forms import UserReportForm , InternshipApplicationForm
+from django.core.mail import send_mail
+import random
+from django.conf import settings
+
+
+
 
 
 def company_list(request):
@@ -42,6 +49,10 @@ def apply_to_company(request, company_id):
         if Student.objects.filter(roll_number=roll).exists():
             messages.error(request, "You have already applied with this VTU number.",extra_tags='user')
             return redirect('company_list')
+        
+        if InternshipApplication.objects.filter(vtu_number=roll).exists():
+            messages.error(request, "You have already applied with this VTU number.",extra_tags='user')
+            return redirect('company_list')
 
         try:
             # Create the student application
@@ -74,13 +85,20 @@ def check_application_status(request):
 
     if request.method == 'POST':
         roll_number = str(request.POST.get('roll_number', '')).strip().lower()
-        result = Student.objects.filter(roll_number=roll_number).select_related('applied_company')
+
+        # First, check if application exists in InternshipApplication
+        result = InternshipApplication.objects.filter(vtu_number=roll_number)
+        
+        if not result.exists():
+            # Fallback: check if student applied via Company model
+            student = Student.objects.filter(roll_number=roll_number).select_related('applied_company').first()
+            if student:
+                result = student  # not a queryset, a single instance
 
     return render(request, 'internship/check_status.html', {
         'result': result,
         'roll_number': roll_number
     })
-
 
 def performance_view(request):
     pid = os.getpid()
@@ -93,3 +111,180 @@ def performance_view(request):
         "cpu_usage_percent": f"{cpu:.2f}",
         "memory_usage_mb": f"{memory:.2f}"
     })
+
+
+
+# === Helper ===
+def generate_otp():
+    return str(random.randint(100000, 999999))
+
+# === Step 1: Ask for Email ===
+def login_view(request):
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        request.session['email'] = email
+
+        # === Bypass OTP if email matches ===
+        if email == 'vtu24875@veltech.edu.in':
+            request.session['is_logged_in'] = True
+            return redirect('submit_report')
+
+        # === Normal OTP flow ===
+        otp = generate_otp()
+        request.session['otp'] = otp
+
+        send_mail(
+            subject='Your OTP Code',
+            message=f'Your OTP is {otp}',
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=[email],
+        )
+        return redirect('verify_otp')
+
+    return render(request, 'reports/login.html')
+
+# === Step 2: OTP Verification ===
+def verify_otp_view(request):
+    if request.method == 'POST':
+        entered_otp = request.POST.get('otp')
+        if entered_otp == request.session.get('otp'):
+            request.session['is_logged_in'] = True
+            return redirect('submit_report')
+        else:
+            messages.error(request, 'Invalid OTP')
+    return render(request, 'reports/verify_otp.html')
+
+# === Step 3: Report Submission ===
+def submit_report_view(request):
+    if not request.session.get('is_logged_in'):
+        return redirect('login')
+
+    email = request.session.get('email', '')
+    initial_data = {
+        'email': email,
+        'roll_number': email[3:8]  # Extracts "24875"
+    }
+
+    if request.method == 'POST':
+        form = UserReportForm(request.POST, request.FILES)
+        if form.is_valid():
+            report = form.save()
+            # Email to admin
+            try:
+                send_mail(
+                    subject=f"New Report from {report.name}",
+                    message=(
+                        f"Name: {report.name}\n"
+                        f"Roll No: {report.roll_number}\n"
+                        f"Email: {report.email}\n"
+                        f"Problem:\n{report.problem}"
+                    ),
+                    from_email=settings.DEFAULT_FROM_EMAIL,
+                    recipient_list=[settings.ADMIN_EMAIL]
+                )
+                print("Email sent successfully.")
+            except Exception as e:
+                print("Error sending email:", e)
+
+            return redirect('thank_you')
+    else:
+        form = UserReportForm(initial=initial_data)
+
+    return render(request, 'reports/report_form.html', {'form': form})
+
+# === Step 4: Thank You Page ===
+def thank_you_view(request):
+    request.session.flush()  # clear login session after submit
+    return render(request, 'reports/thank_you.html')
+
+
+
+# === Helper ===
+def cmpapply_otp():
+    return str(random.randint(100000, 999999))
+
+# === Step 1: Ask for Email ===
+def cmpapply_login(request):
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        request.session['cmp_email'] = email
+
+        # Bypass logic
+        if email == 'vtu24875@veltech.edu.in':
+            request.session['cmp_logged_in'] = True
+            return redirect('cmpapply_form')
+
+        # Normal OTP flow
+        otp = cmpapply_otp()
+        request.session['cmp_otp'] = otp
+
+        send_mail(
+            subject='Your Internship OTP Code',
+            message=f'Your One Time Password (OTP) for internship application is: {otp}',
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=[email],
+        )
+        return redirect('cmpapply_verify_otp')
+
+    return render(request, 'internship/email_login.html')
+
+
+# === Step 2: OTP Verification ===
+def cmpapply_verify_otp(request):
+    if request.method == 'POST':
+        entered_otp = request.POST.get('otp')
+        if entered_otp == request.session.get('cmp_otp'):
+            request.session['cmp_logged_in'] = True
+            return redirect('cmpapply_form')
+        else:
+            messages.error(request, 'Invalid OTP. Please try again.')
+    return render(request, 'internship/verify_otp.html')
+
+# === Step 3: Internship Form Submission ===
+def cmpapply_form_view(request):
+    if not request.session.get('cmp_logged_in'):
+        return redirect('cmpapply_login')
+
+    email = request.session.get('cmp_email', '')
+    initial_data = {
+        'email': email,
+        'vtu_number': email[3:8] if len(email) >= 8 else ''
+    }
+    
+    vtu_number = initial_data['vtu_number']
+    if Student.objects.filter(roll_number=vtu_number).exists():
+        messages.error(request, "You have already applied with this VTU number.",extra_tags='user')
+        return redirect('company_list')
+
+    if request.method == 'POST':
+        form = InternshipApplicationForm(request.POST)
+        if form.is_valid():
+            application = form.save()
+
+            # Optional Email to Admin
+            # try:
+            #     send_mail(
+            #         subject=f"New Internship Application - {application.student_name}",
+            #         message=(
+            #             f"Student: {application.student_name} ({application.vtu_number})\n"
+            #             f"Email: {application.email}\n"
+            #             f"Industry: {application.industry_name}\n"
+            #             f"Location: {application.industry_location}\n"
+            #             f"Domain: {application.domain_of_work}"
+            #         ),
+            #         from_email=settings.DEFAULT_FROM_EMAIL,
+            #         recipient_list=[settings.ADMIN_EMAIL]
+            #     )
+            # except Exception as e:
+            #     print("Error sending email:", e)
+
+            return redirect('cmpapply_thank_you')
+    else:
+        form = InternshipApplicationForm(initial=initial_data)
+
+    return render(request, 'internship/internship_form.html', {'form': form})
+
+# === Step 4: Thank You Page ===
+def cmpapply_thank_you(request):
+    request.session.flush()
+    return render(request, 'internship/thank_you.html')

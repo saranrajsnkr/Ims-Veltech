@@ -1,5 +1,8 @@
 from django.db import models
 from django.core.exceptions import ValidationError
+from django.core.mail import send_mail
+from django.conf import settings
+
 
 
 class Company(models.Model):
@@ -91,3 +94,142 @@ class Announcement(models.Model):
         verbose_name = "Announcement"
         verbose_name_plural = "Announcements"
 
+
+class UserReport(models.Model):
+    name = models.CharField(max_length=100)
+    roll_number = models.CharField(max_length=50)
+    email = models.EmailField()
+    problem = models.TextField()
+    submitted_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.name} ({self.roll_number})"
+    
+    
+    
+
+class InternshipApplication(models.Model):
+    STIPEND_CHOICES = [
+        ('Yes', 'Yes'),
+        ('No', 'No'),
+    ]
+    
+    FEES_CHOICES = [
+        ('Yes', 'Yes'),
+        ('No', 'No'),
+    ]
+    
+    APPROVAL_CHOICES = [
+    ("YES", "Approved"),
+    ("NO", "Not Approved"),
+    ("PENDING", "Pending"),
+]
+    DEPARTMENT_CHOICES = [
+        ('Artificial Intelligence (AI) and Data Science', 'Artificial Intelligence (AI) and Data Science'),
+        ('Artificial Intelligence and Machine Learning', 'Artificial Intelligence and Machine Learning'),
+        ('Computer Science & Engineering', 'Computer Science & Engineering'),
+        ('Computer Science and Engineering (Artificial Intelligence and Machine Learning)', 'Computer Science and Engineering (Artificial Intelligence and Machine Learning)'),
+        ('Computer Science and Engineering (Cyber Security)', 'Computer Science and Engineering (Cyber Security)'),
+        ('Computer Science and Engineering (Data Science)', 'Computer Science and Engineering (Data Science)'),
+        ('Computer Science and Design', 'Computer Science and Design'),
+        ('Information Technology', 'Information Technology'),
+        # Add more departments as needed
+    ]
+    email = models.EmailField(verbose_name="Email")
+    student_name = models.CharField(max_length=100, verbose_name="Name of the Student")
+    vtu_number = models.CharField(max_length=20, verbose_name="VTU Number")
+    department = models.CharField(max_length=100, verbose_name="Department of the Student")
+    contact_number = models.CharField(max_length=15, verbose_name="Contact Number of the Student")
+    department = models.CharField(
+        max_length=150,
+        choices=DEPARTMENT_CHOICES,
+        verbose_name="Department of the Student",
+        blank=True,
+        null=True,
+    )
+    industry_name = models.CharField(max_length=100, verbose_name="Name of the Industry")
+    industry_location = models.CharField(max_length=100, verbose_name="Location of the Industry")
+    domain_of_work = models.CharField(max_length=100, verbose_name="Domain of Work")
+    industry_category = models.CharField(max_length=100, verbose_name="Category the Industry")
+    referal_person_name = models.CharField(
+        max_length=100,
+        verbose_name="Name of the Referal Person",
+        blank=True,
+        null=True
+    )
+    referal_person_designation = models.CharField(
+        max_length=100,
+        verbose_name="Designation of the Referal Person",
+        blank=True,
+        null=True
+    )
+    referal_person_phone_number = models.CharField(
+        max_length=10,
+        verbose_name="Mobile Number of the Referal Person",
+        blank=True,
+        null=True,
+    )
+    referal_person_email = models.EmailField(
+        verbose_name="Email of the Referal Person",
+        blank=True,
+        null=True
+    )
+    industry_website = models.URLField(verbose_name="Website Link of the Industry", blank=True, null=True)
+
+    industry_email = models.EmailField(verbose_name="Industry Contact Email", blank=True, null=True)
+    industry_phone_number = models.CharField(max_length=15, verbose_name="Industry Contact Phone", blank=True, null=True)
+
+    stipend_provided = models.CharField(
+        max_length=3,
+        verbose_name="Any Stipend Provided from the Industry?"
+    )
+    stipend_amount = models.CharField(
+        max_length=20,
+        blank=True,
+        null=True,
+        verbose_name="If Yes, How much Stipend?"
+    )
+
+    fees_required = models.CharField(
+        max_length=3,
+        verbose_name="Is there any need to pay fees to acquire the Internship?"
+    )
+    fees_amount = models.CharField(
+        max_length=20,
+        blank=True,
+        null=True,
+        verbose_name="If yes, How much fees?"
+    )
+
+    application_approved = models.CharField(
+        max_length=10,
+        choices=APPROVAL_CHOICES,
+        default="PENDING",
+        verbose_name="Application Approval Status"
+    )
+    approval_message = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name="Message Regarding Approval Status"
+    )
+
+    submitted_at = models.DateTimeField(auto_now_add=True)
+
+    # def __str__(self):
+    #     return f"{self.student_name} ({self.vtu_number}) - {self.industry_name}"
+
+    # def save(self, *args, **kwargs):
+    #     if self.pk:  # Only on update, not on creation
+    #         old = InternshipApplication.objects.get(pk=self.pk)
+    #         if old.application_approved != self.application_approved:
+    #             # Send approval mail
+    #             subject = f"Internship Application Status - {self.application_approved}"
+    #             message = self.approval_message or "Your application status has been updated."
+    #             send_mail(
+    #                 subject,
+    #                 message,
+    #                 settings.DEFAULT_FROM_EMAIL,  # From Email
+    #                 [self.email],
+    #                 fail_silently=False,
+    #             )
+    #     super().save(*args, **kwargs)

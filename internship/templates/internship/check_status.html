@@ -325,28 +325,40 @@
   }
 </style>
 
-{% if result is not None %} {% if result %}
-<div class="company-list">
-  {% for application in result %}
-  <div class="company-card">
-    <h3>Application</h3>
-    <p><strong>Name:</strong> {{ application.name }}</p>
-    <p><strong>Roll Number:</strong> {{ application.roll_number }}</p>
-    <p><strong>Department:</strong> {{ application.department }}</p>
-    <p><strong>Company:</strong> {{ application.applied_company.name }}</p>
-    <p><strong>Location:</strong> {{ application.applied_company.location }}</p>
-  </div>
-  {% endfor %}
-</div>
+{% if result %}
+  {% if result|length > 0 %}
+    <!-- InternshipApplication case -->
+    <div class="company-list">
+      {% for application in result %}
+        <div class="company-card">
+          <h3>Application (Student Mode)</h3>
+          <p><strong>Name:</strong> {{ application.student_name }}</p>
+          <p><strong>VTU Number:</strong> {{ application.vtu_number }}</p>
+          <p><strong>Industry Name:</strong> {{ application.industry_name }}</p>
+          <p><strong>Location:</strong> {{ application.industry_location }}</p>
+          <p><strong>Status:</strong> {{ application.application_approved }}</p>
+          <p>Please contact the dint office for further details and process.</p>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <!-- Fallback: Student model -->
+    <div class="company-list">
+      <div class="company-card">
+        <h3>Application (College Mode)</h3>
+        <p><strong>Name:</strong> {{ result.name }}</p>
+        <p><strong>Roll Number:</strong> {{ result.roll_number }}</p>
+        <p><strong>Department:</strong> {{ result.department }}</p>
+        <p><strong>Company:</strong> {{ result.applied_company.name }}</p>
+        <p><strong>Location:</strong> {{ result.applied_company.location }}</p>
+        <p><strong>Status:</strong> Selected</p>
+      </div>
+    </div>
+  {% endif %}
 {% else %}
-<div class="company-list">
   <div class="company-card">
-    <h3>Application</h3>
-
-    <p style="display: block; text-align: center; color: red">
-      No applications found for this roll number.
-    </p>
+    <p style="color: red; text-align: center;">No application found for this roll number.</p>
   </div>
-
-  {% endif %} {% endif %} {% endblock %}
+{% endif %}
+ {% endblock %}
 </div>
