@@ -255,6 +255,10 @@ def cmpapply_form_view(request):
     if Student.objects.filter(roll_number=vtu_number).exists():
         messages.error(request, "You have already applied with this VTU number.",extra_tags='user')
         return redirect('company_list')
+    
+    if InternshipApplication.objects.filter(vtu_number=vtu_number).exists():
+        messages.error(request, "You have already applied with this VTU number.",extra_tags='user')
+        return redirect('company_list')
 
     if request.method == 'POST':
         form = InternshipApplicationForm(request.POST)
