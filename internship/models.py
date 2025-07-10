@@ -120,8 +120,8 @@ class InternshipApplication(models.Model):
     ]
     
     APPROVAL_CHOICES = [
-    ("YES", "Approved"),
-    ("NO", "Not Approved"),
+    ("APPROVED", "Approved"),
+    ("REJECTED", "Not Approved"),
     ("PENDING", "Pending"),
 ]
     DEPARTMENT_CHOICES = [

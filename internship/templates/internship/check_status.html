@@ -13,7 +13,9 @@
     inputmode="numeric"
     value="{{ roll_number }}"
   />
-  <p style="display: block; text-align: center; font-weight: bold; color: green">
+  <p
+    style="display: block; text-align: center; font-weight: bold; color: green"
+  >
     All company enrollment records are up to date, including those completed
     before the website was launched.
   </p>
@@ -325,39 +327,91 @@
   }
 </style>
 
-{% if result %}
-  {% if result|length > 0 %}
-    <!-- InternshipApplication case -->
-    <div class="company-list">
-      {% for application in result %}
-        <div class="company-card">
-          <h3>Application (Student Mode)</h3>
-          <p><strong>Name:</strong> {{ application.student_name }}</p>
-          <p><strong>VTU Number:</strong> {{ application.vtu_number }}</p>
-          <p><strong>Industry Name:</strong> {{ application.industry_name }}</p>
-          <p><strong>Location:</strong> {{ application.industry_location }}</p>
-          <p><strong>Status:</strong> {{ application.application_approved }}</p>
-          <p>If approved, please contact the Dint's office for further details and processing.</p>
-        </div>
-      {% endfor %}
-    </div>
-  {% else %}
-    <!-- Fallback: Student model -->
-    <div class="company-list">
-      <div class="company-card">
-        <h3>Application (College Mode)</h3>
-        <p><strong>Name:</strong> {{ result.name }}</p>
-        <p><strong>Roll Number:</strong> {{ result.roll_number }}</p>
-        <p><strong>Department:</strong> {{ result.department }}</p>
-        <p><strong>Company:</strong> {{ result.applied_company.name }}</p>
-        <p><strong>Location:</strong> {{ result.applied_company.location }}</p>
-      </div>
-    </div>
-  {% endif %}
-{% else %}
+{% if result %} {% if result|length > 0 %}
+<!-- InternshipApplication case -->
+<div class="company-list">
+  {% for application in result %}
   <div class="company-card">
-    <p style="color: red; text-align: center;">No application found for this roll number.</p>
+    <h3>Application (Student Mode)</h3>
+    <p><strong>Name:</strong> {{ application.student_name }}</p>
+    <p><strong>VTU Number:</strong> {{ application.vtu_number }}</p>
+    <p><strong>Industry Name:</strong> {{ application.industry_name }}</p>
+    <p><strong>Location:</strong> {{ application.industry_location }}</p>
+    {% if application.application_approved == 'APPROVED' %}
+    <p style="color: green; font-weight: bold">
+      <strong>Status:</strong> {{ application.application_approved }}
+    </p>
+    {% elif application.application_approved == 'PENDING' %}
+    <p style="color: orange; font-weight: bold">
+      <strong>Status:</strong> {{ application.application_approved }}
+    </p>
+    {% elif application.application_approved == 'REJECTED' %}
+    <p style="color: red; font-weight: bold">
+      <strong>Status:</strong> {{ application.application_approved }}
+    </p>
+    {% endif %} {% if application.approval_message %}
+    <p><strong>Message:</strong> {{ application.approval_message }}</p>
+    {% endif %}
+
+    {% if application.application_approved == 'APPROVED' %}
+          <p style="
+              text-align: center;
+              margin-top: 20px;
+              font-family: 'Poppins', sans-serif;
+              font-size: 0.9rem;
+              color: green;
+            "
+          >"The application has been approved. Please contact the DINT office for further process."</p>
+        </div>
+
+
+
+    {% elif application.application_approved == 'PENDING' %}
+         <p style="
+              text-align: center;
+              margin-top: 20px;
+              font-family: 'Poppins', sans-serif;
+              font-size: 0.9rem;
+              color: green;
+            "
+          >"The application is currently pending. Please contact the DINT office to proceed with the process."</p>
+        </div>
+
+
+    
+    {% elif application.application_approved == 'REJECTED' %}
+         <p style="
+              text-align: center;
+              margin-top: 20px;
+              font-family: 'Poppins', sans-serif;
+              font-size: 0.9rem;
+              color: green;
+            "
+          >"The application has been rejected. Please contact the DINT office for more details."</p>
+        </div>
+
+
+
+
+    {% endif %} {% endfor %}
   </div>
-{% endif %}
- {% endblock %}
+  {% else %}
+  <!-- Fallback: Student model -->
+  <div class="company-list">
+    <div class="company-card">
+      <h3>Application (College Mode)</h3>
+      <p><strong>Name:</strong> {{ result.name }}</p>
+      <p><strong>Roll Number:</strong> {{ result.roll_number }}</p>
+      <p><strong>Department:</strong> {{ result.department }}</p>
+      <p><strong>Company:</strong> {{ result.applied_company.name }}</p>
+      <p><strong>Location:</strong> {{ result.applied_company.location }}</p>
+    </div>
+  </div>
+  {% endif %} {% else %}
+  <div class="company-card">
+    <p style="color: red; text-align: center">
+      No application found for this roll number.
+    </p>
+  </div>
+  {% endif %} {% endblock %}
 </div>
