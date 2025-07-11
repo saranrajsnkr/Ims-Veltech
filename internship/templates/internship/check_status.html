@@ -332,7 +332,7 @@
 <div class="company-list">
   {% for application in result %}
   <div class="company-card">
-    <h3>Application (Student Mode)</h3>
+    <h3>Application<br>(Student Mode)</h3>
     <p><strong>Name:</strong> {{ application.student_name }}</p>
     <p><strong>VTU Number:</strong> {{ application.vtu_number }}</p>
     <p><strong>Industry Name:</strong> {{ application.industry_name }}</p>
@@ -399,7 +399,7 @@
   <!-- Fallback: Student model -->
   <div class="company-list">
     <div class="company-card">
-      <h3>Application (College Mode)</h3>
+      <h3>Application<br>(College Mode)</h3>
       <p><strong>Name:</strong> {{ result.name }}</p>
       <p><strong>Roll Number:</strong> {{ result.roll_number }}</p>
       <p><strong>Department:</strong> {{ result.department }}</p>

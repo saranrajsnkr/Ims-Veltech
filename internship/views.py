@@ -252,9 +252,18 @@ def cmpapply_form_view(request):
     }
     
     vtu_number = initial_data['vtu_number']
-    if Student.objects.filter(roll_number=vtu_number).exists():
-        messages.error(request, "You have already applied with this VTU number.",extra_tags='user')
-        return redirect('company_list')
+    student_qs = Student.objects.filter(roll_number=vtu_number)
+
+    if student_qs.exists():
+        student = student_qs.first()
+
+        # Check if student already applied AND the company is NOT the "BLOCKED" company
+        if student.applied_company.name != "Blocked":
+            messages.error(request, "You have already applied with this VTU number.", extra_tags='user')
+            return redirect('company_list')
+
+
+
     
     if InternshipApplication.objects.filter(vtu_number=vtu_number).exists():
         messages.error(request, "You have already applied with this VTU number.",extra_tags='user')
