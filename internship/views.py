@@ -46,13 +46,30 @@ def apply_to_company(request, company_id):
             messages.error(request, "You have already applied to this company.",extra_tags='user')
             return redirect('company_list')
         
+        student_qs = Student.objects.filter(roll_number=roll)
+
+        if student_qs.exists():
+            student = student_qs.first()
+
+            # Check if student already applied AND the company is NOT the "BLOCKED" company
+            if student.applied_company.name == "Blocked":
+                messages.error(request, "You have been blacklisted, so you cannot apply to any company.", extra_tags='user')
+                return redirect('company_list')
+        
         if Student.objects.filter(roll_number=roll).exists():
-            messages.error(request, "You have already applied with this VTU number.",extra_tags='user')
+            messages.error(request, "You have already enrolled in a company, so you cannot apply again to another company.",extra_tags='user')
             return redirect('company_list')
         
-        if InternshipApplication.objects.filter(vtu_number=roll).exists():
-            messages.error(request, "You have already applied with this VTU number.",extra_tags='user')
-            return redirect('company_list')
+        # if InternshipApplication.objects.filter(vtu_number=roll).exists():
+        #     messages.error(request, "You have already applied with this VTU number.",extra_tags='user')
+        #     return redirect('company_list')
+        
+        Intern_qs= InternshipApplication.objects.filter(vtu_number=roll)
+        if Intern_qs.exists():
+            intern = Intern_qs.first()
+            if intern.application_approved == "APPROVED" or intern.application_approved == "PENDING":
+                messages.error(request, "Your external company form is either pending or approved. You can only enroll in other companies if it gets rejected.",extra_tags='user')
+                return redirect('company_list')
 
         try:
             # Create the student application
@@ -259,15 +276,24 @@ def cmpapply_form_view(request):
 
         # Check if student already applied AND the company is NOT the "BLOCKED" company
         if student.applied_company.name != "Blocked":
-            messages.error(request, "You have already applied with this VTU number.", extra_tags='user')
+            messages.error(request, "You have already enrolled in a company, so you cannot access the external application form.", extra_tags='user')
             return redirect('company_list')
 
 
 
     
-    if InternshipApplication.objects.filter(vtu_number=vtu_number).exists():
-        messages.error(request, "You have already applied with this VTU number.",extra_tags='user')
-        return redirect('company_list')
+    # if InternshipApplication.objects.filter(vtu_number=vtu_number).exists():
+    #     messages.error(request, "You have already applied with this VTU number.",extra_tags='user')
+    #     return redirect('company_list')
+    
+    Intern_qs= InternshipApplication.objects.filter(vtu_number=vtu_number)
+    if Intern_qs.exists():
+        intern = Intern_qs.first()
+        if intern.application_approved == "APPROVED" or intern.application_approved == "PENDING":
+            messages.error(request,"You’ve already submitted an external application, and it’s either approved or still pending. You can only apply again if it gets rejected.",extra_tags='user')
+            return redirect('company_list')
+        
+        
 
     if request.method == 'POST':
         form = InternshipApplicationForm(request.POST)
