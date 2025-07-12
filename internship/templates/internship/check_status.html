@@ -327,91 +327,73 @@
   }
 </style>
 
-{% if result %} {% if result|length > 0 %}
-<!-- InternshipApplication case -->
+{% if internship_result or student_result %}
 <div class="company-list">
-  {% for application in result %}
-  <div class="company-card">
-    <h3>Application<br>(Student Mode)</h3>
-    <p><strong>Name:</strong> {{ application.student_name }}</p>
-    <p><strong>VTU Number:</strong> {{ application.vtu_number }}</p>
-    <p><strong>Industry Name:</strong> {{ application.industry_name }}</p>
-    <p><strong>Location:</strong> {{ application.industry_location }}</p>
-    {% if application.application_approved == 'APPROVED' %}
-    <p style="color: green; font-weight: bold">
-      <strong>Status:</strong> {{ application.application_approved }}
-    </p>
-    {% elif application.application_approved == 'PENDING' %}
-    <p style="color: orange; font-weight: bold">
-      <strong>Status:</strong> {{ application.application_approved }}
-    </p>
-    {% elif application.application_approved == 'REJECTED' %}
-    <p style="color: red; font-weight: bold">
-      <strong>Status:</strong> {{ application.application_approved }}
-    </p>
-    {% endif %} {% if application.approval_message %}
-    <p><strong>Message:</strong> {{ application.approval_message }}</p>
-    {% endif %}
 
-    {% if application.application_approved == 'APPROVED' %}
-          <p style="
-              text-align: center;
-              margin-top: 20px;
-              font-family: 'Poppins', sans-serif;
-              font-size: 0.9rem;
-              color: green;
-            "
-          >"The application has been approved. Please contact the DIND office for further process."</p>
-        </div>
+  {% if internship_result and internship_result|length > 0 %}
+    <!-- Student Mode Applications -->
+    {% for application in internship_result %}
+    <div class="company-card">
+      <h3>Application<br>(Student Mode)</h3>
+      <p><strong>Name:</strong> {{ application.student_name }}</p>
+      <p><strong>VTU Number:</strong> {{ application.vtu_number }}</p>
+      <p><strong>Industry Name:</strong> {{ application.industry_name }}</p>
+      <p><strong>Location:</strong> {{ application.industry_location }}</p>
 
+      {% if application.application_approved == 'APPROVED' %}
+      <p style="color: green; font-weight: bold">
+        <strong>Status:</strong> {{ application.application_approved }}
+      </p>
+      {% elif application.application_approved == 'PENDING' %}
+      <p style="color: orange; font-weight: bold">
+        <strong>Status:</strong> {{ application.application_approved }}
+      </p>
+      {% elif application.application_approved == 'REJECTED' %}
+      <p style="color: red; font-weight: bold">
+        <strong>Status:</strong> {{ application.application_approved }}
+      </p>
+      {% endif %}
 
+      {% if application.approval_message %}
+      <p><strong>Message:</strong> {{ application.approval_message }}</p>
+      {% endif %}
 
-    {% elif application.application_approved == 'PENDING' %}
-         <p style="
-              text-align: center;
-              margin-top: 20px;
-              font-family: 'Poppins', sans-serif;
-              font-size: 0.9rem;
-              color: orange;
-            "
-          >"The application is currently pending. Please contact the DIND office to proceed with the process."</p>
-        </div>
+      {% if application.application_approved == 'APPROVED' %}
+      <p style="text-align: center; margin-top: 20px; font-family: 'Poppins', sans-serif; font-size: 0.9rem; color: green;">
+        "The application has been approved. Please contact the DIND office for further process."
+      </p>
+      {% elif application.application_approved == 'PENDING' %}
+      <p style="text-align: center; margin-top: 20px; font-family: 'Poppins', sans-serif; font-size: 0.9rem; color: orange;">
+        "The application is currently pending. Please contact the DIND office to proceed with the process."
+      </p>
+      {% elif application.application_approved == 'REJECTED' %}
+      <p style="text-align: center; margin-top: 20px; font-family: 'Poppins', sans-serif; font-size: 0.9rem; color: red;">
+        "The application has been rejected. Please contact the DIND office for more details."
+      </p>
+      {% endif %}
+    </div>
+    {% endfor %}
+  {% endif %}
 
-
-    
-    {% elif application.application_approved == 'REJECTED' %}
-         <p style="
-              text-align: center;
-              margin-top: 20px;
-              font-family: 'Poppins', sans-serif;
-              font-size: 0.9rem;
-              color: red;
-            "
-          >"The application has been rejected. Please contact the DIND office for more details."</p>
-        </div>
-
-
-
-
-    {% endif %} {% endfor %}
-  </div>
-  {% else %}
-  <!-- Fallback: Student model -->
-  <div class="company-list">
+  {% if student_result %}
+    <!-- College Mode Application -->
     <div class="company-card">
       <h3>Application<br>(College Mode)</h3>
-      <p><strong>Name:</strong> {{ result.name }}</p>
-      <p><strong>Roll Number:</strong> {{ result.roll_number }}</p>
-      <p><strong>Department:</strong> {{ result.department }}</p>
-      <p><strong>Company:</strong> {{ result.applied_company.name }}</p>
-      <p><strong>Location:</strong> {{ result.applied_company.location }}</p>
+      <p><strong>Name:</strong> {{ student_result.name }}</p>
+      <p><strong>Roll Number:</strong> {{ student_result.roll_number }}</p>
+      <p><strong>Department:</strong> {{ student_result.department }}</p>
+      <p><strong>Company:</strong> {{ student_result.applied_company.name }}</p>
+      <p><strong>Location:</strong> {{ student_result.applied_company.location }}</p>
     </div>
-  </div>
-  {% endif %} {% else %}
-  <div class="company-card">
-    <p style="color: red; text-align: center">
-      No application found for this roll number.
-    </p>
-  </div>
-  {% endif %} {% endblock %}
+  {% endif %}
+
+</div>
+{% else %}
+<div class="company-card">
+  <p style="color: red; text-align: center">
+    No application found for this roll number.
+  </p>
+</div>
+{% endif %}
+ {% endblock %}
 </div>

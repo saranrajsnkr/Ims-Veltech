@@ -97,25 +97,25 @@ def apply_to_company(request, company_id):
 
 
 def check_application_status(request):
-    result = None
+    internship_result = None
+    student_result = None
     roll_number = ''
 
     if request.method == 'POST':
         roll_number = str(request.POST.get('roll_number', '')).strip().lower()
 
-        # First, check if application exists in InternshipApplication
-        result = InternshipApplication.objects.filter(vtu_number=roll_number)
-        
-        if not result.exists():
-            # Fallback: check if student applied via Company model
-            student = Student.objects.filter(roll_number=roll_number).select_related('applied_company').first()
-            if student:
-                result = student  # not a queryset, a single instance
+        # Check InternshipApplication model
+        internship_result = InternshipApplication.objects.filter(vtu_number=roll_number)
+
+        # Check Student model
+        student_result = Student.objects.filter(roll_number=roll_number).select_related('applied_company').first()
 
     return render(request, 'internship/check_status.html', {
-        'result': result,
+        'internship_result': internship_result,
+        'student_result': student_result,
         'roll_number': roll_number
     })
+
 
 def performance_view(request):
     pid = os.getpid()
