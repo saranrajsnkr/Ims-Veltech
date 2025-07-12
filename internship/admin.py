@@ -169,6 +169,8 @@ from .models import InternshipApplication
 @admin.register(InternshipApplication)
 class InternshipApplicationAdmin(admin.ModelAdmin):
     list_display = ("student_name", "vtu_number", "industry_name", "application_approved", "submitted_at")
+    list_filter=("application_approved",)
+    search_fields = ("student_name", "vtu_number", "industry_name")
 
     def get_readonly_fields(self, request, obj=None):
         if obj:  # editing an existing object
