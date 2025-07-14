@@ -278,5 +278,19 @@ footer {
         </form>
       </div>
     </section>
+    <script>
+  const form = document.querySelector('form');
+  const button = form.querySelector('button[type="submit"]');
+
+  form.addEventListener('submit', function (e) {
+    // Check if form is valid before disabling the button
+    if (form.checkValidity()) {
+      button.disabled = true;
+      button.innerText = 'Submitting...';
+      button.style.backgroundColor = '#6b7280'; // Change to a gray color
+      button.style.cursor = 'not-allowed';
+    }
+  });
+</script>
   </body>
 {% endblock %}

@@ -107,9 +107,11 @@ class InternshipApplicationForm(forms.ModelForm):
             'department': forms.Select(attrs={
                 'placeholder': 'Department',
                 'class': '',
+                'required': True,
+                'choices': InternshipApplication.DEPARTMENT_CHOICES,
             }),
             'contact_number': forms.TextInput(attrs={
-                'placeholder': 'Student Contact Number',
+                'placeholder': 'Student Contact Number (e.g., 9789XXXXXX)',
                 'class': 'form-control',
                 'pattern': '[0-9]{10}',
                 'title': 'Enter a valid 10-digit mobile number',
@@ -134,10 +136,12 @@ class InternshipApplicationForm(forms.ModelForm):
             'industry_website': forms.TextInput(attrs={
                 'placeholder': 'https://example.com',
                 'class': 'form-control',
+                'required': True,
             }),
             'industry_email': forms.EmailInput(attrs={
                 'placeholder': 'Industry Email (e.g., hr@company.com)',
                 'class': 'form-control',
+                'required': True,
             }),
             'industry_phone_number': forms.TextInput(attrs={
                 'placeholder': 'Industry Phone Number',
@@ -145,28 +149,32 @@ class InternshipApplicationForm(forms.ModelForm):
                 'pattern': '[0-9]{10,15}',
                 'title': 'Enter a valid phone number',
                 'inputmode': 'numeric',
+                'required': True,
             }),
             'referal_person_name': forms.TextInput(attrs={
-                'placeholder': 'Name of the Referral Person (if any)',
+                'placeholder': 'Name of the Referral Person',
                 'class': 'form-control',
                 'required': True,
 
                 
             }),
             'referal_person_designation': forms.TextInput(attrs={
-                'placeholder': 'Designation of the Referral Person (if any)',
+                'placeholder': 'Designation of the Referral Person',
                 'class': 'form-control',
+                'required': True,
             }),
             'referal_person_email': forms.EmailInput(attrs={
-                'placeholder': 'Email of the Referral Person (if any)',
+                'placeholder': 'Email of the Referral Person',
                 'class': 'form-control',
+                'required': True,
             }),
             'referal_person_phone_number': forms.TextInput(attrs={
-                'placeholder': 'Mobile Number of the Referral Person (if any)',
+                'placeholder': 'Mobile Number of the Referral Person',
                 'class': 'form-control',
                 'pattern': '[0-9]{10}',
                 'title': 'Enter a valid 10-digit mobile number',
                 'inputmode': 'numeric',
+                'required': True,
             }),
             'stipend_provided': forms.TextInput(attrs={
                 'placeholder': 'Is stipend provided? (YES/NO)',
