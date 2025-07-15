@@ -21,8 +21,6 @@ def handle_approved_application(sender, instance, created, **kwargs):
     # Try to find an exact match on location + domain, not just name
     company = Company.objects.filter(
         name__iexact=base_name,
-        location__iexact=instance.industry_location,
-        domain__iexact=instance.domain_of_work
     ).first()
 
     if company:
