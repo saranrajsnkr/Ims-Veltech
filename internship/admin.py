@@ -71,7 +71,12 @@ class StudentAdmin(admin.ModelAdmin):
                 return redirect("..")
 
             try:
-                decoded_file = csv_file.read().decode('utf-8').splitlines()
+                try:
+                    decoded_file = csv_file.read().decode('utf-8').splitlines()
+                except UnicodeDecodeError:
+                    csv_file.seek(0)  # Reset file pointer
+                    decoded_file = csv_file.read().decode('latin-1').splitlines()
+
                 reader = csv.DictReader(decoded_file)
 
                 for row in reader:
