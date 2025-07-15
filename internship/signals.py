@@ -37,7 +37,7 @@ def handle_approved_application(sender, instance, created, **kwargs):
             location=instance.industry_location,
             domain=instance.domain_of_work,
             vacancy=1,
-            active=True,
+            active=False,
             description="Auto-created from external application",
         )
 
