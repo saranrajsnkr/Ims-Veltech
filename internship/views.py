@@ -1,12 +1,12 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Company, Student , Announcement , UserReport , InternshipApplication
+from .models import Company, Student , Announcement , UserReport , InternshipApplication , StudentReport
 from django.contrib import messages
 from django.db import transaction, IntegrityError
 from django.db.models import F
 from django.http import JsonResponse
 import psutil
 import os
-from .forms import UserReportForm , InternshipApplicationForm
+from .forms import UserReportForm , InternshipApplicationForm , StudentReportForm
 from django.core.mail import send_mail
 import random
 from django.conf import settings
@@ -327,3 +327,95 @@ def cmpapply_form_view(request):
 def cmpapply_thank_you(request):
     request.session.flush()
     return render(request, 'internship/thank_you.html')
+
+
+
+
+
+
+
+# === Helper ===
+def generate_otp():
+    return str(random.randint(100000, 999999))
+
+# === Step 1: Student Login with Roll Number ===
+def rep_login_view(request):
+    if request.method == 'POST':
+        roll_number = request.POST.get('roll_number')
+        
+        # Check if report already submitted
+        if StudentReport.objects.filter(roll_number=roll_number).exists():
+            messages.error(request, "You have already submitted a report.", extra_tags='user')
+            return redirect('company_list')
+
+        try:
+            student = Student.objects.get(roll_number=roll_number)
+            request.session['student_roll'] = roll_number
+            request.session['student_email'] = f"vtu{roll_number}@veltech.edu.in"
+
+            otp = generate_otp()
+            request.session['student_otp'] = otp
+
+            send_mail(
+                subject='Student OTP Verification',
+                message=f'Your OTP is {otp}',
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=[request.session['student_email']],
+            )
+            return redirect('rep_verify_otp')
+        except Student.DoesNotExist:
+            messages.error(request, 'Invalid roll number. Student not found in any company.')
+
+    return render(request, 'report/student_login.html')
+
+
+
+# === Step 2: Verify Student OTP ===
+def rep_verify_otp_view(request):
+    if request.method == 'POST':
+        entered_otp = request.POST.get('otp')
+        if entered_otp == request.session.get('student_otp'):
+            request.session['is_student_logged_in'] = True
+            return redirect('rep_submit_report')
+        else:
+            messages.error(request, 'Invalid OTP. Please try again.')
+
+    return render(request, 'report/student_verify_otp.html')
+
+
+# === Step 3: Submit Report Status ===
+
+def rep_submit_report_view(request):
+    roll_number = request.session.get('student_roll', '')
+    email = request.session.get('student_email', '')
+    
+    if not roll_number:
+        messages.error(request, "Session expired or not logged in.")
+        return redirect('rep_login')
+
+    initial_data = {
+        'roll_number': roll_number,
+        'email': email,
+        'vtu_number': email[3:8] if len(email) >= 8 else ''
+    }
+
+    if request.method == 'POST':
+        form = StudentReportForm(request.POST)
+        if form.is_valid():
+            if StudentReport.objects.filter(roll_number=roll_number).exists():
+                messages.error(request, "You have already submitted the report.")
+            else:
+                report = form.save(commit=False)
+                report.roll_number = roll_number  # Ensure it's saved with session value
+                report.save()
+                return redirect('rep_thank_you')
+    else:
+        form = StudentReportForm(initial=initial_data)
+
+    return render(request, 'report/student_report_form.html', {'form': form})
+
+
+# === Step 4: Thank You ===
+def rep_thank_you_view(request):
+    request.session.flush()
+    return render(request, 'report/student_thank_you.html')

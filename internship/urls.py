@@ -16,5 +16,9 @@ urlpatterns = [
     path('apply/verify/', views.cmpapply_verify_otp, name='cmpapply_verify_otp'),  # Step 2: Verify OTP
     path('apply/form/', views.cmpapply_form_view, name='cmpapply_form'),  # Step 3: Show internship form
     path('apply/thank-you/', views.cmpapply_thank_you, name='cmpapply_thank_you'),  # Step 4: Thank you
+    path('student-report/login/', views.rep_login_view, name='rep_login'),
+    path('student-report/verify/', views.rep_verify_otp_view, name='rep_verify_otp'),
+    path('student-report/submit/', views.rep_submit_report_view, name='rep_submit_report'),
+    path('student-report/thank-you/', views.rep_thank_you_view, name='rep_thank_you'),
     
 ]

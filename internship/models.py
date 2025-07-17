@@ -233,3 +233,21 @@ class InternshipApplication(models.Model):
     #                 fail_silently=False,
     #             )
     #     super().save(*args, **kwargs)
+    
+    
+    
+    
+
+
+class StudentReport(models.Model):
+    REPORT_STATUS_CHOICES = [
+        ('REPORTED', 'Reported to the Company'),
+        ('NOT_REPORTED', 'Not Reported to the Company'),
+        ('PENDING', 'repoting on 21 july'),
+    ]
+
+    roll_number = models.CharField(max_length=20, unique=True)
+    report_status = models.CharField(max_length=20, choices=REPORT_STATUS_CHOICES)
+
+    def __str__(self):
+        return f"{self.roll_number} - {self.report_status}"

@@ -7,13 +7,24 @@
   >
     Check Application Status
   </button>
+
   <button
     class="btn"
-    type="submit"
     onclick="window.location.href='{% url 'cmpapply_login' %}'"
+    type="submit"
   >
-External Internship Referral  </button>
+    External Internship Referral
+  </button>
+
+  <button
+    class="btn"
+    onclick="window.location.href='{% url 'rep_login' %}'"
+    type="submit"
+  >
+    Update report status
+  </button>
 </div>
+
 
 {% if announcement.message1 and announcement.is_message1_active %}
 <div class="announcement-box">

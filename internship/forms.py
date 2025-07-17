@@ -1,5 +1,5 @@
 from django import forms
-from .models import Student , UserReport , InternshipApplication
+from .models import Student , UserReport , InternshipApplication , StudentReport
 
 class StudentApplicationForm(forms.ModelForm):
     class Meta:
@@ -191,5 +191,24 @@ class InternshipApplicationForm(forms.ModelForm):
             'fees_amount': forms.TextInput(attrs={
                 'placeholder': 'Enter fee amount if applicable or "N/A"',
                 'class': 'form-control',
+            }),
+        }
+
+
+
+
+class StudentReportForm(forms.ModelForm):
+    class Meta:
+        model = StudentReport
+        fields = ['roll_number', 'report_status']
+        widgets = {
+            'roll_number': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Enter Roll Number',
+                'readonly': 'readonly',  # UI-only; backend still needs protection
+
+            }),
+            'report_status': forms.Select(attrs={
+                'class': 'form-control'
             }),
         }
