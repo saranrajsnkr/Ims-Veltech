@@ -1,8 +1,22 @@
 # signals.py
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 from .models import InternshipApplication, Company, Student
 from django.utils.text import slugify
+from internship.models import Student
+import gspread
+from google.oauth2.service_account import Credentials
+from django.conf import settings
+# from internship.utils.google_sheets import sync_db_to_sheets
+import time
+
+
+
+# Setup Google credentials
+SCOPES = ["https://www.googleapis.com/auth/spreadsheets"]
+creds = Credentials.from_service_account_info(settings.GOOGLE_CONFIG, scopes=SCOPES)
+client = gspread.authorize(creds)
+sheet = client.open_by_key(settings.GOOGLE_SHEET_ID).sheet1
 
 @receiver(post_save, sender=InternshipApplication)
 def handle_approved_application(sender, instance, created, **kwargs):
@@ -56,11 +70,75 @@ def handle_approved_application(sender, instance, created, **kwargs):
         student.applied_company = company
         student.save()
 
-from django.db.models.signals import post_save, post_delete
-from django.dispatch import receiver
-from .models import InternshipApplication
-from .utils.sync import sync_to_sheet
 
-@receiver([post_save, post_delete], sender=InternshipApplication)
-def update_google_sheet(sender, instance, **kwargs):
-    sync_to_sheet()
+
+# @receiver([post_save, post_delete], sender=Student)
+# def update_google_sheet(sender, instance, **kwargs):
+#     """Whenever a Student is added/updated/deleted, update Google Sheets"""
+#     sync_db_to_sheets()
+
+
+@receiver(post_delete, sender=Student)
+def track_delete(sender, instance, **kwargs):
+    print(f"🗑️ Student Deleted: ID={instance.id}, Name={instance.name}, Roll={instance.roll_number}")
+    
+    try:
+        # Find the row containing the student's ID
+        cell = sheet.find(str(instance.id))
+        if cell:
+            sheet.delete_rows(cell.row)
+            print(f"✅ Deleted row {cell.row} from Google Sheet for Student ID={instance.id}")
+    except Exception as e:
+        print(f"⚠️ Error deleting from sheet: {e}")
+        
+
+# 🔹 Save or Update Student in Sheet
+@receiver(post_save, sender=Student)
+def track_save(sender, instance, created, **kwargs):
+    try:
+        # Check if student already exists in sheet
+        cell = sheet.find(str(instance.id))
+        row_data = [
+            instance.id,
+            instance.name,
+            instance.roll_number,
+            instance.mobile_number or "",
+            instance.department or "",
+            instance.applied_company.name if instance.applied_company else "",
+            instance.fee or ""
+        ]
+
+        if created:
+            # ➕ New Student → Append to sheet
+            sheet.append_row(row_data)
+            print(f"✅ Added new student {instance.name} to sheet.")
+            time.sleep(2)
+
+        else:
+            # ✏️ Update existing student row
+            for col, value in enumerate(row_data, start=1):
+                sheet.update_cell(cell.row, col, value)
+            print(f"♻️ Updated student {instance.name} in sheet.")
+            time.sleep(2)
+
+    except gspread.exceptions.CellNotFound:
+        # If not found, append new (failsafe)
+        sheet.append_row(row_data)
+        print(f"⚠️ Student not found, appended new row for {instance.name}.")
+        time.sleep(2)
+
+    except Exception as e:
+        print(f"⚠️ Error saving/updating in sheet: {e}")
+
+
+# 🔹 Delete Student from Sheet
+@receiver(post_delete, sender=Student)
+def track_delete(sender, instance, **kwargs):
+    try:
+        cell = sheet.find(str(instance.id))
+        if cell:
+            sheet.delete_rows(cell.row)
+            print(f"🗑️ Deleted student {instance.name} (ID={instance.id}) from sheet.")
+            time.sleep(2)
+    except Exception as e:
+        print(f"⚠️ Error deleting from sheet: {e}")

@@ -85,12 +85,25 @@ class StudentAdmin(admin.ModelAdmin):
                         roll = row['Roll Number'].strip().lower()
                         company_name = row['Applied Company'].strip()
 
-                        # Get company
-                        try:
-                            company = Company.objects.get(name__iexact=company_name)
-                        except Company.DoesNotExist:
-                            self.message_user(request, f"Company '{company_name}' not found. Row skipped.", level=messages.WARNING)
-                            continue
+                        # Get or create company
+                        company, created = Company.objects.get_or_create(
+                            name__iexact=company_name,
+                            defaults={
+                                'name': company_name,
+                                'vacancy': 1,  # First entry for new company
+                                'fees': row.get('Fee', '').strip() or '0',
+                                'location': row.get('Location', 'Not Provided'),
+                                'domain': row.get('Domain', 'Unknown'),
+                                'active': False,
+                                'description': "Auto-created from CSV upload"
+                            }
+                        )
+
+                        if not created:
+                            # If company already exists → increase vacancy before adding
+                            company.vacancy = F('vacancy') + 1
+                            company.save()
+                            company.refresh_from_db()
 
                         # Duplicate check
                         if Student.objects.filter(roll_number=roll, applied_company=company).exists():
@@ -106,11 +119,6 @@ class StudentAdmin(admin.ModelAdmin):
                             applied_company=company,
                             fee=row.get('Fee', '').strip()
                         )
-
-                        # Reduce vacancy
-                        company.vacancy = F('vacancy') - 1
-                        company.save()
-                        company.refresh_from_db()
 
                     except Exception as e:
                         self.message_user(request, f"Error importing row: {row} → {e}", level=messages.ERROR)

@@ -10,9 +10,16 @@ from .forms import UserReportForm , InternshipApplicationForm , StudentReportFor
 from django.core.mail import send_mail
 import random
 from django.conf import settings
+import gspread
+from google.oauth2.service_account import Credentials
 
 
 
+# Setup Google credentials
+SCOPES = ["https://www.googleapis.com/auth/spreadsheets"]
+creds = Credentials.from_service_account_info(settings.GOOGLE_CONFIG, scopes=SCOPES)
+client = gspread.authorize(creds)
+sheet = client.open_by_key(settings.GOOGLE_SHEET_ID).sheet1
 
 
 def company_list(request):
@@ -72,8 +79,8 @@ def apply_to_company(request, company_id):
                 return redirect('company_list')
 
         try:
-            # Create the student application
-            Student.objects.create(
+            # Create the student application and assign it to variable
+            student = Student.objects.create(
                 name=name,
                 roll_number=roll,
                 mobile_number=mobile,
@@ -85,6 +92,17 @@ def apply_to_company(request, company_id):
             company.vacancy = F('vacancy') - 1
             company.save()
             company.refresh_from_db()
+            
+            # Append to Google Sheet
+            sheet.append_row([
+                student.id,
+                student.name,
+                student.roll_number,
+                student.mobile_number or "",
+                student.department or "",
+                student.applied_company.name if student.applied_company else "",
+                student.fee or ""
+            ])
 
             messages.success(request, "Applied successfully!", extra_tags='user')
             return redirect('company_list')
@@ -92,6 +110,7 @@ def apply_to_company(request, company_id):
         except IntegrityError:
             messages.error(request, "You have already applied or something went wrong. Please check your VTU on the application status page.", extra_tags='user')
             return redirect('company_list')
+
 
     return render(request, 'internship/apply_form.html', {'company': company})
 
