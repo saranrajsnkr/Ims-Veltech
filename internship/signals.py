@@ -55,3 +55,12 @@ def handle_approved_application(sender, instance, created, **kwargs):
     if not created and not student.applied_company:
         student.applied_company = company
         student.save()
+
+from django.db.models.signals import post_save, post_delete
+from django.dispatch import receiver
+from .models import InternshipApplication
+from .utils.sync import sync_to_sheet
+
+@receiver([post_save, post_delete], sender=InternshipApplication)
+def update_google_sheet(sender, instance, **kwargs):
+    sync_to_sheet()
