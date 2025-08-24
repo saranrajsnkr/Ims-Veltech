@@ -93,16 +93,16 @@ def apply_to_company(request, company_id):
             company.save()
             company.refresh_from_db()
             
-            # Append to Google Sheet
-            sheet.append_row([
-                student.id,
-                student.name,
-                student.roll_number,
-                student.mobile_number or "",
-                student.department or "",
-                student.applied_company.name if student.applied_company else "",
-                student.fee or ""
-            ])
+            # # Append to Google Sheet
+            # sheet.append_row([
+            #     student.id,
+            #     student.name,
+            #     student.roll_number,
+            #     student.mobile_number or "",
+            #     student.department or "",
+            #     student.applied_company.name if student.applied_company else "",
+            #     student.fee or ""
+            # ])
 
             messages.success(request, "Applied successfully!", extra_tags='user')
             return redirect('company_list')

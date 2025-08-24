@@ -9,6 +9,8 @@ from google.oauth2.service_account import Credentials
 from django.conf import settings
 # from internship.utils.google_sheets import sync_db_to_sheets
 import time
+from gspread.exceptions import GSpreadException
+
 
 
 
@@ -78,57 +80,44 @@ def handle_approved_application(sender, instance, created, **kwargs):
 #     sync_db_to_sheets()
 
 
-@receiver(post_delete, sender=Student)
-def track_delete(sender, instance, **kwargs):
-    print(f"🗑️ Student Deleted: ID={instance.id}, Name={instance.name}, Roll={instance.roll_number}")
-    
-    try:
-        # Find the row containing the student's ID
-        cell = sheet.find(str(instance.id))
-        if cell:
-            sheet.delete_rows(cell.row)
-            print(f"✅ Deleted row {cell.row} from Google Sheet for Student ID={instance.id}")
-    except Exception as e:
-        print(f"⚠️ Error deleting from sheet: {e}")
-        
-
 # 🔹 Save or Update Student in Sheet
 @receiver(post_save, sender=Student)
 def track_save(sender, instance, created, **kwargs):
+    row_data = [
+        instance.id,
+        instance.name,
+        instance.roll_number,
+        instance.mobile_number or "",
+        instance.department or "",
+        instance.applied_company.name if instance.applied_company else "",
+        instance.applied_company.id if instance.applied_company else "",
+        instance.fee or "",
+        "TRUE",
+    ]
+
     try:
-        # Check if student already exists in sheet
-        cell = sheet.find(str(instance.id))
-        row_data = [
-            instance.id,
-            instance.name,
-            instance.roll_number,
-            instance.mobile_number or "",
-            instance.department or "",
-            instance.applied_company.name if instance.applied_company else "",
-            instance.fee or ""
-        ]
-
-        if created:
-            # ➕ New Student → Append to sheet
-            sheet.append_row(row_data)
-            print(f"✅ Added new student {instance.name} to sheet.")
-            time.sleep(2)
-
-        else:
-            # ✏️ Update existing student row
+        cells = sheet.findall(str(instance.id))
+        if cells:
+            cell = cells[0]
+            # Prepare bulk cell updates if needed
+            cell_list = []
             for col, value in enumerate(row_data, start=1):
-                sheet.update_cell(cell.row, col, value)
+                cell_obj = sheet.cell(cell.row, col)
+                cell_obj.value = value
+                cell_list.append(cell_obj)
+            # Batch update with proper parsing
+            sheet.update_cells(cell_list, value_input_option='USER_ENTERED')
             print(f"♻️ Updated student {instance.name} in sheet.")
             time.sleep(2)
-
-    except gspread.exceptions.CellNotFound:
-        # If not found, append new (failsafe)
-        sheet.append_row(row_data)
-        print(f"⚠️ Student not found, appended new row for {instance.name}.")
+        else:
+            raise ValueError("Not found")
+    except (GSpreadException, ValueError):
+        # Append row with interpretation
+        sheet.append_row(row_data, value_input_option='USER_ENTERED')
+        print(f"➕ Added or appended new student {instance.name} to sheet.")
         time.sleep(2)
-
     except Exception as e:
-        print(f"⚠️ Error saving/updating in sheet: {e}")
+        print(f"⚠️ Error updating sheet: {e}")
 
 
 # 🔹 Delete Student from Sheet
