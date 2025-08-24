@@ -12,6 +12,11 @@ import random
 from django.conf import settings
 import gspread
 from google.oauth2.service_account import Credentials
+from django.contrib.auth.decorators import login_required
+
+@login_required(login_url='/accounts/google/login/')
+def home(request):
+    return render(request, 'home.html')
 
 
 
@@ -22,6 +27,7 @@ client = gspread.authorize(creds)
 sheet = client.open_by_key(settings.GOOGLE_SHEET_ID).sheet1
 
 
+@login_required
 def company_list(request):
     companies_with_vacancy = Company.objects.filter(vacancy__gt=0,active=True)
     announcement = Announcement.objects.first()

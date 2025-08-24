@@ -5,5 +5,6 @@ from django.conf import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('internship.urls')),  # Routes to app-level urls.py
+    path('', include('internship.urls')),
+    path('accounts/', include('allauth.urls')), # Routes to app-level urls.py
 ]

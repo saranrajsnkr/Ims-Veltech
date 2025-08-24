@@ -1,0 +1,11 @@
+{% load socialaccount %}
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Login with Google</title>
+</head>
+<body>
+  <h2>Login to Continue</h2>
+  <a href="{% provider_login_url 'google' %}">Login with Google</a>
+</body>
+</html>
