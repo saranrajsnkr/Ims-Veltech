@@ -47,11 +47,10 @@
         >
         <ul class="nav-links" id="navMenu">
           <li><a href="/">Home</a></li>
-          <li><a href="/internships/">Available Internships</a></li>
-          <li><a href="/status/">Application Status</a></li>
-          <li><a href="/referral/">Referral</a></li>
-          <li><a href="/reports/">Reports</a></li>
-          <li><a href="/contact/">Contact</a></li>
+          <li><a href="{% url 'company_list' %}">Available Internships</a></li>
+          <li><a href="{% url 'check_application_status' %}">Application Status</a></li>
+          <li><a href="{% url 'cmpapply_login' %}">Referral</a></li>
+          <li><a href="{% url 'rep_login' %}">Reports</a></li>
         </ul>
         <div class="hamburger" id="hamburger">
           <i class="fa fa-bars"></i>
