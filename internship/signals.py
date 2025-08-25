@@ -1,34 +1,57 @@
-# signals.py
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 from .models import InternshipApplication, Company, Student
 from django.utils.text import slugify
+from django.conf import settings
+import gspread
+from google.oauth2.service_account import Credentials
+from gspread.exceptions import GSpreadException
+import time
 
+# Google Sheets setup
+SCOPES = ["https://www.googleapis.com/auth/spreadsheets"]
+
+def get_google_sheet():
+    """
+    Return the Google Sheet object if credentials are available.
+    Otherwise, return None to safely skip Google Sheets operations.
+    """
+    if not getattr(settings, "GOOGLE_CONFIG", None):
+        return None
+
+    try:
+        creds = Credentials.from_service_account_info(settings.GOOGLE_CONFIG, scopes=SCOPES)
+        client = gspread.authorize(creds)
+        return client.open_by_key(settings.GOOGLE_SHEET_ID).sheet1
+    except Exception as e:
+        print(f"⚠️ Failed to initialize Google Sheet: {e}")
+        return None
+
+
+# ---- Handle Internship Applications ----
 @receiver(post_save, sender=InternshipApplication)
 def handle_approved_application(sender, instance, created, **kwargs):
     if instance.application_approved != "APPROVED":
         return
 
-    # Normalize company name for uniqueness handling
     base_name = instance.industry_name.strip()
     normalized_name = base_name
     counter = 1
 
+    # Ensure unique company name
     while Company.objects.filter(name=normalized_name).exists():
         normalized_name = f"{base_name} ({counter})"
         counter += 1
 
-    # Try to find an exact match on location + domain, not just name
+    # Try to find an existing company by name
     company = Company.objects.filter(
         name__iexact=base_name,
     ).first()
 
     if company:
-        # Company exists — increase vacancy
         company.vacancy += 1
         company.save()
     else:
-        # Company doesn't exist — create a new one with unique name
         company = Company.objects.create(
             name=normalized_name,
             fees=instance.fees_amount or '0',
@@ -39,7 +62,7 @@ def handle_approved_application(sender, instance, created, **kwargs):
             description="Auto-created from external application",
         )
 
-    # Check if student exists by roll number
+    # Create or update student
     student, created = Student.objects.get_or_create(
         roll_number=instance.vtu_number.lower(),
         defaults={
@@ -51,7 +74,67 @@ def handle_approved_application(sender, instance, created, **kwargs):
         }
     )
 
-    # Optional: if student exists but applied_company is blank, update it
     if not created and not student.applied_company:
         student.applied_company = company
         student.save()
+
+
+# ---- Sync Student Save to Google Sheets ----
+@receiver(post_save, sender=Student)
+def track_save(sender, instance, created, **kwargs):
+    sheet = get_google_sheet()
+    if not sheet:
+        print(f"⚠️ Skipping Google Sheet update for student {instance.name}: No credentials available.")
+        return
+
+    row_data = [
+        instance.id,
+        instance.name,
+        instance.roll_number,
+        instance.mobile_number or "",
+        instance.department or "",
+        instance.applied_company.name if instance.applied_company else "",
+        instance.applied_company.id if instance.applied_company else "",
+        instance.fee or "",
+        "TRUE",
+    ]
+
+    try:
+        cells = sheet.findall(str(instance.id))
+        if cells:
+            cell = cells[0]
+            cell_list = []
+            for col, value in enumerate(row_data, start=1):
+                cell_obj = sheet.cell(cell.row, col)
+                cell_obj.value = value
+                cell_list.append(cell_obj)
+            sheet.update_cells(cell_list, value_input_option='USER_ENTERED')
+            print(f"♻️ Updated student {instance.name} in sheet.")
+        else:
+            raise ValueError("Not found")
+    except (GSpreadException, ValueError):
+        sheet.append_row(row_data, value_input_option='USER_ENTERED')
+        print(f"➕ Added new student {instance.name} to sheet.")
+    except Exception as e:
+        print(f"⚠️ Error updating sheet for student {instance.name}: {e}")
+    finally:
+        time.sleep(2)
+
+
+# ---- Sync Student Delete to Google Sheets ----
+@receiver(post_delete, sender=Student)
+def track_delete(sender, instance, **kwargs):
+    sheet = get_google_sheet()
+    if not sheet:
+        print(f"⚠️ Skipping Google Sheet deletion for student {instance.name}: No credentials available.")
+        return
+
+    try:
+        cell = sheet.find(str(instance.id))
+        if cell:
+            sheet.delete_rows(cell.row)
+            print(f"🗑️ Deleted student {instance.name} (ID={instance.id}) from sheet.")
+    except Exception as e:
+        print(f"⚠️ Error deleting from sheet for student {instance.name}: {e}")
+    finally:
+        time.sleep(2)

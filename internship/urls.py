@@ -4,7 +4,10 @@ from .views import performance_view
 
 
 urlpatterns = [
-    path('', views.company_list, name='company_list'),
+    path('',views.home, name='home'),
+    # path('sitelogin/', views.sitelogin, name='sitelogin'),
+    # path('logout/', views.logout_view, name='logout'),
+    path('Internships/', views.company_list, name='company_list'),
     path('apply/<int:company_id>/', views.apply_to_company, name='apply_to_company'),
     path("server-stats/", performance_view, name="performance"),
     path('check-status/', views.check_application_status, name='check_application_status'),

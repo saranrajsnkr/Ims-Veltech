@@ -48,7 +48,60 @@ INSTALLED_APPS = [
 
     # Your app
     'internship',
+    
+    
+     # Required for allauth
+    "django.contrib.sites",
+    "allauth",
+    "allauth.account",
+    "allauth.socialaccount",
+    "allauth.socialaccount.providers.google",
 ]
+
+
+SITE_ID = 1
+# LOGIN_URL = "/accounts/login/"
+LOGIN_REDIRECT_URL = "/"       # Where to go after login
+LOGOUT_REDIRECT_URL = "/login" # Where to go after logout
+ACCOUNT_LOGOUT_REDIRECT_URL = '/'   # after logout
+ACCOUNT_LOGOUT_ON_GET = True
+
+ACCOUNT_ADAPTER = "internship.utils.account_adapter.CustomAccountAdapter"
+
+
+# Session timeout (e.g., 30 mins)
+SESSION_COOKIE_AGE = 1800   # 30 * 60 seconds
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
+
+# Custom email validation
+ACCOUNT_EMAIL_VERIFICATION = "none"
+ACCOUNT_SIGNUP_FIELDS = ['email*', 'username*', 'password1*', 'password2*']
+SOCIALACCOUNT_QUERY_EMAIL = True
+SOCIALACCOUNT_LOGIN_ON_GET = True
+
+
+
+YOUR_GOOGLE_CLIENT_ID = os.getenv("SOCIAL_AUTH_GOOGLE_OAUTH2_KEY")
+YOUR_GOOGLE_CLIENT_SECRET = os.getenv("SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET")
+
+
+SOCIALACCOUNT_PROVIDERS = {
+    "google": {
+        "SCOPE": [
+            "profile",
+            "email",
+        ],
+        "AUTH_PARAMS": {
+            "access_type": "online",
+        },
+        "APP": {
+            "client_id": os.getenv("SOCIAL_AUTH_GOOGLE_OAUTH2_KEY"),
+            "secret": os.getenv("SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET"),
+            "key": "",
+        }
+    }
+}
 
 JAZZMIN_SETTINGS = {
     "site_title": "Internship Portal Admin",
@@ -110,15 +163,21 @@ JAZZMIN_SETTINGS = {
 # Middleware
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',  # 👈 Add this here
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'allauth.account.middleware.AccountMiddleware',
+    
     'internship.middleware.MaintenanceModeMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
+    'internship_portal.middleware.LoginRequiredMiddleware',   # ✅ correct path
+    'internship_portal.middleware.DomainRestrictMiddleware',  # ✅ correct path
+
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
 
 ROOT_URLCONF = 'internship_portal.urls'
 
@@ -219,3 +278,33 @@ EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 ADMIN_EMAIL = os.getenv('ADMIN_EMAIL')
+
+
+private_key = os.getenv("GOOGLE_PRIVATE_KEY")
+if private_key and "\\n" in private_key:
+    private_key = private_key.replace("\\n", "\n")
+
+
+GOOGLE_CONFIG = {
+    "type": os.getenv("GOOGLE_TYPE"),
+    "project_id": os.getenv("GOOGLE_PROJECT_ID"),
+    "private_key_id": os.getenv("GOOGLE_PRIVATE_KEY_ID"),
+    "private_key": private_key,
+    "client_email": os.getenv("GOOGLE_CLIENT_EMAIL"),
+    "client_id": os.getenv("GOOGLE_CLIENT_ID"),
+    "auth_uri": os.getenv("GOOGLE_AUTH_URI"),
+    "token_uri": os.getenv("GOOGLE_TOKEN_URI"),
+    "auth_provider_x509_cert_url": os.getenv("GOOGLE_AUTH_PROVIDER_CERT_URL"),
+    "client_x509_cert_url": os.getenv("GOOGLE_CLIENT_CERT_URL"),
+    "universe_domain": os.getenv("GOOGLE_UNIVERSE_DOMAIN"),
+}
+
+GOOGLE_SHEET_ID = os.getenv("GOOGLE_SHEET_ID")  # put in .env
+# GOOGLE_CREDENTIALS_FILE = os.path.join(BASE_DIR, "google_service.json")
+
+
+
+INSTALLED_APPS += ["django_crontab"]
+CRONJOBS = [
+    ('*/1 * * * *', 'internship.utils.google_sheets.sync_sheets_to_db')  # every 5 min
+]

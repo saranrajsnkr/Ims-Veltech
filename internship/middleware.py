@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from internship.models import SiteSetting
+from django.shortcuts import redirect
 
 class MaintenanceModeMiddleware:
     def __init__(self, get_response):
@@ -19,4 +20,3 @@ class MaintenanceModeMiddleware:
             return render(request, "maintenance.html", status=503)
 
         return self.get_response(request)
-

@@ -10,10 +10,34 @@ from .forms import UserReportForm , InternshipApplicationForm , StudentReportFor
 from django.core.mail import send_mail
 import random
 from django.conf import settings
+import gspread
+from google.oauth2.service_account import Credentials
+from django.contrib.auth.decorators import login_required
 
 
 
 
+# Setup Google credentials
+SCOPES = ["https://www.googleapis.com/auth/spreadsheets"]
+creds = Credentials.from_service_account_info(settings.GOOGLE_CONFIG, scopes=SCOPES)
+client = gspread.authorize(creds)
+sheet = client.open_by_key(settings.GOOGLE_SHEET_ID).sheet1
+
+
+def home(request):
+    if request.user.is_authenticated:
+        email = request.user.email
+        rollno = email.split("@")[0]  # everything before @
+        return render(request, "internship/home.html", {"rollno": rollno})
+
+
+# def sitelogin(request):
+#     return render(request, 'internship/site_login.html')
+
+@login_required
+def account_dashboard(request):
+    user = request.user
+    return render(request, 'internship/dashboard.html', {'user': user})
 
 def company_list(request):
     companies_with_vacancy = Company.objects.filter(vacancy__gt=0,active=True)
@@ -72,8 +96,8 @@ def apply_to_company(request, company_id):
                 return redirect('company_list')
 
         try:
-            # Create the student application
-            Student.objects.create(
+            # Create the student application and assign it to variable
+            student = Student.objects.create(
                 name=name,
                 roll_number=roll,
                 mobile_number=mobile,
@@ -85,6 +109,17 @@ def apply_to_company(request, company_id):
             company.vacancy = F('vacancy') - 1
             company.save()
             company.refresh_from_db()
+            
+            # # Append to Google Sheet
+            # sheet.append_row([
+            #     student.id,
+            #     student.name,
+            #     student.roll_number,
+            #     student.mobile_number or "",
+            #     student.department or "",
+            #     student.applied_company.name if student.applied_company else "",
+            #     student.fee or ""
+            # ])
 
             messages.success(request, "Applied successfully!", extra_tags='user')
             return redirect('company_list')
@@ -93,6 +128,7 @@ def apply_to_company(request, company_id):
             messages.error(request, "You have already applied or something went wrong. Please check your VTU on the application status page.", extra_tags='user')
             return redirect('company_list')
 
+
     return render(request, 'internship/apply_form.html', {'company': company})
 
 
@@ -100,9 +136,13 @@ def check_application_status(request):
     internship_result = None
     student_result = None
     roll_number = ''
+    searched = False  # Default is False (page just loaded)
+
 
     if request.method == 'POST':
         roll_number = str(request.POST.get('roll_number', '')).strip().lower()
+        searched = True  # User submitted a search
+
 
         # Check InternshipApplication model
         internship_result = InternshipApplication.objects.filter(vtu_number=roll_number)
@@ -113,7 +153,9 @@ def check_application_status(request):
     return render(request, 'internship/check_status.html', {
         'internship_result': internship_result,
         'student_result': student_result,
-        'roll_number': roll_number
+        'roll_number': roll_number,
+        "searched": searched,
+
     })
 
 
