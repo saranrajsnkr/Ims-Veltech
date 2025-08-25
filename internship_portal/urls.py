@@ -19,6 +19,8 @@ urlpatterns = [
     path('accounts/email/', redirect_to_dashboard),
     path('accounts/password/change/', redirect_to_dashboard),
     path('accounts/3rdparty/signup/', redirect_to_dashboard),
+    path('accounts/3rdparty/', redirect_to_dashboard),
+    # path('accounts/google/login/callback/', redirect_to_dashboard),
     path('accounts/password/set/', redirect_to_dashboard),
     path('accounts/social/connections/', redirect_to_dashboard),
     path("accounts/", include("allauth.urls")),  # allauth routes
