@@ -1,5 +1,5 @@
 {% extends 'base.html' %} {% load static %} {% block content %}
-<div class="button-container">
+{% comment %} <div class="button-container">
   <button
     class="btn"
     onclick="window.location.href='{% url 'check_application_status' %}'"
@@ -25,6 +25,15 @@
   </button>
 </div>
 
+<div class="internships">
+  <button
+    class="btn"
+    onclick="window.location.href='{% url 'company_list' %}'"
+    type="submit"
+  >
+    Available Internships
+  </button>
+</div> {% endcomment %}
 
 {% if announcement.message1 and announcement.is_message1_active %}
 <div class="announcement-box">
@@ -38,42 +47,41 @@
 <h2>Available Internships</h2>
 
 <style>
-.button-container {
-  display: flex;
-  justify-content: center;
-  gap: 20px; /* spacing between buttons */
-  margin-top: 50px;
-}
+  .button-container {
+    display: flex;
+    justify-content: center;
+    gap: 20px; /* spacing between buttons */
+    margin-top: 50px;
+  }
 
-/* Common style for both buttons */
-button[type="submit"] {
-  width: 220px; /* Set a fixed width */
-  text-align: center;
-  background: linear-gradient(to right, var(--primary), var(--accent));
-  color: white;
-  padding: 0.8rem 1.2rem;
-  border: none;
-  border-radius: 8px;
-  font-family: "Poppins", sans-serif;
-  font-size: 0.8rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: var(--transition);
-  box-shadow: 0 6px 15px rgba(37, 99, 235, 0.35);
-  margin-top: 0px;
-  margin-bottom: 25px;
-}
+  /* Common style for both buttons */
+  button[type="submit"] {
+    width: 220px; /* Set a fixed width */
+    text-align: center;
+    background: linear-gradient(to right, var(--primary), var(--accent));
+    color: white;
+    padding: 0.8rem 1.2rem;
+    border: none;
+    border-radius: 8px;
+    font-family: "Poppins", sans-serif;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    box-shadow: 0 6px 15px rgba(37, 99, 235, 0.35);
+    margin-top: 0px;
+    margin-bottom: 25px;
+  }
 
-/* Hover and active effects */
-button[type="submit"]:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 10px 25px rgba(37, 99, 235, 0.45);
-}
+  /* Hover and active effects */
+  button[type="submit"]:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(37, 99, 235, 0.45);
+  }
 
-button[type="submit"]:active {
-  transform: translateY(0px);
-}
-
+  button[type="submit"]:active {
+    transform: translateY(0px);
+  }
 </style>
 
 {% if has_vacancy %}

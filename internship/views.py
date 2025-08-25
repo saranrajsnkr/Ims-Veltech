@@ -22,6 +22,9 @@ client = gspread.authorize(creds)
 sheet = client.open_by_key(settings.GOOGLE_SHEET_ID).sheet1
 
 
+def home(request):
+    return render(request, 'internship/home.html')
+
 def company_list(request):
     companies_with_vacancy = Company.objects.filter(vacancy__gt=0,active=True)
     announcement = Announcement.objects.first()

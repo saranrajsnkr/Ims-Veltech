@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<head>
+  <!-- Font Awesome for icons -->
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+  />
+
+  <style>
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background: #f8f9fa;
+      margin: 0;
+      padding: 0;
+    }
+
+    .home-container {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 30px;
+      max-width: 1000px;
+      margin: 60px auto;
+      padding: 20px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 40px 25px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      border-top: 4px solid #007bff;
+      text-align: center;
+      cursor: pointer;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .card i {
+      font-size: 40px;
+      color: #007bff;
+      margin-bottom: 15px;
+    }
+
+    .card h3 {
+      font-size: 20px;
+      font-weight: bold;
+      margin: 0;
+      color: #333;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .home-container {
+        grid-template-columns: 1fr; /* single column on mobile */
+      }
+    }
+  </style>
+</head>
+
+<div class="home-container">
+
+  <div class="card" onclick="window.location.href='{% url 'check_application_status' %}'">
+    <i class="fas fa-file-alt"></i>
+    <h3>Check Application Status</h3>
+  </div>
+
+  <div class="card" onclick="window.location.href='{% url 'cmpapply_login' %}'">
+    <i class="fas fa-briefcase"></i>
+    <h3>External Internship Referral</h3>
+  </div>
+
+  <div class="card" onclick="window.location.href='{% url 'rep_login' %}'">
+    <i class="fas fa-bug"></i>
+    <h3>User Site Problems & Reports</h3>
+  </div>
+
+  <div class="card" onclick="window.location.href='{% url 'company_list' %}'">
+    <i class="fas fa-building"></i>
+    <h3>Available Internships</h3>
+  </div>
+
+</div>
+
+{% endblock %}
