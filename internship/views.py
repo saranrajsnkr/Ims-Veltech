@@ -136,9 +136,13 @@ def check_application_status(request):
     internship_result = None
     student_result = None
     roll_number = ''
+    searched = False  # Default is False (page just loaded)
+
 
     if request.method == 'POST':
         roll_number = str(request.POST.get('roll_number', '')).strip().lower()
+        searched = True  # User submitted a search
+
 
         # Check InternshipApplication model
         internship_result = InternshipApplication.objects.filter(vtu_number=roll_number)
@@ -149,7 +153,9 @@ def check_application_status(request):
     return render(request, 'internship/check_status.html', {
         'internship_result': internship_result,
         'student_result': student_result,
-        'roll_number': roll_number
+        'roll_number': roll_number,
+        "searched": searched,
+
     })
 
 

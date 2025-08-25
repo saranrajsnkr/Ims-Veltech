@@ -388,12 +388,13 @@
   {% endif %}
 
 </div>
-{% else %}
-<div class="company-card">
-  <p style="color: red; text-align: center">
-    No application found for this roll number.
-  </p>
-</div>
+{% elif searched %}
+  <!-- Only show this message if search was actually made -->
+  <div class="company-card">
+    <p style="color: red; text-align: center">
+      No application found for this roll number.
+    </p>
+  </div>
 {% endif %}
  {% endblock %}
 </div>
