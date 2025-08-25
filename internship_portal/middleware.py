@@ -38,6 +38,7 @@ class LoginRequiredMiddleware:
             "/login/",  # your custom login page
             "/static/",        # static files
             "/favicon.ico",    # optional
+            "/admin/",
         ]
 
         if (
