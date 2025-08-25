@@ -48,7 +48,60 @@ INSTALLED_APPS = [
 
     # Your app
     'internship',
+    
+    
+     # Required for allauth
+    "django.contrib.sites",
+    "allauth",
+    "allauth.account",
+    "allauth.socialaccount",
+    "allauth.socialaccount.providers.google",
 ]
+
+
+SITE_ID = 1
+# LOGIN_URL = "/accounts/login/"
+LOGIN_REDIRECT_URL = "/"       # Where to go after login
+LOGOUT_REDIRECT_URL = "/login" # Where to go after logout
+ACCOUNT_LOGOUT_REDIRECT_URL = '/'   # after logout
+ACCOUNT_LOGOUT_ON_GET = True
+
+ACCOUNT_ADAPTER = "internship.utils.account_adapter.CustomAccountAdapter"
+
+
+# Session timeout (e.g., 30 mins)
+SESSION_COOKIE_AGE = 1800   # 30 * 60 seconds
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
+
+# Custom email validation
+ACCOUNT_EMAIL_VERIFICATION = "none"
+ACCOUNT_SIGNUP_FIELDS = ['email*', 'username*', 'password1*', 'password2*']
+SOCIALACCOUNT_QUERY_EMAIL = True
+SOCIALACCOUNT_LOGIN_ON_GET = True
+
+
+
+YOUR_GOOGLE_CLIENT_ID = os.getenv("SOCIAL_AUTH_GOOGLE_OAUTH2_KEY")
+YOUR_GOOGLE_CLIENT_SECRET = os.getenv("SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET")
+
+
+SOCIALACCOUNT_PROVIDERS = {
+    "google": {
+        "SCOPE": [
+            "profile",
+            "email",
+        ],
+        "AUTH_PARAMS": {
+            "access_type": "online",
+        },
+        "APP": {
+            "client_id": os.getenv("SOCIAL_AUTH_GOOGLE_OAUTH2_KEY"),
+            "secret": os.getenv("SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET"),
+            "key": "",
+        }
+    }
+}
 
 JAZZMIN_SETTINGS = {
     "site_title": "Internship Portal Admin",
@@ -110,15 +163,21 @@ JAZZMIN_SETTINGS = {
 # Middleware
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',  # 👈 Add this here
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'allauth.account.middleware.AccountMiddleware',
+    
     'internship.middleware.MaintenanceModeMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
+    'internship_portal.middleware.LoginRequiredMiddleware',   # ✅ correct path
+    'internship_portal.middleware.DomainRestrictMiddleware',  # ✅ correct path
+
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
 
 ROOT_URLCONF = 'internship_portal.urls'
 

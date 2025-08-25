@@ -12,6 +12,8 @@ import random
 from django.conf import settings
 import gspread
 from google.oauth2.service_account import Credentials
+from django.contrib.auth.decorators import login_required
+
 
 
 
@@ -23,7 +25,19 @@ sheet = client.open_by_key(settings.GOOGLE_SHEET_ID).sheet1
 
 
 def home(request):
-    return render(request, 'internship/home.html')
+    if request.user.is_authenticated:
+        email = request.user.email
+        rollno = email.split("@")[0]  # everything before @
+        return render(request, "internship/home.html", {"rollno": rollno})
+
+
+# def sitelogin(request):
+#     return render(request, 'internship/site_login.html')
+
+@login_required
+def account_dashboard(request):
+    user = request.user
+    return render(request, 'internship/dashboard.html', {'user': user})
 
 def company_list(request):
     companies_with_vacancy = Company.objects.filter(vacancy__gt=0,active=True)
