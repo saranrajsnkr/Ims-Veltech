@@ -280,11 +280,16 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 ADMIN_EMAIL = os.getenv('ADMIN_EMAIL')
 
 
+private_key = os.getenv("GOOGLE_PRIVATE_KEY")
+if private_key and "\\n" in private_key:
+    private_key = private_key.replace("\\n", "\n")
+
+
 GOOGLE_CONFIG = {
     "type": os.getenv("GOOGLE_TYPE"),
     "project_id": os.getenv("GOOGLE_PROJECT_ID"),
     "private_key_id": os.getenv("GOOGLE_PRIVATE_KEY_ID"),
-    "private_key": os.getenv("GOOGLE_PRIVATE_KEY"), #.replace("\\n", "\n"),
+    "private_key": private_key,
     "client_email": os.getenv("GOOGLE_CLIENT_EMAIL"),
     "client_id": os.getenv("GOOGLE_CLIENT_ID"),
     "auth_uri": os.getenv("GOOGLE_AUTH_URI"),
