@@ -26,9 +26,17 @@ sheet = client.open_by_key(settings.GOOGLE_SHEET_ID).sheet1
 
 def home(request):
     if request.user.is_authenticated:
+        username = request.user.username
+        name=request.user.first_name
         email = request.user.email
-        rollno = email.split("@")[0]  # everything before @
-        return render(request, "internship/home.html", {"rollno": rollno})
+        rollno = email.split("@")[0]
+        if rollno.startswith("vtu") and rollno[3:].isdigit():
+            Vtu_number = rollno[3:]   # only the numbers
+        else:
+            Vtu_number = None   # or raise an error
+        announcement = Announcement.objects.first()
+
+        return render(request, "internship/home.html", {"rollno": rollno, "announcement": announcement, "name": name, "email": email, "username": username, "Vtu_number": Vtu_number})
 
 
 # def sitelogin(request):
@@ -37,7 +45,24 @@ def home(request):
 @login_required
 def account_dashboard(request):
     user = request.user
-    return render(request, 'internship/dashboard.html', {'user': user})
+    email = user.email
+    
+    rollno = email.split("@")[0]
+    if rollno.startswith("vtu") and rollno[3:].isdigit():
+        vtu_number = rollno[3:]   # only the numbers
+    else:
+        vtu_number = None   # fallback if format is wrong
+
+    context = {
+        'user': user,
+        'username': user.username,
+        'name': user.first_name,
+        'email': email,
+        'vtu_number': vtu_number,
+    }
+
+    return render(request, 'internship/dashboard.html', context)
+
 
 def company_list(request):
     companies_with_vacancy = Company.objects.filter(vacancy__gt=0,active=True)

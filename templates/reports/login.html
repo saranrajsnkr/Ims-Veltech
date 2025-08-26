@@ -3,7 +3,7 @@
 
     <style>
       :root {
-        --primary: #2563eb;
+        {% comment %} --primary: #2563eb;
         --primary-dark: #1d4ed8;
         --secondary: #475569;
         --accent: #0ea5e9;
@@ -12,7 +12,7 @@
         --success: #10b981;
         --error: #ef4444;
         --warning: #f59e0b;
-        --info: #3b82f6;
+        --info: #3b82f6; {% endcomment %}
         --border-radius: 12px;
         --box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1),
           0 8px 10px -6px rgba(0, 0, 0, 0.05);
@@ -23,7 +23,7 @@
         margin: 0;
         padding: 0;
         min-height: 100vh;
-        background: white;
+      background: var(--background);
       }
       body1 {
         display: flex;

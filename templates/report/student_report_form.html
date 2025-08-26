@@ -2,8 +2,16 @@
 {% block content %}
 
         <style>
-
-:root {
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--background);
+      color: var(--text-dark);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+{% comment %} :root {
   --primary: #2563eb;
   --primary-dark: #1d4ed8;
   --secondary: #475569;
@@ -18,9 +26,9 @@
   --box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1),
     0 8px 10px -6px rgba(0, 0, 0, 0.05);
   --transition: all 0.3s ease;
-}
+} {% endcomment %}
 
-body {
+{% comment %} body {
   margin: 0;
   padding: 0;
   min-height: 100vh;
@@ -30,7 +38,6 @@ body {
   justify-content: center;
   {% comment %} align-items: flex-start;
   padding-top: 2rem; {% endcomment %}
-}
 
 /* Responsive Card */
 .custom-card {

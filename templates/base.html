@@ -5,57 +5,384 @@
     <meta charset="UTF-8" />
     <title>Internship Portal</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Google Fonts -->
     <link
-      href="https://fonts.googleapis.com/css2?family=Roboto&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@500;600;700&display=swap"
       rel="stylesheet"
     />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter&display=swap"
-      rel="stylesheet"
-    />
+
+    <!-- Font Awesome -->
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
       crossorigin="anonymous"
       referrerpolicy="no-referrer"
     />
+
+    <!-- Favicon -->
     <link
       rel="icon"
       type="image/x-icon"
       href="{% static 'images/LOGO.png' %}"
     />
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
+
+    <style>
+          :root {
+            --primary: #3b82f6;
+            --primary-dark: #1e40af;
+            --accent: #06b6d4;
+            --background: linear-gradient(135deg, #f8fafc, #e0f2fe);
+            --surface: rgba(255, 255, 255, 0.8);
+            --text-dark: #0f172a;
+            --text-muted: #64748b;
+            --radius: 16px;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            --glass: backdrop-filter: blur(12px) saturate(180%);
+            --transition: all 0.3s ease-in-out;
+          }
+
+          * { margin: 0; padding: 0; box-sizing: border-box; }
+
+          body {
+            font-family: 'Inter', sans-serif;
+            background: var(--background);
+            color: var(--text-dark);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            line-height: 1.6;
+          }
+
+          /* HEADER */
+          header {
+            text-align: center;
+            padding: 1.5rem 1rem;
+            background: var(--surface);
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+          }
+
+          .logo-container {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-bottom: 0.8rem;
+            flex-wrap: wrap;
+          }
+
+          .logo-container img {
+            height: 55px;
+            transition: transform 0.3s ease;
+          }
+
+          .logo-container img:hover {
+            transform: scale(1.05);
+          }
+
+          h1 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--text-dark);
+          }
+
+          /* NAVBAR */
+          .navbar {
+            background: var(--surface);
+            box-shadow: var(--shadow);
+            margin: 1rem auto;
+            width: 95%;
+            max-width: 1200px;
+            border-radius: var(--radius);
+            padding: 0.8rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            var(--glass);
+            /* animation */
+            opacity: 0;
+            transform: translateY(-30px);
+            animation: fadeDown 0.8s ease-out forwards;
+          }
+          /* Keyframes for fade from top */
+          @keyframes fadeDown {
+            from {
+              opacity: 0;
+              transform: translateY(-30px);
+            }
+            to {
+              opacity: 1;
+              transform: translateY(0);
+            }
+          }
+        .nav-logo {
+          font-weight: 600;
+          color: var(--text-dark);
+          text-decoration: none;
+          font-size: 1.2rem;
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+        }
+        .nav-links {
+          list-style: none;
+          display: flex;
+          gap: 1.5rem;
+        }
+        .nav-links li a {
+          text-decoration: none;
+          color: var(--text-muted);
+          font-weight: 500;
+          transition: var(--transition);
+        }
+        .nav-links li a:hover {
+          color: var(--primary);
+        }
+        .hamburger { display: none; font-size: 1.6rem; cursor: pointer; }
+        /* MAIN */
+        .main-container {
+          max-width: 1200px;
+          margin: 2rem auto;
+          width: 95%;
+          flex: 1;
+        }
+        .card-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+          gap: 1.5rem;
+        }
+      .card {
+        background: var(--surface);
+        border-radius: var(--radius);
+        padding: 2rem;
+        text-align: center;
+        box-shadow: var(--shadow);
+        cursor: pointer;
+
+        /* entry animation */
+        opacity: 0;
+        transform: translateY(30px);
+        animation: fadeUp 0.8s ease-out forwards; /* keep final state after anim */
+        animation-delay: var(--delay, 0s);
+
+        /* smooth hover transitions */
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+
+      /* Hover effect */
+      .card:hover {
+        transform: translateY(-5px); /* now hover will work */
+        box-shadow: 0 15px 40px rgba(0,0,0,0.12);
+      }
+
+      /* Keyframes */
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* stagger entry */
+      .card:nth-child(1) { animation-delay: 0.2s; }
+      .card:nth-child(2) { animation-delay: 0.4s; }
+      .card:nth-child(3) { animation-delay: 0.6s; }
+      .card:nth-child(4) { animation-delay: 0.8s; }
+
+      {% comment %} .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 40px rgba(0,0,0,0.12);
+      } {% endcomment %}
+      .card i {
+        font-size: 2rem;
+        color: var(--primary);
+        margin-bottom: 1rem;
+      }
+      .card h3 {
+        font-family: 'Poppins', sans-serif;
+        font-size: 1.2rem;
+        margin-bottom: 0.5rem;
+      }
+      .card p {
+        color: var(--text-muted);
+        font-size: 0.95rem;
+      }
+      .alert {
+          padding: 1.2rem;
+          border-radius: 8px;
+          margin-bottom: 1rem;
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+          font-weight: 500;
+          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+        .alert::before {
+          font-family: "Font Awesome 6 Free";
+          font-weight: 900;
+          font-size: 1.5rem;
+        }
+        .alert.user.success {
+          background-color: rgba(16, 185, 129, 0.15);
+          border-left: 4px solid var(--success);
+          color: #047857;
+        }
+        .alert.user.success::before {
+          content: "\f058"; /* fa-circle-check */
+        }
+        .alert.user.error {
+          background-color: rgba(239, 68, 68, 0.15);
+          border-left: 4px solid var(--error);
+          color: #b91c1c;
+        }
+        .alert.user.error::before {
+          content: "\f057"; /* fa-circle-xmark */
+        }
+        .alert.user.warning {
+          background-color: rgba(245, 158, 11, 0.15);
+          border-left: 4px solid var(--warning);
+          color: #b45309;
+        }
+        .alert.user.warning::before {
+          content: "\f071"; /* fa-triangle-exclamation */
+        }
+        .alert.user.info {
+          background-color: rgba(59, 130, 246, 0.15);
+          border-left: 4px solid var(--info);
+          color: #1d4ed8;
+        }
+        .alert.user.info::before {
+          content: "\f05a"; /* fa-circle-info */
+        }
+      /* FOOTER */
+      footer {
+        background: #0f172a;
+        color: #cbd5e1;
+        text-align: center;
+        padding: 1.5rem 0;
+        margin-top: auto;
+      }
+      footer p {
+        font-size: 0.9rem;
+      }
+      /* RESPONSIVE */
+      @media (max-width: 768px) {
+        .nav-links {
+          position: absolute;
+          top: 60px;
+          right: 0;
+          background: var(--surface);
+          flex-direction: column;
+          width: 200px;
+          padding: 1rem;
+          display: none;
+          box-shadow: var(--shadow);
+          border-radius: var(--radius);
+        }
+        .nav-links.active { display: flex; }
+        .hamburger { display: block; }
+        h1 { font-size: 1.5rem; }
+        .logo-container img {
+              height: 40px;
+              transition: transform 0.3s ease;
+          }
+      }
+    </style>
   </head>
   <body>
-    <header>
-      <div class="header-container">
-        <div class="logo-container">
-          <img src="{% static 'images/VELTECH.png' %}" alt="Logo" />
-          <img src="{% static 'images/NIRF.png' %}" alt="Logo" />
-          <img src="{% static 'images/NAAC.png' %}" alt="Logo" />
-        </div>
-        <h1>Student Internship Portal - SOC</h1>
+    <header class="header-animate">
+      <div class="logo-container">
+        <img
+          src="{% static 'images/VELTECH.png' %}"
+          alt="Vel Tech"
+          class="logo fade-left delay-1"
+        />
+        <img
+          src="{% static 'images/NIRF.png' %}"
+          alt="NIRF"
+          class="logo fade-left delay-2"
+        />
+        <img
+          src="{% static 'images/NAAC.png' %}"
+          alt="NAAC"
+          class="logo fade-left delay-3"
+        />
       </div>
+      <h1 class="fade-up delay-4">Student Internship Portal - SOC</h1>
     </header>
 
-    <!-- ✅ New Navigation Bar -->
+    <style>
+      /* Smooth fade-up */
+      .fade-up {
+        opacity: 0;
+        transform: translateY(20px);
+        animation: fadeUp 1s ease forwards;
+      }
+      @keyframes fadeUp {
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* Smooth slide-left */
+      .fade-left {
+        opacity: 0;
+        transform: translateX(-30px);
+        animation: fadeLeft 0.8s ease forwards;
+      }
+      @keyframes fadeLeft {
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+
+      /* Delay control for staggered animation */
+      .delay-1 {
+        animation-delay: 0.2s;
+      }
+      .delay-2 {
+        animation-delay: 0.4s;
+      }
+      .delay-3 {
+        animation-delay: 0.6s;
+      }
+      .delay-4 {
+        animation-delay: 1s;
+      }
+
+      .logo {
+        height: 60px;
+        margin-right: 10px;
+      }
+    </style>
+
     <nav class="navbar">
-      <div class="nav-container">
-        <a href="/" class="nav-logo"
-          ><i class="fa-solid fa-graduation-cap"></i> Portal</a
-        >
-        <ul class="nav-links" id="navMenu">
-          <li><a href="/">Home</a></li>
-          <li><a href="{% url 'company_list' %}">Available Internships</a></li>
-          <li><a href="{% url 'check_application_status' %}">Application Status</a></li>
-          <li><a href="{% url 'cmpapply_login' %}">Referral</a></li>
-          <li><a href="{% url 'rep_login' %}">Reports</a></li>
-          <li><a href="{% url 'account_dashboard' %}">Accounts & Logout</a></li>
-        </ul>
-        <div class="hamburger" id="hamburger">
-          <i class="fa fa-bars"></i>
-        </div>
+      <a href="/" class="nav-logo"
+        ><i class="fa-solid fa-graduation-cap"></i> Portal</a
+      >
+      <ul class="nav-links" id="navMenu">
+        <li><a href="/">Home</a></li>
+        <li><a href="{% url 'company_list' %}">Available Internships</a></li>
+        <li>
+          <a href="{% url 'check_application_status' %}">Application Status</a>
+        </li>
+        <li><a href="{% url 'cmpapply_login' %}">Referral</a></li>
+        <li><a href="{% url 'rep_login' %}">Reports</a></li>
+        <li><a href="{% url 'account_dashboard' %}">Accounts & Logout</a></li>
+      </ul>
+      <div class="hamburger" id="hamburger">
+        <i class="fa fa-bars"></i>
       </div>
     </nav>
 
@@ -65,328 +392,22 @@
         <div class="alert {{ message.tags }}">{{ message }}</div>
         {% endif %} {% endfor %}
       </div>
-
       {% block content %} {% endblock %}
     </main>
 
     <footer>
-      <div class="footer-container">
-        <p>
-          &copy; {{ year|default:2025 }} Internship Portal | Managed by Nitrezz
-          tech solutions - (AIML Student) | All rights reserved
-        </p>
-        <!-- ✅ Extra footer quick links -->
-      </div>
+      <p>
+        &copy; {{ year|default:2025 }} Internship Portal | Managed by Nitrezz
+        Tech Solutions (AIML Student)
+      </p>
     </footer>
 
-    <!-- ✅ Navbar JS -->
-    <!-- ✅ Navbar JS -->
     <script>
       const hamburger = document.getElementById("hamburger");
       const navMenu = document.getElementById("navMenu");
-
-      // Toggle open/close
       hamburger.addEventListener("click", () => {
         navMenu.classList.toggle("active");
-        hamburger.classList.toggle("active");
-      });
-
-      // Close menu when clicking any nav link
-      document.querySelectorAll(".nav-links li a").forEach((link) => {
-        link.addEventListener("click", () => {
-          navMenu.classList.remove("active");
-          hamburger.classList.remove("active");
-        });
       });
     </script>
-
-    <style>
-      /* ✅ Navbar */
-      .navbar {
-        background: #1e293b;
-        color: #fff;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-      }
-      .nav-container {
-        max-width: 1200px;
-        margin: auto;
-        padding: 0.8rem 2rem;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-      }
-      .nav-logo {
-        color: #fff;
-        font-weight: 600;
-        font-size: 1.2rem;
-        text-decoration: none;
-      }
-      .nav-links {
-        list-style: none;
-        display: flex;
-        gap: 1.5rem;
-        z-index: 1000;
-      }
-      .nav-links li a {
-        color: #e2e8f0;
-        text-decoration: none;
-        font-weight: 500;
-        transition: color 0.3s ease;
-      }
-      .nav-links li a:hover {
-        color: #38bdf8;
-      }
-      .hamburger {
-        display: none;
-        font-size: 1.5rem;
-        cursor: pointer;
-        color: #fff;
-      }
-      /* Change hamburger icon when active */
-      .hamburger.active i::before {
-        content: "\f00d"; /* FontAwesome "X" (close) */
-      }
-
-      /* ✅ Mobile */
-      @media (max-width: 768px) {
-        .nav-links {
-          position: absolute;
-          top: 70px;
-          right: 0;
-          background: #1e293b;
-          flex-direction: column;
-          width: 200px;
-          padding: 1rem;
-          display: none;
-        }
-        .nav-links.active {
-          display: flex;
-          z-index: 1000;
-        }
-        .hamburger {
-          display: block;
-        }
-      }
-      /* styles.css */
-      @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700&display=swap");
-      :root {
-        --primary: #2563eb;
-        --primary-dark: #1d4ed8;
-        --secondary: #475569;
-        --accent: #0ea5e9;
-        --light: #f1f5f9;
-        --light-gray: #e2e8f0;
-        --success: #10b981;
-        --error: #ef4444;
-        --warning: #f59e0b;
-        --info: #3b82f6;
-        --border-radius: 12px;
-        --box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1),
-          0 8px 10px -6px rgba(0, 0, 0, 0.05);
-        --transition: all 0.3s ease;
-      }
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
-      body {
-        font-family: "Roboto", sans-serif;
-        background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
-        color: #1e293b;
-        line-height: 1.6;
-        min-height: 100vh;
-        display: flex;
-        flex-direction: column;
-      } /* Header Styles */
-      header {
-        background: linear-gradient(
-          to right,
-          rgb(255, 255, 255),
-          rgb(255, 255, 255)
-        );
-        color: white;
-        padding: 1.2rem 0;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        position: sticky;
-        top: 0;
-        z-index: 100;
-        position: relative;
-      }
-      .header-container {
-        max-width: 1200px;
-        margin: 0 auto;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        padding: 0 2rem;
-      }
-      .logo-container {
-        display: flex;
-        justify-content: center;
-        gap: 2rem;
-        margin-bottom: 1.2rem;
-        flex-wrap: wrap;
-        height: 50px;
-      }
-      .logo-container img {
-        height: 60px;
-        object-fit: contain;
-        transition: transform 0.3s ease;
-        filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
-      }
-      .logo-container img:hover {
-        transform: translateY(-3px);
-      }
-      h1 {
-        font-family: "Poppins", sans-serif;
-        font-weight: 600;
-        font-size: 2rem;
-        text-align: center;
-        color: #1e293b;
-        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-        letter-spacing: -0.5px;
-        margin: 0;
-      } /* Main Content Styles */
-      .main-container {
-        max-width: 1200px;
-        width: 90%;
-        margin: 2rem auto;
-        flex: 1;
-        padding: 2rem;
-        background: white;
-        border-radius: var(--border-radius);
-        box-shadow: var(--box-shadow);
-        position: relative;
-        overflow: hidden;
-      }
-      .main-container::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 6px;
-        background: linear-gradient(to right, var(--primary), var(--accent));
-      } /* Messages/Alerts */
-      .messages {
-        margin-bottom: 2rem;
-      }
-      .alert {
-        padding: 1.2rem;
-        border-radius: 8px;
-        margin-bottom: 1rem;
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-        font-weight: 500;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-      }
-      .alert::before {
-        font-family: "Font Awesome 6 Free";
-        font-weight: 900;
-        font-size: 1.5rem;
-      }
-      .alert.user.success {
-        background-color: rgba(16, 185, 129, 0.15);
-        border-left: 4px solid var(--success);
-        color: #047857;
-      }
-      .alert.user.success::before {
-        content: "\f058"; /* fa-circle-check */
-      }
-      .alert.user.error {
-        background-color: rgba(239, 68, 68, 0.15);
-        border-left: 4px solid var(--error);
-        color: #b91c1c;
-      }
-      .alert.user.error::before {
-        content: "\f057"; /* fa-circle-xmark */
-      }
-      .alert.user.warning {
-        background-color: rgba(245, 158, 11, 0.15);
-        border-left: 4px solid var(--warning);
-        color: #b45309;
-      }
-      .alert.user.warning::before {
-        content: "\f071"; /* fa-triangle-exclamation */
-      }
-      .alert.user.info {
-        background-color: rgba(59, 130, 246, 0.15);
-        border-left: 4px solid var(--info);
-        color: #1d4ed8;
-      }
-      .alert.user.info::before {
-        content: "\f05a"; /* fa-circle-info */
-      } /* Footer Styles */
-      footer {
-        background: #1e293b;
-        color: #cbd5e1;
-        padding: 2rem 0;
-        margin-top: auto;
-      }
-      .footer-container {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 0 2rem;
-        text-align: center;
-      }
-      .footer-container p {
-        font-size: 1rem;
-        margin: 0;
-        padding: 0.5rem 0;
-      } /* Responsive Design */
-      @media (max-width: 768px) {
-        .header-container {
-          padding: 0 1rem;
-          max-width: 1200px;
-          margin: 0 auto;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-        }
-        h1 {
-          font-size: 1.5rem;
-        }
-        .logo-container img {
-          height: 45px;
-        }
-        .main-container {
-          padding: 1.5rem;
-          width: 95%;
-        }
-        .logo-container {
-          margin-bottom: 0rem;
-        }
-        .footer-container p {
-          font-size: 0.5rem;
-          margin: 0;
-          padding: 0.7rem 0;
-        }
-      }
-      @media (max-width: 480px) {
-        h1 {
-          font-size: 1.2rem;
-        }
-        .logo-container {
-          gap: 1rem;
-        }
-        .logo-container img {
-          height: 35px;
-        }
-        .main-container {
-          padding: 1rem;
-          margin: 1rem auto;
-        }
-        .logo-container {
-          margin-bottom: 0rem;
-        }
-        .footer-container p {
-          font-size: 0.7rem;
-          margin: 0;
-          padding: 0.5rem 0;
-        }
-      }
-    </style>
   </body>
 </html>

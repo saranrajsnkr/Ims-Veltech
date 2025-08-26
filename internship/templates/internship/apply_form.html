@@ -1,240 +1,176 @@
-{% extends 'base.html' %} {% block content %}
-<h2>Apply to {{ company.name }}</h2>
-<form method="POST">
-  {% csrf_token %} <input type="text" name="name" placeholder="Your Name"
-  required / style="text-transform: capitalize;"><br /><br />
-<input
-  type="text"
-  name="roll_number"
-  placeholder="VTU Number (e.g., 24875)"
-  pattern="\d{5}"
-  maxlength="5"
-  inputmode="numeric"
-  required
-  title="VTU Number should be exactly 5 digits"
-/><br /><br />
+{% extends 'base.html' %}
+{% block content %}
+<div class="application-container">
+  <h2>Apply to {{ company.name }}</h2>
 
+  <form method="POST" class="application-form">
+    {% csrf_token %}
 
-  {% comment %}
-  <input
-    type="email"
-    name="email"
-    placeholder="VTU Email"
-    required
-  /><br /><br />
-  {% endcomment %}
-  <input
-    type="text"
-    name="mobile_number"
-    placeholder="Mobile Number"
-    required
-    maxlength="10"
-    pattern="\d{10}"
-    inputmode="numeric"
-    title="Mobile Number should be exactly 10 digits"
+    <div class="form-group">
+      <input type="text" name="name" placeholder="Full Name" required style="text-transform: capitalize;" />
+    </div>
 
-  /><br /><br />
-<label for="department"></label>
-<select name="department" id="department" required>
-  <option value="">-- Select Department --</option>
-  <option value="Artificial Intelligence (AI) and Data Science">Artificial Intelligence (AI) and Data Science</option>
-  <option value="Artificial Intelligence and Machine Learning">Artificial Intelligence and Machine Learning</option>
-  <option value="Computer Science & Engineering">Computer Science & Engineering</option>
-  <option value="Computer Science and Engineering (Artificial Intelligence and Machine Learning)">
-    Computer Science and Engineering (Artificial Intelligence and Machine Learning)
-  </option>
-  <option value="Department of Computer Science and Engineering (Cyber Security)">
-    Computer Science and Engineering (Cyber Security)
-  </option>
-  <option value="Department of Computer Science and Engineering (Data Science)">
-    Computer Science and Engineering (Data Science)
-  </option>
-  <option value="Computer Science and Design">Computer Science and Design</option>
-  <option value="Information Technology">Information Technology</option>
-  <!-- Add more options as needed -->
-</select>
-<br /><br />
+    <div class="form-group">
+      <input
+        type="text"
+        name="roll_number"
+        placeholder="VTU Number (e.g., 24875)"
+        pattern="\d{5}"
+        maxlength="5"
+        inputmode="numeric"
+        required
+        title="VTU Number should be exactly 5 digits"
+      />
+    </div>
 
-<button type="submit">Submit Application</button>
-</form>
+    <div class="form-group">
+      <input
+        type="text"
+        name="mobile_number"
+        placeholder="Mobile Number"
+        required
+        maxlength="10"
+        pattern="\d{10}"
+        inputmode="numeric"
+        title="Mobile Number should be exactly 10 digits"
+      />
+    </div>
+
+    <div class="form-group">
+      <select name="department" required>
+        <option value="">-- Select Department --</option>
+        <option value="Artificial Intelligence (AI) and Data Science">Artificial Intelligence (AI) and Data Science</option>
+        <option value="Artificial Intelligence and Machine Learning">Artificial Intelligence and Machine Learning</option>
+        <option value="Computer Science & Engineering">Computer Science & Engineering</option>
+        <option value="Computer Science and Engineering (Artificial Intelligence and Machine Learning)">Computer Science and Engineering (AI & ML)</option>
+        <option value="Department of Computer Science and Engineering (Cyber Security)">Computer Science and Engineering (Cyber Security)</option>
+        <option value="Department of Computer Science and Engineering (Data Science)">Computer Science and Engineering (Data Science)</option>
+        <option value="Computer Science and Design">Computer Science and Design</option>
+        <option value="Information Technology">Information Technology</option>
+      </select>
+    </div>
+
+    <button type="submit" class="submit-btn">Submit Application</button>
+  </form>
+</div>
 
 <script>
-  const form = document.querySelector('form');
-  const button = form.querySelector('button[type="submit"]');
+  const form = document.querySelector('.application-form');
+  const button = form.querySelector('.submit-btn');
 
   form.addEventListener('submit', function (e) {
-    // Check if form is valid before disabling the button
     if (form.checkValidity()) {
       button.disabled = true;
       button.innerText = 'Applying...';
     }
   });
 </script>
-</script>
 
-</form>
 <style>
-  /* Application Form Styles */
-  h2 {
+  .application-container {
+    max-width: 650px;
+    margin: 2rem auto;
+    padding: 2.5rem;
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+    position: relative;
+  }
+
+  .application-container h2 {
+    text-align: center;
     font-family: "Poppins", sans-serif;
     font-size: 2rem;
     font-weight: 600;
-    color: var(--primary-dark);
-    text-align: center;
+    color: #1e293b;
     margin-bottom: 2rem;
     position: relative;
-    padding-bottom: 1rem;
   }
 
-
-  select {
-    width: 100%;
-    padding: 1.2rem 1.5rem;
-    border: 2px solid var(--light-gray);
-    border-radius: 8px;
-    font-family: "Roboto", sans-serif;
-    font-size: 1.05rem;
-    color: var(--secondary);
-    transition: var(--transition);
-    background-color: #f8fafc;
-    margin-bottom: 1.5rem;
-}
-
-select:focus {
-    outline: none;
-    border-color: var(--accent);
-    box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.15);
-    background-color: white;
-}
-
-
-  h2::after {
+  .application-container h2::after {
     content: "";
     position: absolute;
-    bottom: 0;
     left: 50%;
+    bottom: -8px;
     transform: translateX(-50%);
-    width: 100px;
-    height: 4px;
-    background: linear-gradient(to right, var(--primary), var(--accent));
-    border-radius: 2px;
+    width: 80px;
+    height: 3px;
+    background: linear-gradient(90deg, #2563eb, #38bdf8);
+    border-radius: 3px;
   }
 
-  form {
-    max-width: 600px;
-    margin: 0 auto;
-    padding: 2.5rem;
-    background: white;
-    border-radius: var(--border-radius);
-    box-shadow: var(--box-shadow);
-    position: relative;
-    overflow: hidden;
-  }
-
-  form::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 6px;
-    background: linear-gradient(to right, var(--primary), var(--accent));
+  .form-group {
+    margin-bottom: 1.5rem;
   }
 
   input[type="text"],
-  input[type="Number"] {
+  select {
     width: 100%;
-    padding: 1.2rem 1.5rem;
-    border: 2px solid var(--light-gray);
-    border-radius: 8px;
+    padding: 1rem 1.2rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 10px;
+    font-size: 1rem;
     font-family: "Roboto", sans-serif;
-    font-size: 1.05rem;
-    color: var(--secondary);
-    transition: var(--transition);
+    transition: 0.3s;
     background-color: #f8fafc;
-    margin-bottom: 1.5rem;
   }
 
-  input[type="text"]:focus,
-  input[type="Number"]:focus {
+  input:focus,
+  select:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15);
     outline: none;
-    border-color: var(--accent);
-    box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.15);
-    background-color: white;
-  }
-
-  .input-group {
-    position: relative;
-    margin-bottom: 2rem;
-  }
-
-  .input-group label {
-    position: absolute;
-    top: -10px;
-    left: 15px;
     background: white;
-    padding: 0 8px;
-    font-size: 0.9rem;
-    color: var(--primary);
-    font-weight: 500;
-    z-index: 1;
   }
 
-  button[type="submit"] {
-    display: block;
+  .submit-btn {
     width: 100%;
-    background: linear-gradient(to right, var(--primary), var(--accent));
-    color: white;
-    padding: 1.2rem;
-    border: none;
-    border-radius: 8px;
-    font-family: "Poppins", sans-serif;
+    background: linear-gradient(90deg, #2563eb, #38bdf8);
+    color: #ffffff;
+    padding: 1rem;
     font-size: 1.1rem;
+    font-family: "Poppins", sans-serif;
     font-weight: 600;
+    border: none;
+    border-radius: 10px;
     cursor: pointer;
-    transition: var(--transition);
-    box-shadow: 0 6px 15px rgba(37, 99, 235, 0.35);
-    margin-top: 1rem;
+    transition: 0.3s;
+    box-shadow: 0 6px 18px rgba(37, 99, 235, 0.35);
   }
 
-  button[type="submit"]:hover {
+  .submit-btn:hover {
     transform: translateY(-3px);
     box-shadow: 0 10px 25px rgba(37, 99, 235, 0.45);
   }
 
-  button[type="submit"]:active {
+  .submit-btn:active {
     transform: translateY(0);
   }
 
-  /* Responsive Design */
   @media (max-width: 768px) {
-    form {
+    .application-container {
       padding: 2rem;
     }
 
-    h2 {
+    .application-container h2 {
       font-size: 1.8rem;
     }
   }
 
   @media (max-width: 480px) {
-    form {
+    .application-container {
       padding: 1.5rem;
     }
 
-    h2 {
+    .application-container h2 {
       font-size: 1.6rem;
     }
 
-    input[type="text"],
-    input[type="email"] {
-      padding: 1rem;
+    input,
+    select,
+    .submit-btn {
       font-size: 1rem;
-    }
-
-    button[type="submit"] {
-      padding: 1rem;
-      font-size: 1rem;
+      padding: 0.9rem 1rem;
     }
   }
 </style>

@@ -1,7 +1,6 @@
 {% load static %}
 {% load socialaccount %}
 
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,168 +9,164 @@
   <title>Vel Tech Internship Portal - Login</title>
 
   <!-- Google Font -->
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-      <meta name="theme-color" content="#ffffff" id="theme-color-meta">
-    <meta name="description"
-        content="The Veltech Internship Portal is an online platform created to help students apply for internship opportunities offered through the college. Students can easily view available companies and submit their applications by entering basic details like name, roll number, and email.
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-This portal ensures a simple and organized way for students to apply for internships directly from the college.">
-    <meta property="og:title" content="Vel Tech Internship Portal" />
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://internship-portal-i31y.onrender.com/" />
-    <meta property="og:image" content="https://res.cloudinary.com/dvmocwdnn/image/upload/v1751663804/VELTECH_OG_CARD_1_mliesn.jpg" />
-    <meta property="og:image:type" content="image/jpeg" />
-    <meta property="og:image:width" content="1200" />
-    <meta property="og:image:height" content="630" />
-    <meta property="og:description" content="The Vel Tech Internship Portal is an online platform created to help students apply for internship opportunities offered through the college. Students can easily view available companies and submit their applications by entering basic details like name, roll number, and email." />
+  <meta name="theme-color" content="#ffffff" id="theme-color-meta">
+  <meta name="description" content="The Veltech Internship Portal helps students apply for internship opportunities offered through the college with ease and organization.">
+  <meta property="og:title" content="Vel Tech Internship Portal" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://internship-portal-i31y.onrender.com/" />
+  <meta property="og:image" content="https://res.cloudinary.com/dvmocwdnn/image/upload/v1751663804/VELTECH_OG_CARD_1_mliesn.jpg" />
+  <meta property="og:description" content="The Vel Tech Internship Portal is an online platform to apply for internships directly from the college." />
 
-    <link rel="icon" type="image/x-icon" href="{% static 'images/LOGO.png' %}" />
+  <link rel="icon" type="image/x-icon" href="{% static 'images/LOGO.png' %}" />
 
   <style>
+    :root {
+      --primary: #2563eb;
+      --primary-hover: #1e40af;
+      --background: linear-gradient(135deg, #e0f2fe, #f0f9ff);
+      --glass-bg: rgba(255, 255, 255, 0.2);
+      --glass-border: rgba(255, 255, 255, 0.4);
+      --text-main: #0f172a;
+      --text-muted: #475569;
+      --shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+      --radius: 20px;
+      --transition: all 0.3s ease-in-out;
+    }
+
     body {
-      font-family: 'Roboto', sans-serif;
-      background: linear-gradient(135deg, #d7d7d7, #f4f4f4);
+      margin: 0;
       height: 100vh;
+      font-family: 'Inter', sans-serif;
+      background: var(--background);
       display: flex;
       justify-content: center;
       align-items: center;
-      margin: 0;
+      padding: 20px;
     }
 
     .login-card {
-      background: white;
-      border-radius: 15px;
-      padding: 40px;
-      width: 90%;
-      max-width: 700px;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius);
+      padding: 40px 30px;
+      width: 100%;
+      max-width: 420px;
       text-align: center;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(20px) saturate(180%);
+      animation: fadeIn 0.6s ease-in-out;
     }
 
-    /* ✅ Logos in one line, same size */
     .logos {
       display: flex;
       justify-content: center;
       align-items: center;
-      gap: 20px;
-      flex-wrap: wrap; /* wraps on smaller screens */
+      gap: 18px;
       margin-bottom: 20px;
+      flex-wrap: wrap;
     }
 
     .logos img {
-      height: 70px;       /* ✅ fixed height */
-      width: auto;        /* keep aspect ratio */
+      height: 50px;
       object-fit: contain;
     }
 
     .portal-title {
-      margin-top: 10px;
+      font-size: 1.4rem;
       font-weight: 700;
-      font-size: 20px;
-      color: #000;
+      color: var(--text-main);
+      margin-bottom: 25px;
+      letter-spacing: 0.5px;
     }
 
     .google-btn {
-      margin-top: 30px;
-      display: inline-flex;
+      display: flex;
       align-items: center;
       justify-content: center;
-      padding: 10px 20px;
-      border: 1px solid #ddd;
-      border-radius: 25px;
-      font-size: 16px;
-      color: #333;
+      gap: 10px;
+      padding: 12px 20px;
       background: white;
-      cursor: pointer;
-      transition: background 0.3s ease;
+      border: 1px solid #e5e7eb;
+      border-radius: 30px;
+      font-weight: 500;
+      font-size: 15px;
+      color: #111;
       text-decoration: none;
+      transition: var(--transition);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
     }
 
     .google-btn:hover {
-      background: #f1f1f1;
+      background: #f9fafb;
+      transform: translateY(-1px);
     }
 
     .google-btn img {
-      height: 20px;
-      margin-right: 10px;
+      height: 22px;
     }
 
     .note {
       margin-top: 20px;
-      font-size: 12px;
-      color: #555;
+      font-size: 0.85rem;
+      color: var(--text-muted);
       font-weight: 500;
     }
 
-    /* ✅ Responsive */
-    @media (max-width: 600px) {
-      .logos img {
-        height: 40px; /* smaller logos on mobile */
-      }
-      .portal-title {
-        font-size: 16px;
-      }
-      .google-btn {
-        padding: 8px 15px;
-        font-size: 14px;
-      }
-      .login-card {
-        padding: 25px;
-      }
-      .login-card {
-    background: none;
-    border-radius: 15px;
-    padding: 40px;
-    width: 90%;
-    max-width: 700px;
-    text-align: center;
-    box-shadow: none;
-}
+    .alert-domain_error {
+      margin-top: 15px;
+      padding: 8px 12px;
+      border: 1px solid #fca5a5;
+      background: #fee2e2;
+      color: #991b1b;
+      border-radius: 8px;
+      font-size: 0.9rem;
     }
 
-    .alert-domain_error {
-    margin-top: 20px;
-    color: #a10000;
-    font-weight: bold;
-}
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
 
+    /* Mobile */
+    @media (max-width: 480px) {
+      .logos img { height: 40px; }
+      .portal-title { font-size: 1.2rem; }
+      .login-card { padding: 30px 20px; }
+    }
   </style>
 </head>
 <body>
   <div class="login-card">
-    <!-- 🔹 Logos Row -->
+    <!-- Logos -->
     <div class="logos">
       <img src="{% static 'images/VELTECH.png' %}" alt="VelTech Logo">
       <img src="{% static 'images/NIRF.png' %}" alt="Category 1">
       <img src="{% static 'images/NAAC.png' %}" alt="NAAC">
     </div>
 
-    <!-- 🔹 Portal Title -->
+    <!-- Title -->
     <div class="portal-title">VEL TECH INTERNSHIP PORTAL</div>
 
-    <!-- 🔹 Google Login -->
-    {% comment %} <a href="{% url "supp" %}" class="google-btn">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" alt="Google logo"/>
-      Continue with Google
-    </a> {% endcomment %}
+    <!-- Google Login -->
     <a href="{% provider_login_url 'google' %}" class="google-btn">
       <img src="https://www.gstatic.com/marketing-cms/assets/images/d5/dc/cfe9ce8b4425b410b49b7f2dd3f3/g.webp=s48-fcrop64=1,00000000ffffffff-rw" alt="Google logo"/>
       Continue with Google
     </a>
-{% if messages %}
-  {% for message in messages %}
-    {% if "domain_error" in message.tags %}
-      <div class="alert alert-{{ message.tags }}">
-        {{ message }}
-      </div>
+
+    {% if messages %}
+      {% for message in messages %}
+        {% if "domain_error" in message.tags %}
+          <div class="alert-domain_error">
+            {{ message }}
+          </div>
+        {% endif %}
+      {% endfor %}
     {% endif %}
-  {% endfor %}
-{% endif %}
 
-
-
-    <!-- 🔹 Note -->
-    <div class="note">USE VTU MAIL FOR LOG IN</div>
+    <!-- Note -->
+    <div class="note">Use your official VTU email to log in.</div>
   </div>
 </body>
 </html>
