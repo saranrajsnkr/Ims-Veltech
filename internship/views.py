@@ -27,41 +27,74 @@ sheet = client.open_by_key(settings.GOOGLE_SHEET_ID).sheet1
 def home(request):
     if request.user.is_authenticated:
         username = request.user.username
-        name=request.user.first_name
+        name = request.user.first_name
         email = request.user.email
         rollno = email.split("@")[0]
+
         if rollno.startswith("vtu") and rollno[3:].isdigit():
             Vtu_number = rollno[3:]   # only the numbers
         else:
-            Vtu_number = None   # or raise an error
+            Vtu_number = None
+
         announcement = Announcement.objects.first()
 
-        return render(request, "internship/home.html", {"rollno": rollno, "announcement": announcement, "name": name, "email": email, "username": username, "Vtu_number": Vtu_number,"path": request.path})
+        # check admin
+        is_admin = request.user.is_superuser or request.user.is_staff
 
+        return render(
+            request,
+            "internship/home.html",
+            {
+                "rollno": rollno,
+                "announcement": announcement,
+                "name": name,
+                "email": email,
+                "username": username,
+                "Vtu_number": Vtu_number,
+                "path": request.path,
+                "is_admin": is_admin,   # pass to template
+            },
+        )
 
 # def sitelogin(request):
 #     return render(request, 'internship/site_login.html')
 
 @login_required
 def account_dashboard(request):
-    user = request.user
-    email = user.email
-    
-    rollno = email.split("@")[0]
-    if rollno.startswith("vtu") and rollno[3:].isdigit():
-        vtu_number = rollno[3:]   # only the numbers
-    else:
-        vtu_number = None   # fallback if format is wrong
+    if request.user.is_authenticated:
+        username = request.user.username
+        name = request.user.first_name
+        email = request.user.email
+        rollno = email.split("@")[0]
 
-    context = {
-        'user': user,
-        'username': user.username,
-        'name': user.first_name,
-        'email': email,
-        'vtu_number': vtu_number,
-    }
+        if rollno.startswith("vtu") and rollno[3:].isdigit():
+            Vtu_number = rollno[3:]   # only the numbers
+        else:
+            Vtu_number = None
 
-    return render(request, 'internship/dashboard.html', context)
+
+        # check admin
+        is_admin = request.user.is_superuser or request.user.is_staff
+        
+        # Check Student model
+        student_result = Student.objects.filter(roll_number=Vtu_number).select_related('applied_company').first()
+
+
+        return render(
+            request,
+            "internship/dashboard.html",
+            {
+                "rollno": rollno,
+                "name": name,
+                "email": email,
+                "username": username,
+                "Vtu_number": Vtu_number,
+                "path": request.path,
+                'student_result': student_result,
+
+                "is_admin": is_admin,   # pass to template
+            },
+        )
 
 
 def company_list(request):
@@ -191,6 +224,8 @@ def performance_view(request):
 
 
 
+# === Site Support Report Views ===
+
 # === Helper ===
 def generate_otp():
     return str(random.randint(100000, 999999))
@@ -233,10 +268,10 @@ def verify_otp_view(request):
 
 # === Step 3: Report Submission ===
 def submit_report_view(request):
-    if not request.session.get('is_logged_in'):
-        return redirect('login')
+    # if not request.session.get('is_logged_in'):
+    #     return redirect('login')
 
-    email = request.session.get('email', '')
+    email = request.user.email
     initial_data = {
         'email': email,
         'roll_number': email[3:8]  # Extracts "24875"
@@ -276,7 +311,10 @@ def thank_you_view(request):
 
 
 
-# === Helper ===
+
+# === External Application ===
+
+# # === Helper ===
 def cmpapply_otp():
     return str(random.randint(100000, 999999))
 
@@ -319,10 +357,10 @@ def cmpapply_verify_otp(request):
 
 # === Step 3: Internship Form Submission ===
 def cmpapply_form_view(request):
-    if not request.session.get('cmp_logged_in'):
-        return redirect('cmpapply_login')
+    # if not request.session.get('cmp_logged_in'):
+    #     return redirect('cmpapply_login')
 
-    email = request.session.get('cmp_email', '')
+    email = request.user.email
     initial_data = {
         'email': email,
         'vtu_number': email[3:8] if len(email) >= 8 else ''
@@ -392,7 +430,7 @@ def cmpapply_thank_you(request):
 
 
 
-
+# === Reporting status of Internship (Optional Unwanted)===
 
 # === Helper ===
 def generate_otp():

@@ -11,6 +11,7 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@500;600;700&display=swap"
       rel="stylesheet"
     />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
 
     <!-- Font Awesome -->
     <link
@@ -197,7 +198,11 @@
       .card:nth-child(2) { animation-delay: 0.4s; }
       .card:nth-child(3) { animation-delay: 0.6s; }
       .card:nth-child(4) { animation-delay: 0.8s; }
-
+      .card:nth-child(5) { animation-delay: 1s; }
+      .card:nth-child(6) { animation-delay: 1.2s; }
+      .card:nth-child(7) { animation-delay: 1.4s; }
+      .card:nth-child(8) { animation-delay: 1.6s; }
+      .card:nth-child(9) { animation-delay: 1.8s; }
       {% comment %} .card:hover {
         transform: translateY(-5px);
         box-shadow: 0 15px 40px rgba(0,0,0,0.12);
@@ -481,7 +486,7 @@ button,
       }
     </style>
 
-    <nav class="navbar">
+    <nav class="navbar" style="z-index: 1;">
       <a href="/" class="nav-logo nav-icon {% if path == '/' %}active{% endif %}"
         ><i class="fa-solid fa-graduation-cap"></i> Portal</a
       >
@@ -491,8 +496,8 @@ button,
         <li>
           <a href="{% url 'check_application_status' %}" class="nav-icon {% if request.resolver_match.url_name == 'check_application_status' %}active{% endif %}">Application Status</a>
         </li>
-        <li><a href="{% url 'cmpapply_login' %}" class="nav-icon {% if request.resolver_match.url_name == 'cmpapply_login' %}active{% endif %}">Referral</a></li>
-        <li><a href="{% url 'rep_login' %}" class="nav-icon {% if request.resolver_match.url_name == 'rep_login' %}active{% endif %}">Reports</a></li>
+        <li><a href="{% url 'cmpapply_form' %}" class="nav-icon {% if request.resolver_match.url_name == 'cmpapply_form' %}active{% endif %}">Referral</a></li>
+        <li><a href="{% url 'submit_report' %}" class="nav-icon {% if request.resolver_match.url_name == 'submit_report' %}active{% endif %}">Reports</a></li>
         <li><a href="{% url 'account_dashboard' %}" class="nav-icon {% if request.resolver_match.url_name == 'account_dashboard' %}active{% endif %}">Accounts & Logout</a></li>
       </ul>
       <div class="hamburger" id="hamburger">
@@ -500,7 +505,7 @@ button,
       </div>
     </nav>
 
-    <main class="main-container">
+    <main class="main-container" style="z-index: 0;">
       <div class="custom-cursor" id="cursor"></div>
       <div class="cursor-trail" id="cursor"></div>
       <div class="messages">

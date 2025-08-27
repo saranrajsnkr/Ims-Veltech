@@ -1,88 +1,219 @@
 {% extends "base.html" %}
 {% load static %}
-
 {% block content %}
 <div class="dashboard-container">
   <div class="dashboard-card">
-    <h2>Welcome, {{ user.get_full_name|default:user.username }}</h2>
-    <div class="user-info">
-      <p><strong>Email:</strong> {{ user.email }}</p>
+    <div class="profile-header">
+      <div class="profile-avatar">
+        <span>{{ name|default:user.username|slice:":1" }}</span>
+      </div>
+      <h2>Welcome, {{ name|default:user.username }}</h2>
     </div>
-<div class="actions">
-  <a href="{% url 'account_logout' %}" 
-     id="logout-btn"
-     style="display:inline-block;
-            padding:12px 28px;
-            background:#007bff;
-            color:#fff;
-            border-radius:10px;
-            text-decoration:none;
-            font-weight:500;
-            transition:background 0.3s ease, transform 0.2s ease;"
-     onmouseover="this.style.background='#0056b3'; this.style.transform='scale(1.05)';"
-     onmouseout="this.style.background='#007bff'; this.style.transform='scale(1)';">
-     Sign Out
-  </a>
-</div>
 
+    <div class="user-info">
+      <p><strong>Name:</strong> {{ name }}</p>
+      <p><strong>Username:</strong> {{ username }}</p>
+      <p><strong>VTU Number:</strong> {{ Vtu_number }}</p>
+      <p><strong>Email:</strong> {{ user.email }}</p>
+      <hr />
+      <p><strong>Account Created:</strong> {{ user.date_joined|date:"d M Y" }}</p>
+      <p>
+        <strong>Account Status:</strong>
+        {% if user.is_active %}
+          <span class="verified">Verified</span>
+        {% else %}
+          <span class="not-verified">Not Verified</span>
+        {% endif %}
+      </p>
+    </div>
+
+    <div class="actions">
+      <a href="{% url 'company_list' %}" class="action-btn primary">
+        <i class="fa-solid fa-briefcase"></i> Apply for Internship
+      </a>
+      <a href="{% url 'account_logout' %}" class="action-btn secondary">
+        <i class="fas fa-sign-out-alt"></i> Sign Out
+      </a>
+    </div>
   </div>
-</div>
-{% endblock %}
 
-{% block extra_css %}
+  {% if student_result %}
+  <div class="result-card">
+    <div class="card-header">
+      <h3><i class="fa-solid fa-school"></i> College Mode Application</h3>
+    </div>
+    <div class="card-body">
+      <p><strong>Name:</strong> {{ student_result.name }}</p>
+      <p><strong>Roll Number:</strong> {{ student_result.roll_number }}</p>
+      <p><strong>Department:</strong> {{ student_result.department }}</p>
+      <p><strong>Company:</strong> {{ student_result.applied_company.name }}</p>
+      <p><strong>Location:</strong> {{ student_result.applied_company.location }}</p>
+    </div>
+  </div>
+  {% endif %}
+</div>
+
 <style>
   .dashboard-container {
     display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
     justify-content: center;
-    align-items: center;
-    min-height: calc(100vh - 60px); /* Adjust if navbar height differs */
-    background: linear-gradient(135deg, #eef1f5, #ffffff);
-    padding: 20px;
-  }
-
-  .dashboard-card {
-    background: #fff;
-    border-radius: 16px;
+    align-items: flex-start;
     padding: 40px;
+  }
+
+  .dashboard-card, .result-card {
+    background: var(--bg-card);
+        backdrop-filter: blur(16px);
+
+    border-radius: 20px;
+    padding: 30px;
     width: 100%;
-    max-width: 700px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    max-width: 500px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+    animation: fadeInUp 0.8s ease-out forwards;
+  }
+  @keyframes fadeInUp {
+    0% {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    }
+  .profile-header {
     text-align: center;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    margin-bottom: 20px;
   }
 
-  .dashboard-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
-  }
-
-  .dashboard-card h2 {
-    font-size: 1.8rem;
+  .profile-avatar {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+      background: linear-gradient(to right, var(--primary), var(--accent));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    color: #fff;
     font-weight: 600;
-    margin-bottom: 1rem;
+    margin: 0 auto 10px;
+  }
+
+  h2 {
+    font-size: 1.6rem;
+    font-weight: 600;
     color: #222;
   }
 
   .user-info {
     font-size: 1rem;
-    margin-bottom: 2rem;
+    margin: 20px 0;
     color: #555;
   }
 
-  #logout-btn {
-    display: inline-block;
-    padding: 12px 28px;
-    background: #007bff;
-    color: #fff;
+  .user-info hr {
+    border: none;
+    border-top: 1px solid #eee;
+    margin: 10px 0;
+  }
+
+  .verified { color: green; font-weight: 600; }
+  .not-verified { color: red; font-weight: 600; }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 20px;
+    justify-content: center;
+  }
+
+  .action-btn {
+    flex: 1 1 45%;
+    text-align: center;
+    padding: 12px 20px;
     border-radius: 10px;
     text-decoration: none;
     font-weight: 500;
-    transition: background 0.3s ease, transform 0.2s ease;
+    transition: all 0.3s ease;
   }
 
-  #logout-btn:hover {
-    background: #0056b3;
-    transform: scale(1.05);
+  .action-btn.primary {
+      background: linear-gradient(to right, var(--primary), var(--accent));
+    color: #fff;
+  }
+
+  .action-btn.primary:hover {       transform: translateY(-3px);
+      box-shadow: 0 12px 25px rgba(37, 99, 235, 0.45); }
+
+  .action-btn.secondary {
+    background: #f5f5f5;
+    color: #333;
+  }
+
+  .action-btn.secondary:hover {       transform: translateY(-3px);
+      box-shadow: 0 12px 25px rgba(37, 99, 235, 0.45); }
+
+.result-card {
+    background: var(--bg-card);
+    backdrop-filter: blur(16px);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    transition: var(--transition);
+    animation: fadeInUp 0.6s ease-out forwards;
+}
+
+@keyframes fadeInleft {
+    0% {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+.result-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+}
+
+.card-header {
+    {% comment %} background: linear-gradient(to right, var(--primary), var(--accent)); {% endcomment %}
+    color: black;
+    padding: 1rem 1.5rem;
+    font-weight: 600;
+}
+
+.card-body {
+    padding: 1.5rem;
+    color: #1f2937;
+}
+
+.card-body p {
+    margin-bottom: 0.8rem;
+}
+
+
+  /* Responsive for small devices */
+  @media (max-width: 768px) {
+    .dashboard-container {
+      flex-direction: column;
+      padding: 20px;
+      align-items: center;
+    }
+
+    .dashboard-card, .result-card {
+      max-width: 95%;
+      padding: 20px;
+    }
+
+    h2 { font-size: 1.4rem; }
   }
 </style>
 {% endblock %}

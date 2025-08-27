@@ -44,7 +44,10 @@
   });
 </script>
 
-<p class="fade-in" style="margin-bottom: 1rem">{{ email }}</p>
+<p class="fade-in" style="margin-bottom: 1rem">
+  {{ email }} {% if is_admin %}
+  <span class="span" style="font-weight: 500">(Admin)</span>{% endif %}
+</p>
 
 {% if announcement.message1 and announcement.is_message1_active %}
 <div class="announcement-box">
@@ -93,6 +96,16 @@
 </style>
 
 <div class="card-grid">
+  <div
+    class="card"
+    onclick="window.location.href='{% url 'account_dashboard' %}'"
+  >
+    <i class="fa-solid fa-user-circle"></i>
+    <h3>Profile & Dashboard</h3>
+    <p>
+      View your profile and get a quick overview of your activities in one place.
+    </p>
+  </div>
   <div class="card" onclick="window.location.href='{% url 'company_list' %}'">
     <i class="fa-solid fa-briefcase"></i>
     <h3>Available Internships</h3>
@@ -106,27 +119,37 @@
     onclick="window.location.href='{% url 'check_application_status' %}'"
   >
     <i class="fa-solid fa-file-circle-check"></i>
-    <h3>Check Application Status</h3>
+    <h3>Check Status</h3>
     <p>
       Monitor the status of your submitted internship applications in real time.
     </p>
   </div>
   <div class="card" onclick="window.location.href='{% url 'cmpapply_login' %}'">
     <i class="fa-solid fa-user-plus"></i>
-    <h3>External Internship Referral</h3>
+    <h3>External Internship Application</h3>
     <p>
       Submit external internship details for official approval from the
       institution.
     </p>
   </div>
   <div class="card" onclick="window.location.href='{% url 'rep_login' %}'">
-    <i class="fa-solid fa-bug"></i>
-    <h3>User Site Problems & Reports</h3>
+    <i class="bi bi-headset"></i>
+    <h3>Support</h3>
     <p>
       Report technical issues, share errors, or give feedback to improve this
       portal.
     </p>
   </div>
+  {% if is_admin %}
+  <div class="card" onclick="window.location.href='/admin'">
+    <i class="fa fa-user"></i>
+    <h3>Admin</h3>
+    <p>
+      Access administrative dashboard to manage users, representatives, and
+      system settings.
+    </p>
+  </div>
+  {% endif %}
 </div>
 
 {% endblock %}
