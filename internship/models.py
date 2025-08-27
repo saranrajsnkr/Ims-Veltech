@@ -31,6 +31,7 @@ class Student(models.Model):
     department = models.CharField(max_length=100, blank=True, null=True)
     applied_company = models.ForeignKey(Company, on_delete=models.CASCADE, blank=True, null=True)
     fee = models.CharField(max_length=20, blank=True, null=True)
+    house=models.CharField(max_length=100, blank=True, null=True)
 
 
     def clean(self):

@@ -26,9 +26,9 @@ class CompanyAdmin(admin.ModelAdmin):
 
 @admin.register(Student)
 class StudentAdmin(admin.ModelAdmin):
-    list_display = ('name', 'roll_number', 'department', 'applied_company')
-    search_fields = ('name', 'roll_number')
-    list_filter = ('applied_company',)
+    list_display = ('name', 'roll_number', 'department', 'applied_company', 'house')
+    search_fields = ('name', 'roll_number',)
+    list_filter = ('applied_company', 'house')
     actions = ["export_as_csv"]
     change_list_template = "admin/internship/student/changelist.html"
 

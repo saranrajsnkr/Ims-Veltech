@@ -2,9 +2,51 @@
 {% block content %}
 
 <section class="status-section">
-    <h2 class="page-title">
+    {% comment %} <h2 class="page-title">
         <i class="fa-solid fa-magnifying-glass"></i> Check Your Application Status
-    </h2>
+    </h2> {% endcomment %}
+
+    <h1 class="page-title" id="typing-text"><i class="fa-solid fa-magnifying-glass"></i> </h1>
+
+<style>
+  /* Add blinking cursor */
+  #typing-text::after {
+    content: "|";
+    display: inline-block;
+    margin-left: 2px;
+    color: #007bff; /* cursor color */
+    animation: blink 0.7s infinite;
+  }
+
+  @keyframes blink {
+    0%,
+    50% {
+      opacity: 1;
+    }
+    50.01%,
+    100% {
+      opacity: 0;
+    }
+  }
+</style>
+    <script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const text = "Check Your Application Status";
+    let i = 0;
+    const speed = 100;
+    const target = document.getElementById("typing-text");
+
+    function typeWriter() {
+      if (i < text.length) {
+        target.innerHTML += text.charAt(i);
+        i++;
+        setTimeout(typeWriter, speed);
+      }
+    }
+
+    typeWriter();
+  });
+</script>
 
     <form method="POST" class="status-form">
         {% csrf_token %}
@@ -120,6 +162,17 @@
     border-radius: var(--radius);
     box-shadow: var(--shadow);
     overflow: hidden; /* ensures ::before respects the card's rounded corners */
+    animation: fadeInUp 0.6s ease forwards;
+}
+@keyframes fadeInUp {
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .status-form::before {
@@ -189,8 +242,19 @@
     box-shadow: var(--shadow);
     overflow: hidden;
     transition: var(--transition);
+    animation: fadeInleft 0.6s ease forwards;
 }
 
+@keyframes fadeInleft {
+    0% {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
 .result-card:hover {
     transform: translateY(-8px);
     box-shadow: 0 15px 35px rgba(0,0,0,0.15);

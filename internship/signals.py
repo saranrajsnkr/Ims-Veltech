@@ -71,6 +71,7 @@ def handle_approved_application(sender, instance, created, **kwargs):
             'department': instance.department,
             'applied_company': company,
             'fee': instance.fees_amount or '0',
+            'house': "External",
         }
     )
 
@@ -92,11 +93,13 @@ def track_save(sender, instance, created, **kwargs):
         instance.name,
         instance.roll_number,
         instance.mobile_number or "",
+        f"vtu{instance.roll_number}@veltech.edu.in",  # 👈 new email field
         instance.department or "",
         instance.applied_company.name if instance.applied_company else "",
         instance.applied_company.id if instance.applied_company else "",
         instance.fee or "",
         "TRUE",
+        instance.house or "",
     ]
 
     try:

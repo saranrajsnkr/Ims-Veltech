@@ -36,7 +36,7 @@ def home(request):
             Vtu_number = None   # or raise an error
         announcement = Announcement.objects.first()
 
-        return render(request, "internship/home.html", {"rollno": rollno, "announcement": announcement, "name": name, "email": email, "username": username, "Vtu_number": Vtu_number})
+        return render(request, "internship/home.html", {"rollno": rollno, "announcement": announcement, "name": name, "email": email, "username": username, "Vtu_number": Vtu_number,"path": request.path})
 
 
 # def sitelogin(request):
@@ -79,21 +79,23 @@ def company_list(request):
 def apply_to_company(request, company_id):
     company = get_object_or_404(Company.objects.select_for_update(), id=company_id)
 
+    # Generate roll number from email (locked)
+    roll = str(request.user.email[3:8]).lower().strip()
+
     if request.method == 'POST':
         name = request.POST.get('name')
-        roll = str(request.POST.get('roll_number', '')).strip().lower()  # Normalize roll number
         mobile = request.POST.get('mobile_number')
         department = request.POST.get('department')
 
         # Prevent application if no vacancies
         if company.vacancy <= 0:
             messages.error(request, "Vacancy was filled. Please apply for another company.",extra_tags='user')
-            return redirect('company_list')
+            return redirect('home')
 
         # Prevent duplicate application
         if Student.objects.filter(roll_number=roll, applied_company=company).exists():
             messages.error(request, "You have already applied to this company.",extra_tags='user')
-            return redirect('company_list')
+            return redirect('home')
         
         student_qs = Student.objects.filter(roll_number=roll)
 
@@ -103,11 +105,11 @@ def apply_to_company(request, company_id):
             # Check if student already applied AND the company is NOT the "BLOCKED" company
             if student.applied_company.name == "Blocked":
                 messages.error(request, "You have been blacklisted, so you cannot apply to any company.", extra_tags='user')
-                return redirect('company_list')
+                return redirect('home')
         
         if Student.objects.filter(roll_number=roll).exists():
             messages.error(request, "You have already enrolled in a company, so you cannot apply again to another company.",extra_tags='user')
-            return redirect('company_list')
+            return redirect('home')
         
         # if InternshipApplication.objects.filter(vtu_number=roll).exists():
         #     messages.error(request, "You have already applied with this VTU number.",extra_tags='user')
@@ -118,7 +120,7 @@ def apply_to_company(request, company_id):
             intern = Intern_qs.first()
             if intern.application_approved == "APPROVED" or intern.application_approved == "PENDING":
                 messages.error(request, "Your external company form is either pending or approved. You can only enroll in other companies if it gets rejected.",extra_tags='user')
-                return redirect('company_list')
+                return redirect('home')
 
         try:
             # Create the student application and assign it to variable
@@ -127,35 +129,26 @@ def apply_to_company(request, company_id):
                 roll_number=roll,
                 mobile_number=mobile,
                 department=department,
-                applied_company=company
+                applied_company=company,
+                house="INTERNAL",
             )
 
             # Reduce the company's vacancy
             company.vacancy = F('vacancy') - 1
             company.save()
             company.refresh_from_db()
-            
-            # # Append to Google Sheet
-            # sheet.append_row([
-            #     student.id,
-            #     student.name,
-            #     student.roll_number,
-            #     student.mobile_number or "",
-            #     student.department or "",
-            #     student.applied_company.name if student.applied_company else "",
-            #     student.fee or ""
-            # ])
 
             messages.success(request, "Applied successfully!", extra_tags='user')
-            return redirect('company_list')
+            return redirect('home')
 
         except IntegrityError:
             messages.error(request, "You have already applied or something went wrong. Please check your VTU on the application status page.", extra_tags='user')
-            return redirect('company_list')
+            return redirect('home')
 
-
-    return render(request, 'internship/apply_form.html', {'company': company})
-
+    return render(request, 'internship/apply_form.html', {
+        'company': company,
+        'roll_number': roll,  # Pass it to template (readonly field)
+    })
 
 def check_application_status(request):
     internship_result = None
@@ -344,7 +337,7 @@ def cmpapply_form_view(request):
         # Check if student already applied AND the company is NOT the "BLOCKED" company
         if student.applied_company.name != "Blocked":
             messages.error(request, "You have already enrolled in a company, so you cannot access the external application form.", extra_tags='user')
-            return redirect('company_list')
+            return redirect('home')
 
 
 
@@ -358,7 +351,7 @@ def cmpapply_form_view(request):
         intern = Intern_qs.first()
         if intern.application_approved == "APPROVED" or intern.application_approved == "PENDING":
             messages.error(request,"You’ve already submitted an external application, and it’s either approved or still pending. You can only apply again if it gets rejected.",extra_tags='user')
-            return redirect('company_list')
+            return redirect('home')
         
         
 
@@ -383,8 +376,8 @@ def cmpapply_form_view(request):
             #     )
             # except Exception as e:
             #     print("Error sending email:", e)
-
-            return redirect('cmpapply_thank_you')
+            messages.success(request, "Application submitted successfully.", extra_tags='user')
+            return redirect('home')
     else:
         form = InternshipApplicationForm(initial=initial_data)
 
