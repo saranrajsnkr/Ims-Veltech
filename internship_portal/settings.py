@@ -174,6 +174,7 @@ MIDDLEWARE = [
     'internship.middleware.MaintenanceModeMiddleware',
     'internship_portal.middleware.LoginRequiredMiddleware',   # ✅ correct path
     'internship_portal.middleware.DomainRestrictMiddleware',  # ✅ correct path
+    'internship_portal.middleware.RoleBasedSessionMiddleware',  # ✅ correct path
 
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]

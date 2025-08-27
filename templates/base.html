@@ -13,6 +13,8 @@
     />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
 
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
+
     <!-- Font Awesome -->
     <link
       rel="stylesheet"
@@ -43,7 +45,7 @@
             --transition: all 0.3s ease-in-out;
           }
 
-          * { margin: 0; padding: 0; box-sizing: border-box; }
+          * { margin: 0; padding: 0; box-sizing: border-box; scroll-behavior: smooth; scroll-bar-color: var(--primary) var(--background); }
 
           body {
             font-family: 'Inter', sans-serif;
@@ -61,7 +63,7 @@
             padding: 1.5rem 1rem;
             background: var(--surface);
             box-shadow: var(--shadow);
-            position: sticky;
+            position: relative;
             top: 0;
             z-index: 100;
             border-bottom: 1px solid rgba(0,0,0,0.05);
@@ -84,6 +86,10 @@
             transform: scale(1.05);
           }
 
+          header h1 {
+    font-family: "Times New Roman", Times, serif;
+
+          }
           h1 {
             font-family: 'Poppins', sans-serif;
             font-size: 1.8rem;
@@ -93,7 +99,10 @@
 
           /* NAVBAR */
           .navbar {
-            background: var(--surface);
+            background: rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(2.5px);
+            /* Applies the blur effect */
+            -webkit-backdrop-filter: blur(10px);
             box-shadow: var(--shadow);
             margin: 1rem auto;
             width: 95%;
@@ -103,8 +112,10 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            position: relative;
-            var(--glass);
+            position: sticky;   /* ✅ navbar sticks */
+            top: 20px;             /* ✅ sticks to top */
+            z-index: 100;       /* ✅ stays above content */
+              var(--glass);
             /* animation */
             opacity: 0;
             transform: translateY(-30px);
@@ -157,29 +168,35 @@
           grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
           gap: 1.5rem;
         }
-      .card {
-        background: var(--surface);
-        border-radius: var(--radius);
-        padding: 2rem;
-        text-align: center;
-        box-shadow: var(--shadow);
-        cursor: pointer;
+.card-wrapper {
+  opacity: 0;
+  transform: translateY(30px);
+  animation: fadeUp 0.8s ease-out forwards;
+  animation-delay: var(--delay, 0s);
+  
+}
 
-        /* entry animation */
-        opacity: 0;
-        transform: translateY(30px);
-        animation: fadeUp 0.8s ease-out forwards; /* keep final state after anim */
-        animation-delay: var(--delay, 0s);
+.card {
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 2rem;
+  text-align: center;
+  box-shadow: var(--shadow);
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;               /* ensures equal height */
+  flex-direction: column;      /* content stacked */
+  justify-content: flex-start; /* keep text at top */
+  height: 100%;                /* stretch inside grid */
+  min-height: 220px;           /* optional consistent height */
+}
 
-        /* smooth hover transitions */
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-      }
+/* Hover only affects card, not wrapper */
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 40px rgba(0,0,0,0.12);
+}
 
-      /* Hover effect */
-      .card:hover {
-        transform: translateY(-5px); /* now hover will work */
-        box-shadow: 0 15px 40px rgba(0,0,0,0.12);
-      }
 
       /* Keyframes */
       @keyframes fadeUp {
@@ -194,15 +211,15 @@
       }
 
       /* stagger entry */
-      .card:nth-child(1) { animation-delay: 0.2s; }
-      .card:nth-child(2) { animation-delay: 0.4s; }
-      .card:nth-child(3) { animation-delay: 0.6s; }
-      .card:nth-child(4) { animation-delay: 0.8s; }
-      .card:nth-child(5) { animation-delay: 1s; }
-      .card:nth-child(6) { animation-delay: 1.2s; }
-      .card:nth-child(7) { animation-delay: 1.4s; }
-      .card:nth-child(8) { animation-delay: 1.6s; }
-      .card:nth-child(9) { animation-delay: 1.8s; }
+      .card-wrapper:nth-child(1) { animation-delay: 0.2s; }
+      .card-wrapper:nth-child(2) { animation-delay: 0.4s; }
+      .card-wrapper:nth-child(3) { animation-delay: 0.6s; }
+      .card-wrapper:nth-child(4) { animation-delay: 0.8s; }
+      .card-wrapper:nth-child(5) { animation-delay: 1s; }
+      .card-wrapper:nth-child(6) { animation-delay: 1.2s; }
+      .card-wrapper:nth-child(7) { animation-delay: 1.4s; }
+      .card-wrapper:nth-child(8) { animation-delay: 1.6s; }
+      .card-wrapper:nth-child(9) { animation-delay: 1.8s; }
       {% comment %} .card:hover {
         transform: translateY(-5px);
         box-shadow: 0 15px 40px rgba(0,0,0,0.12);
@@ -293,9 +310,22 @@
           box-shadow: var(--shadow);
           border-radius: var(--radius);
         }
-        .nav-links.active { display: flex; }
+        
+        .nav-links.active { 
+          display: flex;            
+          background: rgba(255, 255, 255, 0.5);
+          backdrop-filter: blur(2px);
+          /* Applies the blur effect */
+          -webkit-backdrop-filter: blur(10px);  
+        }
+        
+        
         .hamburger { display: block; }
+        
+        
         h1 { font-size: 1.5rem; }
+        
+        
         .logo-container img {
               height: 40px;
               transition: transform 0.3s ease;
@@ -429,7 +459,7 @@ button,
           class="logo {%if path == '/' %}fade-left delay-3{% endif %}"
         />
       </div>
-      <h1 class="title {%if path == '/' %}fade-up delay-4{% endif %}">Student Internship Portal - SOC</h1>
+      <h1 class="title {%if path == '/' %}fade-up delay-4{% endif %}">Internship Management System</h1>
     </header>
 
     <style>
@@ -478,26 +508,74 @@ button,
         margin-right: 10px;
       }
 
-      .nav-icon.active {
+      {% comment %} .nav-icon.active {
       color: var(--primary) !important;
       /* Highlight active icon */
       position: relative;
       /* Needed for positioning */
-      }
+      } {% endcomment %}
+
+      .nav-icon.active {
+  color: #fff !important;
+  background: linear-gradient(to right, var(--primary), var(--accent));
+  padding: 6px 16px;             /* Add breathing space */
+  border-radius: 25px;           /* Softer pill shape */
+  font-weight: 600;              /* Make text pop */
+  transition: all 0.3s ease;     /* Smooth animation */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* Subtle shadow */
+}
+
+/* Optional hover effect for active */
+.nav-icon.active:hover {
+  transform: translateY(-2px);
+}
+
+
+/* Default: desktop visible, mobile hidden */
+.desktop-logo { display: inline-flex; }
+.mobile-logo { display: none; }
+
+/* Mobile view */
+@media (max-width: 768px) {
+  .desktop-logo { display: none; }
+  .mobile-logo { display: inline-flex; }
+}
+
     </style>
 
     <nav class="navbar" style="z-index: 1;">
-      <a href="/" class="nav-logo nav-icon {% if path == '/' %}active{% endif %}"
-        ><i class="fa-solid fa-graduation-cap"></i> Portal</a
-      >
+        <!-- Desktop logo -->
+        <a href="/" class="nav-logo nav-icon desktop-logo {% if path == '/' %}active{% endif %}">
+          <i class="fa-solid fa-graduation-cap"></i> IMS
+        </a>
+
+        <!-- Mobile logo -->
+        <a href="/" class="nav-logo nav- mobile-logo {% if request.resolver_match.url_name == 'company_list' %}active{% endif %}">
+{% if path == '/' %}
+    <i class="bi-solid bi-house"></i> Home
+  {% elif request.resolver_match.url_name == 'company_list' %}
+    <i class="fa-solid fa-briefcase"></i> Internships
+  {% elif request.resolver_match.url_name == 'check_application_status' %}
+    <i class="fa-solid fa-circle-check"></i> Application Status
+  {% elif request.resolver_match.url_name == 'cmpapply_form' %}
+    <i class="fa-solid fa-file-signature"></i> External Application
+  {% elif request.resolver_match.url_name == 'submit_report' %}
+    <i class="fa-solid fa-headset"></i> Support
+  {% elif request.resolver_match.url_name == 'account_dashboard' %}
+    <i class="fa-solid fa-user-gear"></i> Accounts & Logout
+  {% else %}
+    <i class="fa-solid fa-graduation-cap"></i> Portal
+  {% endif %}
+        </a>
+
       <ul class="nav-links" id="navMenu">
         <li><a href="/" class="nav-icon {% if path == '/' %}active{% endif %}">Home</a></li>
-        <li><a href="{% url 'company_list' %}" class="nav-icon {% if request.resolver_match.url_name == 'company_list' %}active{% endif %}">Available Internships</a></li>
+        <li><a href="{% url 'company_list' %}" class="nav-icon {% if request.resolver_match.url_name == 'company_list' %}active{% endif %}">Internships</a></li>
         <li>
           <a href="{% url 'check_application_status' %}" class="nav-icon {% if request.resolver_match.url_name == 'check_application_status' %}active{% endif %}">Application Status</a>
         </li>
-        <li><a href="{% url 'cmpapply_form' %}" class="nav-icon {% if request.resolver_match.url_name == 'cmpapply_form' %}active{% endif %}">Referral</a></li>
-        <li><a href="{% url 'submit_report' %}" class="nav-icon {% if request.resolver_match.url_name == 'submit_report' %}active{% endif %}">Reports</a></li>
+        <li><a href="{% url 'cmpapply_form' %}" class="nav-icon {% if request.resolver_match.url_name == 'cmpapply_form' %}active{% endif %}">External Application</a></li>
+        <li><a href="{% url 'submit_report' %}" class="nav-icon {% if request.resolver_match.url_name == 'submit_report' %}active{% endif %}">Support</a></li>
         <li><a href="{% url 'account_dashboard' %}" class="nav-icon {% if request.resolver_match.url_name == 'account_dashboard' %}active{% endif %}">Accounts & Logout</a></li>
       </ul>
       <div class="hamburger" id="hamburger">

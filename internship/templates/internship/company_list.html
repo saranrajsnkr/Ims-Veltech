@@ -179,27 +179,38 @@
       box-shadow: 0 12px 25px rgba(37, 99, 235, 0.45);
     }
 
-    .company-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-      gap: 1.8rem;
-    }
-  .company-card {
-    background: var(--surface);
-    border-radius: var(--radius);
-    box-shadow: var(--shadow);
-    padding: 1.8rem;
-    position: relative;
-    transition: var(--transition);
-    display: flex;
-    flex-direction: column;
+.company-grid {
+  column-count: 3;
+  column-gap: 1.5rem;
+}
 
-    /* animation settings */
-    opacity: 0;
-    transform: translateY(30px);
-    animation: fadeInUp 0.6s ease forwards;
+.company-card {
+  display: inline-block;
+  width: 100%;
+  margin: 0 0 1.5rem;
+  break-inside: avoid;
+  background: var(--surface);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 1.8rem;
+  transition: var(--transition);
+
+  /* entry animation */
+  opacity: 0;
+  transform: translateY(30px);
+  animation: fadeInUp 0.6s ease forwards;
+}
+
+@media (max-width: 1200px) {
+  .company-grid { column-count: 2; }
+}
+
+@media (max-width: 768px) {
+  .company-grid { column-count: 1; }
+  .action-buttons {
+    display: none;
   }
-
+}
   {% comment %} .company-card:nth-child(1) { animation-delay: 0.1s; }
   .company-card:nth-child(2) { animation-delay: 0.3s; }
   .company-card:nth-child(3) { animation-delay: 0.5s; }
@@ -238,6 +249,7 @@
       font-weight: 600;
     }
     .apply-btn {
+      display: inline-block;   /* 👈 add this */
       margin-top: auto;
       align-self: flex-start;
       padding: 0.7rem 1.6rem;
