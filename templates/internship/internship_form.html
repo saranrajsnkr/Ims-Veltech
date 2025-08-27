@@ -39,6 +39,17 @@
   position: relative;
   overflow: hidden;
   margin: 1rem;
+  animation: fadeInUp 0.6s ease forwards;
+}
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .custom-card::before {
@@ -132,7 +143,7 @@ button[type="submit"] {
   color: white;
   padding: 1.2rem;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--radius);
   font-family: "Poppins", sans-serif;
   font-size: 1.1rem;
   font-weight: 600;

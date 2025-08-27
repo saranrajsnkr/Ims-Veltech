@@ -13,7 +13,7 @@
     <div class="user-info">
       <p><strong>Name:</strong> {{ name }}</p>
       <p><strong>Username:</strong> {{ username }}</p>
-      <p><strong>VTU Number:</strong> {{ Vtu_number }}</p>
+      <p><strong>Vtu Number:</strong> {{ Vtu_number }}</p>
       <p><strong>Email:</strong> {{ user.email }}</p>
       <hr />
       <p><strong>Account Created:</strong> {{ user.date_joined|date:"d M Y" }}</p>
@@ -173,7 +173,7 @@
     flex: 1 1 45%;
     text-align: center;
     padding: 12px 20px;
-    border-radius: 10px;
+    border-radius: var(--radius);
     text-decoration: none;
     font-weight: 500;
     transition: all 0.3s ease;
