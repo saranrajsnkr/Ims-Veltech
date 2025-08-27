@@ -55,7 +55,7 @@
         <p><strong>Location:</strong> {{ company.location }}</p>
         <p><strong>Vacancies Available:</strong> {{ company.vacancy }}</p>
       </div>
-      <a href="{% url 'apply_to_company' company.id %}" class="apply-btn">
+      <a href="{% url 'apply_to_company' company.uid %}" class="apply-btn">
         <i class="fa-solid fa-paper-plane"></i> Apply Now
       </a>
     </div>

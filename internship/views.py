@@ -109,8 +109,8 @@ def company_list(request):
 
 
 @transaction.atomic
-def apply_to_company(request, company_id):
-    company = get_object_or_404(Company.objects.select_for_update(), id=company_id)
+def apply_to_company(request, company_uid):
+    company = get_object_or_404(Company.objects.select_for_update(), uid=company_uid)
 
     # Generate roll number from email (locked)
     roll = str(request.user.email[3:8]).lower().strip()

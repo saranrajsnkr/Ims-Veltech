@@ -1,3 +1,4 @@
+import uuid
 from django.db import models
 from django.core.exceptions import ValidationError
 from django.core.mail import send_mail
@@ -6,6 +7,7 @@ from django.conf import settings
 
 
 class Company(models.Model):
+    uid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)  # ✅ Unique UUID field
     name = models.CharField(max_length=100)
     cgpa = models.CharField(max_length=100, blank=True, null=True)
     fees = models.CharField(max_length=20, blank=False, null=True)
