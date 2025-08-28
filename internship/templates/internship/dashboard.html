@@ -1,6 +1,4 @@
-{% extends "base.html" %}
-{% load static %}
-{% block content %}
+{% extends "base.html" %} {% load static %} {% block content %}
 <div class="dashboard-container">
   <div class="dashboard-card">
     <div class="profile-header">
@@ -16,13 +14,15 @@
       <p><strong>Vtu Number:</strong> {{ Vtu_number }}</p>
       <p><strong>Email:</strong> {{ user.email }}</p>
       <hr />
-      <p><strong>Account Created:</strong> {{ user.date_joined|date:"d M Y" }}</p>
+      <p>
+        <strong>Account Created:</strong> {{ user.date_joined|date:"d M Y" }}
+      </p>
       <p>
         <strong>Account Status:</strong>
         {% if user.is_active %}
-          <span class="verified">Verified</span>
+        <span class="verified">Verified</span>
         {% else %}
-          <span class="not-verified">Not Verified</span>
+        <span class="not-verified">Not Verified</span>
         {% endif %}
       </p>
     </div>
@@ -47,218 +47,238 @@
       <p><strong>Roll Number:</strong> {{ student_result.roll_number }}</p>
       <p><strong>Department:</strong> {{ student_result.department }}</p>
       <p><strong>Company:</strong> {{ student_result.applied_company.name }}</p>
-      <p><strong>Location:</strong> {{ student_result.applied_company.location }}</p>
+      <p>
+        <strong>Location:</strong> {{ student_result.applied_company.location }}
+      </p>
     </div>
   </div>
   {% endif %}
 </div>
 
 <div class="card-grid">
-
   <div class="card-wrapper">
-  <div class="card" onclick="window.location.href='{% url 'company_list' %}'">
-    <i class="fa-solid fa-briefcase"></i>
-    <h3>Available Internships</h3>
-    <p>
-      Explore active internship opportunities provided by the institution and
-      apply directly.
-    </p>
-  </div>
-  </div>
-  <div class="card-wrapper">
-  <div
-    class="card"
-    onclick="window.location.href='{% url 'check_application_status' %}'"
-  >
-    <i class="fa-solid fa-file-circle-check"></i>
-    <h3>Check Status</h3>
-    <p>
-      Monitor the status of your submitted internship applications in real time.
-    </p>
-  </div>
+    <div class="card" onclick="window.location.href='{% url 'company_list' %}'">
+      <i class="fa-solid fa-briefcase"></i>
+      <h3>Available Internships</h3>
+      <p>
+        Explore active internship opportunities provided by the institution and
+        apply directly.
+      </p>
+    </div>
   </div>
   <div class="card-wrapper">
-  <div class="card" onclick="window.location.href='{% url 'cmpapply_form' %}'">
-    <i class="fa-solid fa-user-plus"></i>
-    <h3>External Internship Application</h3>
-    <p>
-      Submit external internship details for official approval from the
-      institution.
-    </p>
-  </div>
+    <div
+      class="card"
+      onclick="window.location.href='{% url 'check_application_status' %}'"
+    >
+      <i class="fa-solid fa-file-circle-check"></i>
+      <h3>Check Status</h3>
+      <p>
+        Monitor the status of your submitted internship applications in real
+        time.
+      </p>
+    </div>
   </div>
   <div class="card-wrapper">
-  <div class="card" onclick="window.location.href='{% url 'submit_report' %}'">
-    <i class="bi bi-headset"></i>
-    <h3>Support</h3>
-    <p>
-      Report technical issues, share errors, or give feedback to improve this
-      portal.
-    </p>
+    <div
+      class="card"
+      onclick="window.location.href='{% url 'cmpapply_form' %}'"
+    >
+      <i class="fa-solid fa-user-plus"></i>
+      <h3>External Internship Application</h3>
+      <p>
+        Submit external internship details for official approval from the
+        institution.
+      </p>
+    </div>
   </div>
+  <div class="card-wrapper">
+    <div
+      class="card"
+      onclick="window.location.href='{% url 'submit_report' %}'"
+    >
+      <i class="bi bi-headset"></i>
+      <h3>Support</h3>
+      <p>
+        Report technical issues, share errors, or give feedback to improve this
+        portal.
+      </p>
+    </div>
   </div>
 </div>
 <style>
-  .dashboard-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    justify-content: center;
-    align-items: flex-start;
-    padding: 40px;
-  }
-
-  .dashboard-card, .result-card {
-    background: var(--bg-card);
-        backdrop-filter: blur(16px);
-
-    border-radius: 20px;
-    padding: 30px;
-    width: 100%;
-    max-width: 500px;
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
-    animation: fadeInUp 0.8s ease-out forwards;
-  }
-  @keyframes fadeInUp {
-    0% {
-      opacity: 0;
-      transform: translateY(20px);
+    .dashboard-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 40px;
     }
-    100% {
-      opacity: 1;
-      transform: translateY(0);
+
+    .dashboard-card, .result-card {
+      background: var(--bg-card);
+          backdrop-filter: blur(16px);
+
+      border-radius: 20px;
+      padding: 30px;
+      width: 100%;
+      max-width: 500px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+      animation: fadeInUp 0.8s ease-out forwards;
     }
+    @keyframes fadeInUp {
+      0% {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      }
+    .profile-header {
+      text-align: center;
+      margin-bottom: 20px;
     }
-  .profile-header {
-    text-align: center;
-    margin-bottom: 20px;
-  }
 
-  .profile-avatar {
-    width: 70px;
-    height: 70px;
-    border-radius: 50%;
-      background: linear-gradient(to right, var(--primary), var(--accent));
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 28px;
-    color: #fff;
-    font-weight: 600;
-    margin: 0 auto 10px;
-  }
+    .profile-avatar {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+        background: linear-gradient(to right, var(--primary), var(--accent));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      color: #fff;
+      font-weight: 600;
+      margin: 0 auto 10px;
+    }
 
-  h2 {
-    font-size: 1.6rem;
-    font-weight: 600;
-    color: #222;
-  }
+    h2 {
+      font-size: 1.6rem;
+      font-weight: 600;
+      color: #222;
+    }
 
-  .user-info {
-    font-size: 1rem;
-    margin: 20px 0;
-    color: #555;
-  }
+    .user-info {
+      font-size: 1rem;
+      margin: 20px 0;
+      color: #555;
+    }
 
-  .user-info hr {
-    border: none;
-    border-top: 1px solid #eee;
-    margin: 10px 0;
-  }
+    .user-info hr {
+      border: none;
+      border-top: 1px solid #eee;
+      margin: 10px 0;
+    }
 
-  .verified { color: green; font-weight: 600; }
-  .not-verified { color: red; font-weight: 600; }
-
+    .verified { color: green; font-weight: 600; }
+    .not-verified { color: red; font-weight: 600; }
   .actions {
     display: flex;
-    flex-wrap: wrap;
     gap: 12px;
     margin-top: 20px;
     justify-content: center;
   }
 
   .action-btn {
-    flex: 1 1 45%;
+    flex: 1; /* equal space */
     text-align: center;
-    padding: 12px 20px;
-    border-radius: var(--radius);
+    padding: 14px 0;
+    border-radius: var(--radius, 8px);
     text-decoration: none;
     font-weight: 500;
     transition: all 0.3s ease;
+    min-width: 140px; /* optional: keeps button readable on PC */
   }
 
+  /* Primary button */
   .action-btn.primary {
-      background: linear-gradient(to right, var(--primary), var(--accent));
+    background: linear-gradient(to right, var(--primary, #2563eb), var(--accent, #3b82f6));
     color: #fff;
   }
 
-  .action-btn.primary:hover {       transform: translateY(-3px);
-      box-shadow: 0 12px 25px rgba(37, 99, 235, 0.45); }
+  .action-btn.primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 25px rgba(37, 99, 235, 0.45);
+  }
 
+  /* Secondary button */
   .action-btn.secondary {
     background: #f5f5f5;
     color: #333;
   }
 
-  .action-btn.secondary:hover {       transform: translateY(-3px);
-      box-shadow: 0 12px 25px rgba(37, 99, 235, 0.45); }
-
-.result-card {
-    background: var(--bg-card);
-    backdrop-filter: blur(16px);
-    border-radius: var(--radius);
-    box-shadow: var(--shadow);
-    overflow: hidden;
-    transition: var(--transition);
-    animation: fadeInUp 0.6s ease-out forwards;
-}
-
-@keyframes fadeInleft {
-    0% {
-        opacity: 0;
-        transform: translateX(-20px);
-    }
-    100% {
-        opacity: 1;
-        transform: translateX(0);
-    }
-}
-.result-card:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 15px 35px rgba(0,0,0,0.15);
-}
-
-.card-header {
-    {% comment %} background: linear-gradient(to right, var(--primary), var(--accent)); {% endcomment %}
-    color: black;
-    padding: 1rem 1.5rem;
-    font-weight: 600;
-}
-
-.card-body {
-    padding: 1.5rem;
-    color: #1f2937;
-}
-
-.card-body p {
-    margin-bottom: 0.8rem;
-}
-
-
-  /* Responsive for small devices */
-  @media (max-width: 768px) {
-    .dashboard-container {
-      flex-direction: column;
-      padding: 20px;
-      align-items: center;
-    }
-
-    .dashboard-card, .result-card {
-      max-width: 95%;
-      padding: 20px;
-    }
-
-    h2 { font-size: 1.4rem; }
+  .action-btn.secondary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
   }
+
+  /* Mobile fix: stack buttons */
+  @media (max-width: 640px) {
+    .actions {
+      flex-direction: column;
+    }
+  }
+
+  .result-card {
+      background: var(--bg-card);
+      backdrop-filter: blur(16px);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      transition: var(--transition);
+      animation: fadeInUp 0.6s ease-out forwards;
+  }
+
+  @keyframes fadeInleft {
+      0% {
+          opacity: 0;
+          transform: translateX(-20px);
+      }
+      100% {
+          opacity: 1;
+          transform: translateX(0);
+      }
+  }
+  .result-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+  }
+
+  .card-header {
+      {% comment %} background: linear-gradient(to right, var(--primary), var(--accent)); {% endcomment %}
+      color: black;
+      padding: 1rem 1.5rem;
+      font-weight: 600;
+  }
+
+  .card-body {
+      padding: 1.5rem;
+      color: #1f2937;
+  }
+
+  .card-body p {
+      margin-bottom: 0.8rem;
+  }
+
+
+    /* Responsive for small devices */
+    @media (max-width: 768px) {
+      .dashboard-container {
+        flex-direction: column;
+        padding: 20px;
+        align-items: center;
+      }
+
+      .dashboard-card, .result-card {
+        max-width: 95%;
+        padding: 20px;
+      }
+
+      h2 { font-size: 1.4rem; }
+    }
 </style>
 {% endblock %}
