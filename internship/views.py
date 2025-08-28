@@ -298,7 +298,8 @@ def submit_report_view(request):
             except Exception as e:
                 print("Error sending email:", e)
 
-            return redirect('thank_you')
+            messages.success(request, "Report submitted successfully.", extra_tags='user')
+            return redirect('home')
     else:
         form = UserReportForm(initial=initial_data)
 

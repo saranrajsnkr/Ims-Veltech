@@ -3,7 +3,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>Internship Portal</title>
+    <title>IMS - SOC</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <!-- Google Fonts -->
@@ -574,7 +574,7 @@ button,
 
       <ul class="nav-links" id="navMenu">
         <li><a href="/" class="nav-icon {% if path == '/' %}active{% endif %}">Home</a></li>
-        <li><a href="{% url 'company_list' %}" class="nav-icon {% if request.resolver_match.url_name == 'company_list' %}active{% endif %}">Internships</a></li>
+        <li><a href="{% url 'company_list' %}" class="nav-icon {% if request.resolver_match.url_name == 'company_list' or request.resolver_match.url_name == 'apply_to_company' %}active{% endif %}">Internships</a></li>
         <li>
           <a href="{% url 'check_application_status' %}" class="nav-icon {% if request.resolver_match.url_name == 'check_application_status' %}active{% endif %}">Application Status</a>
         </li>

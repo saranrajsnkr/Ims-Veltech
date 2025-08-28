@@ -55,17 +55,7 @@
   </form>
 </div>
 
-<script>
-  const form = document.querySelector('.application-form');
-  const button = form.querySelector('.submit-btn');
 
-  form.addEventListener('submit', function (e) {
-    if (form.checkValidity()) {
-      button.disabled = true;
-      button.innerText = 'Applying...';
-    }
-  });
-</script>
 
 <style>
   .application-container {
@@ -76,6 +66,17 @@
     border-radius: 16px;
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
     position: relative;
+    animation: fadeInUp 0.6s ease-out forwards;
+  }
+  @keyframes fadeInUp {
+    0% {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 
   .application-container h2 {
@@ -175,4 +176,21 @@
     }
   }
 </style>
+<script>
+  const form = document.querySelector('.application-form');
+  const button = form.querySelector('.submit-btn');
+
+  form.addEventListener('submit', function (e) {
+    if (form.checkValidity()) {
+      // Disable immediately
+      button.disabled = true;
+      button.innerText = 'Applying...';
+      button.style.cursor = 'not-allowed';
+
+    } else {
+      e.preventDefault(); // prevent invalid form submit
+    }
+  });
+</script>
+
 {% endblock %}
