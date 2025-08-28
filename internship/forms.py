@@ -212,3 +212,25 @@ class StudentReportForm(forms.ModelForm):
                 'class': 'form-control'
             }),
         }
+        
+        
+        
+from django import forms
+from .models import Company
+
+class CompanyLoginForm(forms.Form):
+    username = forms.CharField(max_length=100)
+    password = forms.CharField(widget=forms.PasswordInput)
+
+    def clean(self):
+        cleaned_data = super().clean()
+        username = cleaned_data.get("username")
+        password = cleaned_data.get("password")
+
+        try:
+            company = Company.objects.get(username=username, password=password)
+            cleaned_data["company"] = company
+        except Company.DoesNotExist:
+            raise forms.ValidationError("Invalid username or password")
+
+        return cleaned_data

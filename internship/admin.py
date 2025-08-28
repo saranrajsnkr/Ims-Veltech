@@ -1,6 +1,6 @@
 import csv
 from django.contrib import admin, messages
-from .models import Company, Student , Announcement , SiteSetting , UserReport , InternshipApplication , StudentReport
+from .models import Company, Student , Announcement , SiteSetting , UserReport , InternshipApplication , StudentReport , Attendance
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from .admin_forms import CsvImportForm  # Make sure you have this form
@@ -224,3 +224,11 @@ class StudentReportAdmin(admin.ModelAdmin):
     list_display = ('roll_number', 'report_status')
     list_filter = ('report_status',)
     search_fields = ('roll_number',)
+
+
+
+@admin.register(Attendance)
+class AttendanceAdmin(admin.ModelAdmin):
+    list_display = ("student", "company", "date", "status")
+    search_fields = ("student__name", "company__name")
+    list_filter = ("date", "status", "company")

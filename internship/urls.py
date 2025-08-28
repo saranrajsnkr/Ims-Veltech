@@ -23,5 +23,7 @@ urlpatterns = [
     path('student-report/verify/', views.rep_verify_otp_view, name='rep_verify_otp'),
     path('student-report/submit/', views.rep_submit_report_view, name='rep_submit_report'),
     path('student-report/thank-you/', views.rep_thank_you_view, name='rep_thank_you'),
+    path("company/login/", views.company_login, name="company_login"),
+    path("company/attendance/", views.attendance_page, name="attendance_page"),
     
 ]

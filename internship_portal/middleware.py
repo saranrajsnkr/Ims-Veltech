@@ -41,6 +41,8 @@ class LoginRequiredMiddleware:
             "/static/",        # static files
             "/favicon.ico",    # optional
             "/admin/",
+            "/company/login/",
+            "/company/attendance/",
         ]
 
         if (

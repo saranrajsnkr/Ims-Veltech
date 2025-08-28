@@ -3,11 +3,17 @@ from django.db import models
 from django.core.exceptions import ValidationError
 from django.core.mail import send_mail
 from django.conf import settings
+from django.utils import timezone
 
 
+
+
+import uuid
+from django.db import models
+from django.utils.text import slugify
 
 class Company(models.Model):
-    uid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)  # ✅ Unique UUID field
+    uid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)  
     name = models.CharField(max_length=100)
     cgpa = models.CharField(max_length=100, blank=True, null=True)
     fees = models.CharField(max_length=20, blank=False, null=True)
@@ -18,6 +24,31 @@ class Company(models.Model):
     location = models.CharField(max_length=100, blank=False, null=True)
     vacancy = models.PositiveIntegerField()
     active = models.BooleanField("Active", default=False)
+
+    # Login credentials
+    username = models.CharField(max_length=100, blank=True, null=True, unique=True)
+    password = models.CharField(max_length=100, blank=True, null=True)
+
+    def save(self, *args, **kwargs):
+        if not self.username:
+            # Create professional username
+            base_username = slugify(self.name).replace("-", "")  # e.g. "Infosys Ltd" -> "infosysltd"
+            base_username = base_username[:10].lower()  # keep short, lowercase
+            count = Company.objects.filter(username__startswith=base_username).count()
+
+            self.username = f"{base_username}{count+1}" if count else base_username
+
+        if not self.password:
+            # Minimal & professional password (company prefix + year or number)
+            prefix = self.username[:4]  # first 4 letters of username
+            year = "2025"  # you can make this dynamic with datetime.now().year
+            count = Company.objects.filter(username__startswith=self.username[:4]).count()
+
+            self.password = f"{prefix}{year}{count+1}"  # e.g. info20251, goog20252
+
+        super().save(*args, **kwargs)
+
+
 
     class Meta:
         verbose_name_plural = "Companies"
@@ -254,3 +285,22 @@ class StudentReport(models.Model):
 
     def __str__(self):
         return f"{self.roll_number} - {self.report_status}"
+    
+    
+    
+    
+class Attendance(models.Model):
+    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    company = models.ForeignKey(Company, on_delete=models.CASCADE)
+    date = models.DateField(default=timezone.now)
+    status = models.CharField(
+        max_length=10,
+        choices=[("Present", "Present"), ("Absent", "Absent")],
+        default="Present"
+    )
+
+    class Meta:
+        unique_together = ("student", "company", "date")
+
+    def __str__(self):
+        return f"{self.student.name} - {self.date} - {self.status}"

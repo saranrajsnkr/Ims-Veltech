@@ -12,7 +12,7 @@ import random
 from django.conf import settings
 import gspread
 from google.oauth2.service_account import Credentials
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 
 
 
@@ -518,3 +518,68 @@ def rep_submit_report_view(request):
 def rep_thank_you_view(request):
     request.session.flush()
     return render(request, 'report/student_thank_you.html')
+
+
+
+
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from django.utils import timezone
+from .models import Student, Company, Attendance
+from .forms import CompanyLoginForm
+import datetime
+
+
+def login_not_required(view_func):
+    """Redirect authenticated users away from guest-only pages"""
+    def _wrapped_view(request, *args, **kwargs):
+        if request.user.is_authenticated:
+            return redirect('custom_login')  # change to your logged-in home page
+        return view_func(request, *args, **kwargs)
+    return _wrapped_view
+
+
+@login_not_required
+def company_login(request):
+    """Company Login"""
+    if request.method == "POST":
+        form = CompanyLoginForm(request.POST)
+        if form.is_valid():
+            company = form.cleaned_data["company"]
+            request.session["company_id"] = str(company.uid)  # Save in session
+            return redirect("attendance_page")
+    else:
+        form = CompanyLoginForm()
+    return render(request, "internship/company_login.html", {"form": form})
+
+@login_not_required
+def attendance_page(request):
+    """Show students & enter attendance"""
+    company_id = request.session.get("company_id")
+    if not company_id:
+        return redirect("company_login")
+
+    company = Company.objects.get(uid=company_id)
+    students = Student.objects.filter(applied_company=company)
+
+    if request.method == "POST":
+        for student in students:
+            status = request.POST.get(f"attendance_{student.id}", "Absent")
+            Attendance.objects.update_or_create(
+                student=student,
+                company=company,
+                date=datetime.date.today(),
+                defaults={"status": status},
+            )
+        messages.success(request, "Attendance saved successfully!", extra_tags='user')
+
+
+    today = timezone.now().date()
+    attendance_records = Attendance.objects.filter(company=company, date=today)
+
+    return render(request, "internship/attendance_page.html", {
+        "company": company,
+        "students": students,
+        "attendance_records": attendance_records,
+        "today": today
+    })
