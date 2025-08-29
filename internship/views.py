@@ -78,6 +78,9 @@ def account_dashboard(request):
         
         # Check Student model
         student_result = Student.objects.filter(roll_number=Vtu_number).select_related('applied_company').first()
+        
+        attendance_records = Attendance.objects.filter(vtu_number=Vtu_number).order_by('-date')
+
 
 
         return render(
@@ -91,7 +94,7 @@ def account_dashboard(request):
                 "Vtu_number": Vtu_number,
                 "path": request.path,
                 'student_result': student_result,
-
+                'attendance_records': attendance_records,
                 "is_admin": is_admin,   # pass to template
             },
         )
@@ -567,6 +570,7 @@ def attendance_page(request):
             status = request.POST.get(f"attendance_{student.id}", "Absent")
             Attendance.objects.update_or_create(
                 student=student,
+                vtu_number=student.roll_number,
                 company=company,
                 date=datetime.date.today(),
                 defaults={"status": status},

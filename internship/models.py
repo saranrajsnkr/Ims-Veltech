@@ -291,6 +291,7 @@ class StudentReport(models.Model):
     
 class Attendance(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    vtu_number = models.CharField(max_length=20, blank=True, null=True)
     company = models.ForeignKey(Company, on_delete=models.CASCADE)
     date = models.DateField(default=timezone.now)
     status = models.CharField(

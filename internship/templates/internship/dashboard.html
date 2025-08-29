@@ -55,6 +55,37 @@
   {% endif %}
 </div>
 
+
+
+
+<div class="attendance-section">
+  <h2>Your Attendance Records</h2>
+  <div class="attendance-card">
+    <table>
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Company</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for record in attendance_records %}
+        <tr>
+          <td>{{ record.date }}</td>
+          <td>{{ record.company.name }}</td>
+          <td>{{ record.status }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="3">No attendance records found.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
 <div class="card-grid">
   <div class="card-wrapper">
     <div class="card" onclick="window.location.href='{% url 'company_list' %}'">
@@ -280,5 +311,84 @@
 
       h2 { font-size: 1.4rem; }
     }
+
+    /* Attendance Section */
+.attendance-section {
+  margin-bottom: 50px;
+  width: 100%;
+  max-width: 90%;
+  margin-left: auto;
+  margin-right: auto;
+}
+.attendance-card:hover {
+  box-shadow: 0 12px 25px rgba(37, 99, 235, 0.25);
+  transition: box-shadow 0.3s ease-in;
+}
+
+.attendance-section h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 20px;
+  text-align: center;
+  color: #222;
+}
+
+/* Attendance Card Wrapper */
+.attendance-card {
+  background: var(--bg-card);
+  backdrop-filter: blur(16px);
+  border-radius: 20px;
+  padding: 25px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+  animation: fadeInUp 0.8s ease-out forwards;
+  overflow-x: auto;
+}
+
+/* Attendance Table */
+.attendance-card table {
+  width: 100%;
+  border-collapse: collapse;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.attendance-card thead {
+  background: linear-gradient(to right, var(--primary), var(--accent));
+  color: #fff;
+}
+
+.attendance-card th,
+.attendance-card td {
+  padding: 14px 16px;
+  text-align: center;
+  font-size: 0.95rem;
+}
+
+.attendance-card tbody tr:nth-child(even) {
+  background: #f9fafb;
+}
+
+.attendance-card tbody tr:nth-child(odd) {
+  background: #ffffff;
+}
+
+.attendance-card tbody tr:hover {
+  background: #eef6ff;
+  transition: background 0.3s ease;
+}
+
+/* Status Labels */
+.attendance-card td:last-child {
+  font-weight: 600;
+}
+
+.attendance-card td:last-child:contains("Present") {
+  color: #16a34a;
+}
+
+.attendance-card td:last-child:contains("Absent") {
+  color: #dc2626;
+}
+
 </style>
 {% endblock %}
