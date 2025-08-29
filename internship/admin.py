@@ -9,19 +9,50 @@ from django.db.models import F
 
 @admin.register(Company)
 class CompanyAdmin(admin.ModelAdmin):
-    list_display = ('name', 'skill_required', 'vacancy')
-    actions = None  # disables action choices
+    list_display = ('name', 'skill_required', 'vacancy', 'location', 'active')
+    actions = ["export_as_csv"]
 
-    def get_actions(self, request):
-        # Remove the bulk action box
-        return {}
+    def export_as_csv(self, request, queryset):
+        response = HttpResponse(content_type="text/csv")
+        response["Content-Disposition"] = 'attachment; filename="company_data.csv"'
+        writer = csv.writer(response)
 
-    def changelist_view(self, request, extra_context=None):
-        # Remove selection checkboxes
-        request.GET = request.GET.copy()
-        if '_selected_action' in request.GET:
-            del request.GET['_selected_action']
-        return super().changelist_view(request, extra_context=extra_context)
+        # CSV Header
+        writer.writerow([
+            'UID',
+            'Name',
+            'CGPA',
+            'Fees',
+            'Duration',
+            'Domain',
+            'Description',
+            'Skill Required',
+            'Location',
+            'Username',
+            'password',
+        ])
+
+        # CSV Rows
+        for company in queryset:
+            writer.writerow([
+                company.uid,
+                company.name,
+                company.cgpa if company.cgpa else '',
+                company.fees if company.fees else '',
+                company.duration if company.duration else '',
+                company.domain if company.domain else '',
+                company.description if company.description else '',
+                company.skill_required if company.skill_required else '',
+                company.location if company.location else '',
+                company.username if company.username else '',
+                company.password if company.password else '',
+            ])
+
+        return response
+
+    export_as_csv.short_description = "Export Selected Companies to CSV"
+
+
 
 
 @admin.register(Student)
@@ -232,3 +263,32 @@ class AttendanceAdmin(admin.ModelAdmin):
     list_display = ("student", "company", "date", "status")
     search_fields = ("student__name", "company__name")
     list_filter = ("date", "status", "company")
+    actions = ["export_as_csv"]
+
+    def export_as_csv(self, request, queryset):
+        response = HttpResponse(content_type="text/csv")
+        response["Content-Disposition"] = 'attachment; filename="attendance_data.csv"'
+        writer = csv.writer(response)
+
+        # CSV Header
+        writer.writerow([
+            "Student Name",
+            "VTU Number",
+            "Company",
+            "Date",
+            "Status"
+        ])
+
+        # CSV Rows
+        for attendance in queryset:
+            writer.writerow([
+                attendance.student.name if attendance.student else "",
+                attendance.vtu_number if attendance.vtu_number else "",
+                attendance.company.name if attendance.company else "",
+                attendance.date,
+                attendance.status,
+            ])
+
+        return response
+
+    export_as_csv.short_description = "Export Selected Attendance Records to CSV"
