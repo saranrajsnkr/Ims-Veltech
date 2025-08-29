@@ -74,7 +74,9 @@
         <tr>
           <td>{{ record.date }}</td>
           <td>{{ record.company.name }}</td>
-          <td>{{ record.status }}</td>
+<td class="{% if record.status == 'Present' %}status-present{% else %}status-absent{% endif %}">
+    {{ record.status }}
+</td>
         </tr>
         {% empty %}
         <tr>
@@ -389,6 +391,16 @@
 .attendance-card td:last-child:contains("Absent") {
   color: #dc2626;
 }
+
+.status-present {
+  color: green;
+  font-weight: bold;
+}
+.status-absent {
+  color: red;
+  font-weight: bold;
+}
+
 
 </style>
 {% endblock %}

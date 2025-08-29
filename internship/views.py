@@ -578,7 +578,7 @@ def attendance_page(request):
         messages.success(request, "Attendance saved successfully!", extra_tags='user')
 
 
-    today = timezone.now().date()
+    today = datetime.date.today()
     attendance_records = Attendance.objects.filter(company=company, date=today)
 
     return render(request, "internship/attendance_page.html", {
