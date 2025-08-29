@@ -81,6 +81,10 @@ SOCIALACCOUNT_QUERY_EMAIL = True
 SOCIALACCOUNT_LOGIN_ON_GET = True
 
 
+# settings.py
+COMPANY_OPEN_PATHS = ("/company/login", "/company/attendance")
+
+CSRF_FAILURE_VIEW = 'internship.views.csrf_failure'
 
 YOUR_GOOGLE_CLIENT_ID = os.getenv("SOCIAL_AUTH_GOOGLE_OAUTH2_KEY")
 YOUR_GOOGLE_CLIENT_SECRET = os.getenv("SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET")
@@ -172,6 +176,7 @@ MIDDLEWARE = [
     'allauth.account.middleware.AccountMiddleware',
     
     'internship.middleware.MaintenanceModeMiddleware',
+    'internship_portal.middleware.ForceLogoutOnCompanyPathsMiddleware',   # ✅ correct path
     'internship_portal.middleware.LoginRequiredMiddleware',   # ✅ correct path
     'internship_portal.middleware.DomainRestrictMiddleware',  # ✅ correct path
     'internship_portal.middleware.RoleBasedSessionMiddleware',  # ✅ correct path

@@ -555,15 +555,22 @@ def company_login(request):
         form = CompanyLoginForm()
     return render(request, "internship/company_login.html", {"form": form})
 
+
+
 @login_not_required
 def attendance_page(request):
-    """Show students & enter attendance"""
     company_id = request.session.get("company_id")
     if not company_id:
         return redirect("company_login")
 
     company = Company.objects.get(uid=company_id)
     students = Student.objects.filter(applied_company=company)
+
+    # Default date = today
+    today = datetime.date.today()
+    selected_date = request.POST.get("attendance_date") or today
+    if isinstance(selected_date, str):
+        selected_date = datetime.datetime.strptime(selected_date, "%Y-%m-%d").date()
 
     if request.method == "POST":
         for student in students:
@@ -572,18 +579,49 @@ def attendance_page(request):
                 student=student,
                 vtu_number=student.roll_number,
                 company=company,
-                date=datetime.date.today(),
+                date=selected_date,
                 defaults={"status": status},
             )
-        messages.success(request, "Attendance saved successfully!", extra_tags='user')
+        messages.success(request, f"Attendance saved for {selected_date}!", extra_tags='user')
+        return redirect("submit_attendance")
 
-
-    today = datetime.date.today()
-    attendance_records = Attendance.objects.filter(company=company, date=today)
+    # Fetch attendance for that selected date
+    attendance_records = Attendance.objects.filter(company=company, date=selected_date)
 
     return render(request, "internship/attendance_page.html", {
         "company": company,
         "students": students,
         "attendance_records": attendance_records,
-        "today": today
+        "today": today,
+        "selected_date": selected_date,
     })
+
+
+@login_not_required
+def submit_attendance(request):
+    request.session.flush()
+    return render(request, "internship/submit_attendance.html")
+
+
+def csrf_failure(request, reason=""):
+    path = request.path
+
+    if path.startswith("/company/login/") or path.startswith("/company/attendance/"):
+        # Company-specific CSRF failure page
+        return render(request, "internship/csrf_failure.html", status=403)
+
+    # Default/common CSRF failure page
+    return render(request, "internship/common_csrf_failure.html", status=403)
+
+
+def handler404(request, exception):
+    return render(request, "errors/404.html", status=404)
+
+def handler500(request):
+    return render(request, "errors/500.html", status=500)
+
+def handler403(request, exception=None):
+    return render(request, "errors/403.html", status=403)
+
+def handler400(request, exception):
+    return render(request, "errors/400.html", status=400)

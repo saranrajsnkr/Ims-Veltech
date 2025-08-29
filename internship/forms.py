@@ -219,8 +219,21 @@ from django import forms
 from .models import Company
 
 class CompanyLoginForm(forms.Form):
-    username = forms.CharField(max_length=100)
-    password = forms.CharField(widget=forms.PasswordInput)
+    username = forms.CharField(
+        max_length=100,
+        label='',
+        widget=forms.TextInput(attrs={
+            'placeholder': 'Username',
+            'class': 'form-control',
+        })
+    )
+    password = forms.CharField(
+        label='',
+        widget=forms.PasswordInput(attrs={
+            'placeholder': 'Password',
+            'class': 'form-control',
+        })
+    )
 
     def clean(self):
         cleaned_data = super().clean()

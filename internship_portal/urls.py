@@ -27,3 +27,7 @@ urlpatterns = [
     path('', include('internship.urls')),  # Routes to app-level urls.py
 
 ]
+handler404 = "internship.views.handler404"
+handler500 = "internship.views.handler500"
+handler403 = "internship.views.handler403"
+handler400 = "internship.views.handler400"

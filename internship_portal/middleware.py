@@ -5,9 +5,30 @@ from internship.models import SiteSetting
 from django.shortcuts import redirect
 from django.contrib import messages
 from django.contrib.auth import logout
+from django.contrib.auth.models import AnonymousUser
 
 
 
+# settings.py
+COMPANY_OPEN_PATHS = ("/company/login", "/company/attendance")
+
+class ForceLogoutOnCompanyPathsMiddleware:
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        path = request.path.rstrip("/")
+        # match "/company/login" and anything under it like "/company/login/..."
+        def matches(p): 
+            return path == p or path.startswith(p + "/")
+
+        if any(matches(p) for p in getattr(settings, "COMPANY_OPEN_PATHS", ())):
+            if request.user.is_authenticated:
+                logout(request)                 # flush session + rotate key
+                request.user = AnonymousUser()  # make this request anonymous immediately
+            return self.get_response(request)
+
+        return self.get_response(request)
 
 class DomainRestrictMiddleware:
     def __init__(self, get_response):
@@ -29,29 +50,31 @@ class DomainRestrictMiddleware:
         return self.get_response(request) 
     
 
+# internship_portal/middleware.py
+from django.conf import settings
+
 class LoginRequiredMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response
 
     def __call__(self, request):
-        # Paths that should not require login
-        exempt_paths = [
-            "/accounts/",      # for django-allauth
-            "/login/",  # your custom login page
-            "/static/",        # static files
-            "/favicon.ico",    # optional
-            "/admin/",
-            "/company/login/",
-            "/company/attendance/",
-        ]
+        path = request.path.rstrip("/")
+        def matches(p): 
+            return path == p or path.startswith(p + "/")
 
+        # Always allowed, no login required
+        if any(matches(p) for p in settings.COMPANY_OPEN_PATHS):
+            return self.get_response(request)
+
+        exempt_paths = ("/accounts", "/login", "/static", "/favicon.ico")
         if (
             not request.user.is_authenticated
-            and not any(request.path.startswith(path) for path in exempt_paths)
+            and not any(path.startswith(p) for p in exempt_paths)
         ):
+            from django.shortcuts import redirect
             return redirect("custom_login")
-
         return self.get_response(request)
+
 
 
 class AdminLoginBypassMiddleware:

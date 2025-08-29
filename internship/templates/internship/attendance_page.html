@@ -12,7 +12,14 @@
 
     <form method="post" id="attendance-form">
       {% csrf_token %}
-
+      <div style="margin-bottom: 1rem;">
+    <label for="attendance-date" style="font-weight: 600; color: var(--primary); margin-right: 10px;">
+      Select Date:
+    </label>
+    <input type="date" id="attendance-date" name="attendance_date"
+           value="{{ today|date:'Y-m-d' }}"
+           style="padding: 8px; border: 1px solid #ddd; border-radius: var(--radius);">
+  </div>
       <!-- Select All Controls -->
       <div style="display: flex; justify-content: flex-end; gap: 10px; margin-bottom: 1rem;">
         <button type="button" id="select-all-present"
@@ -127,4 +134,8 @@ button[type="submit"]:hover {
   transform: translateY(-3px);
   box-shadow: 0 10px 25px rgba(37, 99, 235, 0.4);
 }
+
+</style>
+</div>
+
 {% endblock %}
