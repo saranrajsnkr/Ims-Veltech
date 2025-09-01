@@ -86,7 +86,7 @@ SOCIALACCOUNT_LOGIN_ON_GET = True
 
 
 # settings.py
-COMPANY_OPEN_PATHS = ("/company/login", "/company/attendance")
+COMPANY_OPEN_PATHS = ("/company/login", "/company/attendance", "/dept/login", "/dept/logout", "/dept/dashboard",)
 
 CSRF_FAILURE_VIEW = 'internship.views.csrf_failure'
 
