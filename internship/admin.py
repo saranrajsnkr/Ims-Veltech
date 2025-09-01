@@ -1,6 +1,6 @@
 import csv
 from django.contrib import admin, messages
-from .models import Company, Student , Announcement , SiteSetting , UserReport , InternshipApplication , StudentReport , Attendance
+from .models import Company, Student , Announcement , SiteSetting , UserReport , InternshipApplication , StudentReport , Attendance , downloadable_files
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from .admin_forms import CsvImportForm  # Make sure you have this form
@@ -292,3 +292,9 @@ class AttendanceAdmin(admin.ModelAdmin):
         return response
 
     export_as_csv.short_description = "Export Selected Attendance Records to CSV"
+
+
+
+@admin.register(downloadable_files)
+class downloadable_filesAdmin(admin.ModelAdmin):
+    list_display = ('file_name', 'file_link')

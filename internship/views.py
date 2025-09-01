@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Company, Student , Announcement , UserReport , InternshipApplication , StudentReport
+from .models import Company, Student , Announcement , UserReport , InternshipApplication , StudentReport , Attendance , downloadable_files
 from django.contrib import messages
 from django.db import transaction, IntegrityError
 from django.db.models import F
@@ -590,7 +590,7 @@ def attendance_page(request):
                 defaults={"status": status},
             )
         messages.success(request, f"Attendance saved for {selected_date}!", extra_tags='user')
-        return redirect("submit_attendance")
+        return redirect("attendance_page")
 
     # Fetch attendance for that selected date
     attendance_records = Attendance.objects.filter(company=company, date=selected_date)
@@ -636,6 +636,9 @@ def handler400(request, exception):
 
 
 
+
+MAX_FILE_SIZE = 2 * 1024 * 1024  # 2 MB in bytes (2097152)
+
 def extract_roll_from_email(email):
     match = re.search(r"\d+", email)
     return match.group() if match else None
@@ -646,21 +649,36 @@ def upload_student_documents(request):
     email = request.user.email
     roll_number = extract_roll_from_email(email)
 
-    # find student by roll_number
-    student = Student.objects.filter(roll_number=roll_number).exists()
-
+    student = Student.objects.filter(roll_number=roll_number).first()
     if not student:
         messages.error(request, 'Invalid roll number. Student not found in any company.', extra_tags='user')
         return redirect('home')
-
-    student = get_object_or_404(Student, roll_number=roll_number)
 
     if request.method == "POST":
         approval_file = request.FILES.get("approval_letter")
         undertaking_file = request.FILES.get("undertaking_letter")
         bonafide_file = request.FILES.get("bonafide_letter")
 
+        # ✅ validation function
+        def is_valid_pdf(file, label):
+            # Size check
+            if file.size > MAX_FILE_SIZE:
+                messages.error(request, f"{label} must be under 2 MB.", extra_tags='user')
+                return False
+            # Extension check
+            ext = os.path.splitext(file.name)[1].lower()
+            if ext != ".pdf":
+                messages.error(request, f"{label} must be a PDF file.", extra_tags='user')
+                return False
+            # MIME type check
+            if file.content_type != "application/pdf":
+                messages.error(request, f"{label} must be a valid PDF.", extra_tags='user')
+                return False
+            return True
+
         if approval_file:
+            if not is_valid_pdf(approval_file, "Approval letter"):
+                return redirect("upload_documents")
             result = cloudinary.uploader.upload(
                 approval_file,
                 folder=f"APPROVAL_LETTERS/",
@@ -670,6 +688,8 @@ def upload_student_documents(request):
             student.approval_letter_got = True
 
         if undertaking_file:
+            if not is_valid_pdf(undertaking_file, "Undertaking letter"):
+                return redirect("upload_documents")
             result = cloudinary.uploader.upload(
                 undertaking_file,
                 folder=f"UNDERTAKING_LETTERS/",
@@ -679,6 +699,8 @@ def upload_student_documents(request):
             student.undertaking_letter_got = True
 
         if bonafide_file:
+            if not is_valid_pdf(bonafide_file, "Bonafide letter"):
+                return redirect("upload_documents")
             result = cloudinary.uploader.upload(
                 bonafide_file,
                 folder=f"BONAFIDE_LETTERS/",
@@ -693,3 +715,134 @@ def upload_student_documents(request):
 
     return render(request, "student/upload_documents.html", {"student": student})
 
+
+def downloadable_files_view(request):
+    files = downloadable_files.objects.all()
+    return render(request, 'internship/downloadable_files.html', {'files': files})
+
+
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from django.db.models import Count, Sum, Case, When, IntegerField, FloatField, F
+from django.views.decorators.http import require_http_methods
+
+# import your models
+from .models import Student, Attendance, Company  # adjust import as per your structure
+
+# Your DEPARTMENT_CHOICES (you already have this)
+DEPARTMENT_CHOICES = [
+    ('Artificial Intelligence (AI) and Data Science', 'Artificial Intelligence (AI) and Data Science'),
+    ('Artificial Intelligence and Machine Learning', 'Artificial Intelligence and Machine Learning'),
+    ('Computer Science & Engineering', 'Computer Science & Engineering'),
+    ('Computer Science and Engineering (Artificial Intelligence and Machine Learning)', 'Computer Science and Engineering (Artificial Intelligence and Machine Learning)'),
+    ('Computer Science and Engineering (Cyber Security)', 'Computer Science and Engineering (Cyber Security)'),
+    ('Computer Science and Engineering (Data Science)', 'Computer Science and Engineering (Data Science)'),
+    ('Computer Science and Design', 'Computer Science and Design'),
+    ('Information Technology', 'Information Technology'),
+]
+
+# ❗ Hardcoded department accounts (username → dict)
+DEPT_ACCOUNTS = {
+    # username: {password, department}
+    "dept_aimlds": {
+        "password": "AIDS@123",
+        "department": "Artificial Intelligence (AI) and Data Science",
+    },
+    "dept_aiml": {
+        "password": "AIML@123",
+        "department": "Artificial Intelligence and Machine Learning",
+    },
+    "dept_cse": {
+        "password": "CSE@123",
+        "department": "Computer Science & Engineering",
+    },
+    "dept_cse_aiml": {
+        "password": "CSE-AIML@123",
+        "department": "Computer Science and Engineering (Artificial Intelligence and Machine Learning)",
+    },
+    "dept_cyber": {
+        "password": "CYBER@123",
+        "department": "Computer Science and Engineering (Cyber Security)",
+    },
+    "dept_ds": {
+        "password": "DS@123",
+        "department": "Computer Science and Engineering (Data Science)",
+    },
+    "dept_csd": {
+        "password": "CSD@123",
+        "department": "Computer Science and Design",
+    },
+    "dept_it": {
+        "password": "IT@123",
+        "department": "Information Technology",
+    },
+}
+
+def _require_dept_session(request):
+    """Return department name if logged in; else None."""
+    return request.session.get("dept_department")
+
+@require_http_methods(["GET", "POST"])
+def department_login(request):
+    if request.method == "POST":
+        username = request.POST.get("username", "").strip()
+        password = request.POST.get("password", "").strip()
+        acct = DEPT_ACCOUNTS.get(username)
+
+        if acct and acct["password"] == password:
+            # Save session
+            request.session["dept_username"] = username
+            request.session["dept_department"] = acct["department"]
+            messages.success(request, f"You are logged in as {acct['department']}.")
+            return redirect("department_dashboard")
+        else:
+            messages.error(request, "Invalid username or password.")
+            return render(request, "dept_login.html", {"title": "Department Login"})
+
+    # GET
+    return render(request, "dept_login.html", {"title": "Department Login"})
+
+def department_logout(request):
+    request.session.pop("dept_username", None)
+    request.session.pop("dept_department", None)
+    messages.info(request, "You have been logged out.")
+    return redirect("department_login")
+
+def department_dashboard(request):
+    dept_name = _require_dept_session(request)
+    if not dept_name:
+        messages.warning(request, "Please log in first.")
+        return redirect("department_login")
+
+    # Students from this department who have applied for an internship
+    # Compute total classes, presents, and percentage via annotations
+    students_qs = (
+        Student.objects
+        .filter(department=dept_name, applied_company__isnull=False)
+        .select_related("applied_company")
+        .annotate(
+            total_classes=Count("attendance"),  # reverse FK: Attendance -> Student (use 'attendance')
+            present_classes=Sum(
+                Case(
+                    When(attendance__status="Present", then=1),
+                    default=0,
+                    output_field=IntegerField(),
+                )
+            ),
+        )
+        .annotate(
+            attendance_pct=Case(
+                When(total_classes__gt=0, then=(100.0 * F("present_classes") / F("total_classes"))),
+                default=0.0,
+                output_field=FloatField(),
+            )
+        )
+        .order_by("name", "roll_number")
+    )
+
+    context = {
+        "title": f"{dept_name} — Internship Dashboard",
+        "dept_name": dept_name,
+        "students": students_qs,
+    }
+    return render(request, "dept_dashboard.html", context)

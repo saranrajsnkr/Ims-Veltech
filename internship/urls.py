@@ -27,4 +27,9 @@ urlpatterns = [
     path("company/attendance/", views.attendance_page, name="attendance_page"),
     path("company/attendance/sucess/", views.submit_attendance, name="submit_attendance"),
     path("student/upload/documents/", views.upload_student_documents, name="upload_documents"),
+    path("downloadable-files/", views.downloadable_files_view, name="downloadable_files"),
+    path("dept/login/", views.department_login, name="department_login"),
+    path("dept/logout/", views.department_logout, name="department_logout"),
+    path("dept/dashboard/", views.department_dashboard, name="department_dashboard"),
+
 ]

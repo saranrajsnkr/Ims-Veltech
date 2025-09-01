@@ -336,3 +336,12 @@ class Attendance(models.Model):
 
     def __str__(self):
         return f"{self.student.name} - {self.date} - {self.status}"
+    
+    
+class downloadable_files(models.Model):
+    file_name = models.CharField(max_length=100, blank=True, null=True)
+    file_link = models.URLField(max_length=200, blank=True, null=True)
+    
+    def __str__(self):
+        return self.file_name
+
