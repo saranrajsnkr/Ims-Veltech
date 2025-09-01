@@ -13,7 +13,19 @@ from django.conf import settings
 import gspread
 from google.oauth2.service_account import Credentials
 from django.contrib.auth.decorators import login_required, user_passes_test
-
+from django.shortcuts import render, get_object_or_404, redirect
+from .models import Student
+from .forms import StudentDocumentsForm
+import re
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect, get_object_or_404
+import cloudinary.uploader
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from django.utils import timezone
+from .models import Student, Company, Attendance
+from .forms import CompanyLoginForm
+import datetime
 
 
 
@@ -525,12 +537,7 @@ def rep_thank_you_view(request):
 
 
 
-from django.shortcuts import render, redirect
-from django.contrib import messages
-from django.utils import timezone
-from .models import Student, Company, Attendance
-from .forms import CompanyLoginForm
-import datetime
+
 
 
 def login_not_required(view_func):
@@ -625,3 +632,64 @@ def handler403(request, exception=None):
 
 def handler400(request, exception):
     return render(request, "errors/400.html", status=400)
+
+
+
+
+def extract_roll_from_email(email):
+    match = re.search(r"\d+", email)
+    return match.group() if match else None
+
+@login_required
+def upload_student_documents(request):
+    # get roll from logged in user email
+    email = request.user.email
+    roll_number = extract_roll_from_email(email)
+
+    # find student by roll_number
+    student = Student.objects.filter(roll_number=roll_number).exists()
+
+    if not student:
+        messages.error(request, 'Invalid roll number. Student not found in any company.', extra_tags='user')
+        return redirect('home')
+
+    student = get_object_or_404(Student, roll_number=roll_number)
+
+    if request.method == "POST":
+        approval_file = request.FILES.get("approval_letter")
+        undertaking_file = request.FILES.get("undertaking_letter")
+        bonafide_file = request.FILES.get("bonafide_letter")
+
+        if approval_file:
+            result = cloudinary.uploader.upload(
+                approval_file,
+                folder=f"APPROVAL_LETTERS/",
+                public_id=f"{student.name}_{roll_number}"
+            )
+            student.approval_letter = result["secure_url"]
+            student.approval_letter_got = True
+
+        if undertaking_file:
+            result = cloudinary.uploader.upload(
+                undertaking_file,
+                folder=f"UNDERTAKING_LETTERS/",
+                public_id=f"{student.name}_{roll_number}"
+            )
+            student.undertaking_letter = result["secure_url"]
+            student.undertaking_letter_got = True
+
+        if bonafide_file:
+            result = cloudinary.uploader.upload(
+                bonafide_file,
+                folder=f"BONAFIDE_LETTERS/",
+                public_id=f"{student.name}_{roll_number}"
+            )
+            student.bonafide_letter = result["secure_url"]
+            student.bonafide_letter_got = True
+
+        student.save()
+        messages.success(request, "Documents uploaded successfully!", extra_tags='user')
+        return redirect("upload_documents")  # reload page after upload
+
+    return render(request, "student/upload_documents.html", {"student": student})
+

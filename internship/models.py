@@ -4,6 +4,7 @@ from django.core.exceptions import ValidationError
 from django.core.mail import send_mail
 from django.conf import settings
 from django.utils import timezone
+from cloudinary.models import CloudinaryField
 
 
 
@@ -65,6 +66,36 @@ class Student(models.Model):
     applied_company = models.ForeignKey(Company, on_delete=models.CASCADE, blank=True, null=True)
     fee = models.CharField(max_length=20, blank=True, null=True)
     house=models.CharField(max_length=100, blank=True, null=True)
+    approval_letter = CloudinaryField(
+        resource_type="raw",
+        folder="APPROVAL_LETTERS",
+        public_id=lambda instance: f"{instance.name}_{instance.roll_number}_approval",
+        blank=True, null=True
+    )
+    approval_letter_got = models.BooleanField(default=False)
+
+    undertaking_letter = CloudinaryField(
+        resource_type="raw",
+        folder="UNDERTAKING_LETTERS",
+        public_id=lambda instance: f"{instance.name}_{instance.roll_number}_undertaking",
+        blank=True, null=True
+    )
+    undertaking_letter_got = models.BooleanField(default=False)
+
+    bonafide_letter = CloudinaryField(
+        resource_type="raw",
+        folder="BONAFIDE_LETTERS",
+        public_id=lambda instance: f"{instance.name}_{instance.roll_number}_bonafide",
+        blank=True, null=True
+    )
+    bonafide_letter_got = models.BooleanField(default=False)
+
+    def save(self, *args, **kwargs):
+        # Auto-set booleans based on file existence
+        self.approval_letter_got = bool(self.approval_letter)
+        self.undertaking_letter_got = bool(self.undertaking_letter)
+        self.bonafide_letter_got = bool(self.bonafide_letter)
+        super().save(*args, **kwargs)
 
 
     def clean(self):

@@ -247,3 +247,9 @@ class CompanyLoginForm(forms.Form):
             raise forms.ValidationError("Invalid username or password")
 
         return cleaned_data
+
+
+class StudentDocumentsForm(forms.ModelForm):
+    class Meta:
+        model = Student
+        fields = ["approval_letter", "undertaking_letter", "bonafide_letter"]

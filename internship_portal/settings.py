@@ -4,6 +4,10 @@ import os
 from decouple import config, Csv
 import dj_database_url
 from dotenv import load_dotenv
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
+import os
 
 load_dotenv()
 
@@ -314,3 +318,18 @@ INSTALLED_APPS += ["django_crontab"]
 CRONJOBS = [
     ('*/1 * * * *', 'internship.utils.google_sheets.sync_sheets_to_db')  # every 5 min
 ]
+
+
+
+
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': os.getenv("CLOUDINARY_CLOUD_NAME"),
+    'API_KEY': os.getenv("CLOUDINARY_API_KEY"),
+    'API_SECRET': os.getenv("CLOUDINARY_API_SECRET"),
+}
+
+cloudinary.config(
+    cloud_name=CLOUDINARY_STORAGE['CLOUD_NAME'],
+    api_key=CLOUDINARY_STORAGE['API_KEY'],
+    api_secret=CLOUDINARY_STORAGE['API_SECRET'],
+)

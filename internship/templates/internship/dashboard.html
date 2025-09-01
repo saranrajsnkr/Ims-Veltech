@@ -29,9 +29,9 @@
 
     <div class="actions">
       <a href="{% url 'company_list' %}" class="action-btn primary">
-        <i class="fa-solid fa-briefcase"></i> Apply for Internship
+        <i class="fa-solid fa-briefcase" style="font-weight: bold"></i> Apply for Internship
       </a>
-      <a href="{% url 'account_logout' %}" class="action-btn secondary">
+      <a href="{% url 'account_logout' %}" class="action-btn secondary" style="font-weight: bold">
         <i class="fas fa-sign-out-alt"></i> Sign Out
       </a>
     </div>
@@ -50,6 +50,35 @@
       <p>
         <strong>Location:</strong> {{ student_result.applied_company.location }}
       </p>
+      <hr />
+      <h3 class="required" style="margin-bottom: 0.8rem;"><i class="fa fa-tasks"></i> Required to be submitted</h3>     <!-- tasks list -->
+      <p>
+        {% comment %} <strong>Approval Letter:</strong> {% endcomment %}
+        {% if student_result.approval_letter %}
+        <span class="verified"><i class="fa fa-circle-check"></i> Approval Letter</span>
+        {% else %}
+        <span class="not-verified"><i class="fa fa-circle-xmark"></i> Approval Letter</span>
+        {% endif %}
+      </p>
+      <p>
+        {% comment %} <strong>Undertaking Letter:</strong> {% endcomment %}
+        {% if student_result.undertaking_letter %}
+        <span class="verified"><i class="fa fa-circle-check"></i> Undertaking Letter</span>
+        {% else %}
+        <span class="not-verified"><i class="fa fa-circle-xmark"></i> Undertaking Letter</span>
+        {% endif %}
+      </p>  
+      <p>
+        {% comment %} <strong>Bonafide Letter:</strong> {% endcomment %}
+        {% if student_result.bonafide_letter %}
+        <span class="verified"><i class="fa fa-circle-check"></i> Bonafide Letter</span>
+        {% else %}
+        <span class="not-verified"><i class="fa fa-circle-xmark"></i> Bonafide Letter</span>
+        {% endif %}
+      </p>
+        {% if not student_result.approval_letter or not student_result.undertaking_letter or not student_result.bonafide_letter %}
+        <button class="upload-button" onclick="window.location.href='{% url 'upload_documents' %}'" style="font-weight: bold;"><i class="fa fa-cloud-upload"></i> Upload Documents</button>
+        {% endif %}
     </div>
   </div>
   {% endif %}
@@ -201,7 +230,7 @@
       color: #555;
     }
 
-    .user-info hr {
+    hr {
       border: none;
       border-top: 1px solid #eee;
       margin: 10px 0;
@@ -289,7 +318,7 @@
   }
 
   .card-body {
-      padding: 1.5rem;
+      padding: 0rem 1.5rem 1.5rem 1.5rem;
       color: #1f2937;
   }
 
@@ -400,7 +429,27 @@
   color: red;
   font-weight: bold;
 }
-
+    .upload-button {
+      display: inline-block;   /* 👈 add this */
+      margin-top: auto;
+      align-self: flex-start;
+      padding: 0.7rem 1.6rem;
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: #fff;
+      background: linear-gradient(to right, var(--primary), var(--accent));
+      border-radius: var(--radius);
+      text-decoration: none;
+      transition: var(--transition);
+      box-shadow: 0 6px 15px rgba(37, 99, 235, 0.35);
+      border: none;
+      cursor: pointer;
+      margin-top: 1rem;
+    }
+    .upload-button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 25px rgba(37, 99, 235, 0.45);
+    }
 
 </style>
 {% endblock %}
