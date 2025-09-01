@@ -60,7 +60,7 @@ class Company(models.Model):
 
 class Student(models.Model):
     name = models.CharField(max_length=100)
-    roll_number = models.CharField(max_length=20, unique=True, )  # ✅ Unique roll number
+    roll_number = models.CharField(max_length=20, unique=True)  # ✅ Unique roll number
     mobile_number = models.CharField(max_length=15, blank=True, null=True)
     department = models.CharField(max_length=100, blank=True, null=True)
     applied_company = models.ForeignKey(Company, on_delete=models.CASCADE, blank=True, null=True)
@@ -311,8 +311,7 @@ class StudentReport(models.Model):
         ('PENDING', 'repoting on 21 july'),
     ]
 
-    student = models.OneToOneField(Student, on_delete=models.CASCADE)  # ✅ ensures unique roll link
-
+    roll_number = models.CharField(max_length=20, unique=True)
     report_status = models.CharField(max_length=20, choices=REPORT_STATUS_CHOICES)
 
     def __str__(self):
