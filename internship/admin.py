@@ -169,7 +169,7 @@ class StudentAdmin(admin.ModelAdmin):
 
 @admin.register(SiteSetting)
 class SiteSettingAdmin(admin.ModelAdmin):
-    list_display = ['maintenance_mode']
+    list_display = [ 'maintenance_mode', 'active_approval_letter', 'active_undertaking_letter', 'active_bonafide_letter']
 
     def has_add_permission(self, request):
         # Only allow adding if no announcement exists

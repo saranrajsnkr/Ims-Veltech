@@ -44,14 +44,18 @@
     </div>
     <div class="card-body">
       <p><strong>Name:</strong> {{ student_result.name }}</p>
-      <p><strong>Roll Number:</strong> {{ student_result.roll_number }}</p>
+      <p><strong>Vtu Number:</strong> {{ student_result.roll_number }}</p>
+      <p><strong>Mobile Number:</strong> {{ student_result.mobile_number }}</p>
       <p><strong>Department:</strong> {{ student_result.department }}</p>
       <p><strong>Company:</strong> {{ student_result.applied_company.name }}</p>
       <p>
         <strong>Location:</strong> {{ student_result.applied_company.location }}
       </p>
+      {% if site_setting.active_approval_letter or site_setting.active_undertaking_letter or site_setting.active_bonafide_letter %}
       <hr />
       <h3 class="required" style="margin-bottom: 0.8rem;"><i class="fa fa-tasks"></i> Required to be submitted</h3>     <!-- tasks list -->
+      {% endif %}
+      {% if site_setting.active_approval_letter %}
       <p>
         {% comment %} <strong>Approval Letter:</strong> {% endcomment %}
         {% if student_result.approval_letter %}
@@ -60,6 +64,8 @@
         <span class="not-verified"><i class="fa fa-circle-xmark"></i> Approval Letter</span>
         {% endif %}
       </p>
+      {% endif %}
+      {% if site_setting.active_undertaking_letter %}
       <p>
         {% comment %} <strong>Undertaking Letter:</strong> {% endcomment %}
         {% if student_result.undertaking_letter %}
@@ -68,6 +74,8 @@
         <span class="not-verified"><i class="fa fa-circle-xmark"></i> Undertaking Letter</span>
         {% endif %}
       </p>  
+      {% endif %}
+      {% if site_setting.active_bonafide_letter %}
       <p>
         {% comment %} <strong>Bonafide Letter:</strong> {% endcomment %}
         {% if student_result.bonafide_letter %}
@@ -76,10 +84,13 @@
         <span class="not-verified"><i class="fa fa-circle-xmark"></i> Bonafide Letter</span>
         {% endif %}
       </p>
+      {% endif %}
+      {% if site_setting.active_approval_letter or site_setting.active_undertaking_letter or site_setting.active_bonafide_letter %}
         {% if not student_result.approval_letter or not student_result.undertaking_letter or not student_result.bonafide_letter %}
         <button class="upload-button" onclick="window.location.href='{% url 'upload_documents' %}'" style="font-weight: bold;"><i class="fa fa-cloud-upload"></i> Upload Documents</button>
         {% endif %}
-    </div>
+        {% endif %}
+      </div>
   </div>
   {% endif %}
 </div>

@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Company, Student , Announcement , UserReport , InternshipApplication , StudentReport , Attendance , downloadable_files
+from .models import Company, Student , Announcement , UserReport , InternshipApplication , StudentReport , Attendance , downloadable_files , SiteSetting
 from django.contrib import messages
 from django.db import transaction, IntegrityError
 from django.db.models import F
@@ -93,7 +93,7 @@ def account_dashboard(request):
         
         attendance_records = Attendance.objects.filter(vtu_number=Vtu_number).order_by('-date')
 
-
+        site_settings = SiteSetting.objects.first()
 
         return render(
             request,
@@ -108,6 +108,7 @@ def account_dashboard(request):
                 'student_result': student_result,
                 'attendance_records': attendance_records,
                 "is_admin": is_admin,   # pass to template
+                "site_setting": site_settings,
             },
         )
 
@@ -204,6 +205,7 @@ def check_application_status(request):
     roll_number = ''
     searched = False  # Default is False (page just loaded)
 
+    SiteSettings = SiteSetting.objects.first()
 
     if request.method == 'POST':
         roll_number = str(request.POST.get('roll_number', '')).strip().lower()
@@ -221,6 +223,7 @@ def check_application_status(request):
         'student_result': student_result,
         'roll_number': roll_number,
         "searched": searched,
+        "site_setting": SiteSettings,
 
     })
 
@@ -648,6 +651,8 @@ def upload_student_documents(request):
     # get roll from logged in user email
     email = request.user.email
     roll_number = extract_roll_from_email(email)
+    
+    SiteSettings = SiteSetting.objects.first()
 
     student = Student.objects.filter(roll_number=roll_number).first()
     if not student:
@@ -713,7 +718,7 @@ def upload_student_documents(request):
         messages.success(request, "Documents uploaded successfully!", extra_tags='user')
         return redirect("upload_documents")  # reload page after upload
 
-    return render(request, "student/upload_documents.html", {"student": student})
+    return render(request, "student/upload_documents.html", {"student": student, "site_setting": SiteSettings})
 
 
 def downloadable_files_view(request):
@@ -808,20 +813,25 @@ def department_logout(request):
     messages.info(request, "You have been logged out.")
     return redirect("department_login")
 
+# views.py
+from django.db.models import Count, Sum, Case, When, F, FloatField, IntegerField
+from django.shortcuts import render, redirect
+from django.contrib import messages
+
 def department_dashboard(request):
     dept_name = _require_dept_session(request)
     if not dept_name:
         messages.warning(request, "Please log in first.")
         return redirect("department_login")
 
-    # Students from this department who have applied for an internship
-    # Compute total classes, presents, and percentage via annotations
+    site_settings = SiteSetting.objects.first()
+
     students_qs = (
         Student.objects
         .filter(department=dept_name, applied_company__isnull=False)
         .select_related("applied_company")
         .annotate(
-            total_classes=Count("attendance"),  # reverse FK: Attendance -> Student (use 'attendance')
+            total_classes=Count("attendance"),
             present_classes=Sum(
                 Case(
                     When(attendance__status="Present", then=1),
@@ -844,5 +854,7 @@ def department_dashboard(request):
         "title": f"{dept_name} — Internship Dashboard",
         "dept_name": dept_name,
         "students": students_qs,
+        "site_setting": site_settings,
     }
     return render(request, "dept_dashboard.html", context)
+

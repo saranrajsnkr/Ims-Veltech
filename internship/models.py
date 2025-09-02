@@ -128,8 +128,12 @@ MESSAGE_COLOR_CHOICES = [
     ('red', 'Error - Red'),
 ]
 
+# models.py
 class SiteSetting(models.Model):
     maintenance_mode = models.BooleanField(default=False)
+    active_approval_letter = models.BooleanField("Allow Approval Letter Uploads", default=True)
+    active_undertaking_letter = models.BooleanField("Allow Undertaking Letter Uploads", default=True)
+    active_bonafide_letter = models.BooleanField("Allow Bonafide Letter Uploads", default=True)
 
     def __str__(self):
         return "Site Settings"

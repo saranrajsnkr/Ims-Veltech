@@ -29,9 +29,9 @@
                 <th>VTU No</th>
                 <th>Mobile</th>
                 <th>Company</th>
-                <th>Department Approval</th>
-                <th>Undertaking Letter</th>
-                <th>Bonafide</th>
+                {% if site_setting.active_approval_letter %}<th>Department Approval</th>{% endif %}
+                {% if site_setting.active_undertaking_letter %}<th>Undertaking Letter</th>{% endif %}
+                {% if site_setting.active_bonafide_letter %}<th>Bonafide</th>{% endif %}
                 <th>Total Classes</th>
                 <th>Present</th>
                 <th>Attendance %</th>
@@ -47,7 +47,8 @@
                 <td>{{ s.roll_number }}</td>
                 <td>{{ s.mobile_number|default:"-" }}</td>
                 <td>{{ s.applied_company.name }}</td>
-                                <td style="text-align: center;">
+                {% if site_setting.active_approval_letter %}
+                <td style="text-align: center;">
                     {% if s.approval_letter_got %}
                         <span class="badge badge-success">
                             <i class="fas fa-circle-check" style="color: #28a745; margin-bottom: 0rem; font-size: 1.7rem;" ></i>
@@ -58,6 +59,8 @@
                         </span>
                     {% endif %}
                 </td>
+                {% endif %}
+                {% if site_setting.active_undertaking_letter %}
                 <td style="text-align: center;">
                     {% if s.undertaking_letter_got %}
                         <span class="badge badge-success">
@@ -69,6 +72,8 @@
                         </span>
                     {% endif %}
                 </td>
+                {% endif %}
+                {% if site_setting.active_bonafide_letter %}
                 <td style="text-align: center;">
                     {% if s.bonafide_got %}
                         <span class="badge badge-success">
@@ -80,6 +85,7 @@
                         </span>
                     {% endif %}
                 </td>
+                {% endif %}
                 <td>{{ s.total_classes }}</td>
                 <td>{{ s.present_classes|default:0 }}</td>
                 <td class="pct
