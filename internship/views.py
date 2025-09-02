@@ -561,6 +561,9 @@ def company_login(request):
             company = form.cleaned_data["company"]
             request.session["company_id"] = str(company.uid)  # Save in session
             return redirect("attendance_page")
+        else:
+            messages.error(request, "Invalid username or password.")
+            return redirect("company_login")
     else:
         form = CompanyLoginForm()
     return render(request, "internship/company_login.html", {"form": form})
