@@ -50,6 +50,12 @@
         </p>
     </div>
   {% endif %}
+    {% if not site_setting.active_approval_letter and not site_setting.active_undertaking_letter and not site_setting.active_bonafide_letter %}
+    <p style="font-size: 1.2rem; color: #555; text-align: center; font-weight: bold;">
+        No documents are required to upload now.
+    </p>
+    {% endif %}
+
 </form>
 <style>
 /* ==============================
