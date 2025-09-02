@@ -52,7 +52,7 @@
 {% if announcement.message1 and announcement.is_message1_active %}
 <div class="announcement-box">
   <p class="announcement-text" style="color: {{ announcement.message1_color }}">
-    {% comment %} <span class="span">Announcement:</span>{% endcomment %} {{ announcement.message1 }}
+    {% comment %} <span class="span">Announcement:</span>{% endcomment %}<i class="fa fa-bullhorn"></i>  {{ announcement.message1 }}
   </p>
 </div>
 {% endif %}
@@ -87,6 +87,17 @@
     border-radius: var(--radius);
     margin-bottom: 1.5rem;
     text-align: center;
+    animation: fadeInUp 0.6s ease forwards;
+  }
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
   .announcement-text {
     font-weight: 600;
@@ -97,8 +108,7 @@
 <div class="card-grid">
   <div class="card-wrapper">
     <div class="card" onclick="window.location.href='/admin/internship/company/'">
-      <i class="fa fa-building"></i>
-      <h3>Manage Companies</h3>
+<i class="bi bi-buildings"></i>     <h3>Manage Companies</h3>
       <p>
         Add and manage companies offering internships to students.
       </p>
@@ -106,17 +116,13 @@
   </div>
     <div class="card-wrapper">
     <div class="card" onclick="window.location.href='/admin/internship/student/'">
-      <i class="fa fa-graduation-cap"></i>
-      <h3>Manage Students</h3>
-      <p>
-        View and manage student profiles and their internship activities.
-      </p>
+<i class="fa-solid fa-user-graduate"></i>      <h3>Manage Students</h3>
+      <p>Manage the student details and the enrollment details.</p>
     </div>
   </div>
     <div class="card-wrapper">
     <div class="card" onclick="window.location.href='/admin/internship/internshipapplication/'">
-      <i class="fa fa-users"></i>
-      <h3>Manage External Internship Applications</h3>
+<i class="bi bi-clipboard-check"></i>      <h3>Manage External Internship Applications</h3>
       <p>
         Review and manage external internship applications submitted by
         students.
@@ -135,8 +141,7 @@
   </div>
   <div class="card-wrapper">
     <div class="card" onclick="window.location.href='/admin/internship/attendance/'">
-      <i class="fa fa-calendar-check"></i>
-      <h3>Attendance</h3>
+<i class="bi bi-calendar-check"></i>      <h3>Attendance</h3>
       <p>
         Manage the Students Attendance for the Internship Program.
       </p>
@@ -162,8 +167,7 @@
   </div>
   <div class="card-wrapper">
     <div class="card" onclick="window.location.href='/admin/internship/userreport/'">
-      <i class="fa fa-file-text"></i>
-      <h3>Site problems</h3>
+<i class="bi bi-exclamation-triangle"></i>      <h3>Site problems</h3>
       <p>
         View and manage user-reported issues and feedback about the portal.
       </p>
@@ -171,8 +175,7 @@
   </div>
     <div class="card-wrapper">
     <div class="card" onclick="window.location.href='/admin'">
-      <i class="fa fa-user"></i>
-      <h3>Default Admin Panel</h3>
+<i class="fa-solid fa-screwdriver-wrench"></i>      <h3>Default Admin Panel</h3>
       <p>
         Access administrative dashboard to manage users, representatives, and
         system settings.
@@ -188,7 +191,7 @@
       class="card"
       onclick="window.location.href='{% url 'account_dashboard' %}'"
     >
-      <i class="fa-solid fa-user-circle"></i>
+      <i class="bi bi-person-circle"></i>
       <h3>Profile & Dashboard</h3>
       <p>
         View your profile and get a quick overview of your activities in one
@@ -198,7 +201,7 @@
   </div>
   <div class="card-wrapper">
     <div class="card" onclick="window.location.href='{% url 'company_list' %}'">
-      <i class="fa-solid fa-briefcase"></i>
+      <i class="bi bi-buildings"></i>
       <h3>Available Internships</h3>
       <p>
         Explore active internship opportunities provided by the institution and
@@ -211,7 +214,7 @@
       class="card"
       onclick="window.location.href='{% url 'check_application_status' %}'"
     >
-      <i class="fa-solid fa-file-circle-check"></i>
+      <i class="bi bi-clipboard-check"></i>
       <h3>Check Status</h3>
       <p>
         Monitor the status of your submitted internship applications in real
@@ -224,8 +227,7 @@
       class="card"
       onclick="window.location.href='{% url 'cmpapply_form' %}'"
     >
-      <i class="fa-solid fa-user-plus"></i>
-      <h3>External Internship Application</h3>
+<i class="fa-solid fa-file-circle-plus"></i>      <h3>External Internship Application</h3>
       <p>
         Submit external internship details for official approval from the
         institution.
@@ -251,7 +253,7 @@
       class="card"
       onclick="window.location.href='{% url 'upload_documents' %}'"
     >
-      <i class="fa fa-file-upload"></i>
+      <i class="bi bi-file-earmark-arrow-up"></i>
       <h3>Upload Documents</h3>
       <p>
         Students can upload the required documents to attend the internship.
