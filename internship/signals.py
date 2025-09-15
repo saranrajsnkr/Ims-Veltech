@@ -62,22 +62,43 @@ def handle_approved_application(sender, instance, created, **kwargs):
             description="Auto-created from external application",
         )
 
-    # Create or update student
-    student, created = Student.objects.get_or_create(
-        roll_number=instance.vtu_number.lower(),
-        defaults={
-            'name': instance.student_name,
-            'mobile_number': instance.contact_number,
-            'department': instance.department,
-            'applied_company': company,
-            'fee': instance.fees_amount or '0',
-            'house': "External",
-        }
-    )
+    # ---------- Handle Multiple Students ----------
+    student_fields = [
+        {
+            "name": instance.student_name,
+            "vtu": instance.vtu_number,
+            "contact": instance.contact_number,
+            "dept": instance.department,
+        },
+        # student_2 → student_10
+        *[
+            {
+                "name": getattr(instance, f"student_{i}"),
+                "vtu": getattr(instance, f"vtu_number_{i}"),
+                "contact": getattr(instance, f"contact_number_stu_{i}"),
+                "dept": getattr(instance, f"department_stu_{i}"),
+            }
+            for i in range(2, 11)
+        ],
+    ]
 
-    if not created and not student.applied_company:
-        student.applied_company = company
-        student.save()
+    for stu in student_fields:
+        if stu["vtu"]:  # Only create if VTU is present
+            student, created = Student.objects.get_or_create(
+                roll_number=stu["vtu"].lower(),
+                defaults={
+                    'name': stu["name"],
+                    'mobile_number': stu["contact"],
+                    'department': stu["dept"],
+                    'applied_company': company,
+                    'fee': instance.fees_amount or '0',
+                    'house': "External",
+                }
+            )
+            if not created and not student.applied_company:
+                student.applied_company = company
+                student.save()
+
 
 
 # ---- Sync Student Save to Google Sheets ----

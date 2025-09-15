@@ -231,72 +231,106 @@ footer {
     <section class="body1">
       <div class="custom-card">
         <h2>Internship Application Form</h2>
-        <form method="POST">
-          {% csrf_token %}
-          {{ form.non_field_errors }}
+<form method="POST">
+  {% csrf_token %}
+  {{ form.non_field_errors }}
 
-          {{ form.email }}
-          {{ form.email.errors }}
+  <!-- Student 1 -->
+  {{ form.email }} {{ form.email.errors }}
+  {{ form.student_name }} {{ form.student_name.errors }}
+  {{ form.vtu_number }} {{ form.vtu_number.errors }}
+  {{ form.department }} {{ form.department.errors }}
+  {{ form.contact_number }} {{ form.contact_number.errors }}
 
-          {{ form.student_name }}
-          {{ form.student_name.errors }}
+  <!-- Industry Details -->
+  {{ form.industry_name }} {{ form.industry_name.errors }}
+  {{ form.industry_location }} {{ form.industry_location.errors }}
+  {{ form.domain_of_work }} {{ form.domain_of_work.errors }}
+  {{ form.industry_category }} {{ form.industry_category.errors }}
 
-          {{ form.vtu_number }}
-          {{ form.vtu_number.errors }}
+  <!-- Referral Person -->
+  {{ form.referal_person_name }} {{ form.referal_person_name.errors }}
+  {{ form.referal_person_designation }} {{ form.referal_person_designation.errors }}
+  {{ form.referal_person_email }} {{ form.referal_person_email.errors }}
+  {{ form.referal_person_phone_number }} {{ form.referal_person_phone_number.errors }}
 
-          {{ form.department }}
-          {{ form.department.errors }}
+  <!-- Industry Contact -->
+  {{ form.industry_website }} {{ form.industry_website.errors }}
+  {{ form.industry_email }} {{ form.industry_email.errors }}
+  {{ form.industry_phone_number }} {{ form.industry_phone_number.errors }}
 
-          {{ form.contact_number }}
-          {{ form.contact_number.errors }}
+  <!-- Stipend / Fees -->
+  {{ form.stipend_provided }} {{ form.stipend_provided.errors }}
+  {{ form.stipend_amount }} {{ form.stipend_amount.errors }}
+  {{ form.fees_required }} {{ form.fees_required.errors }}
+  {{ form.fees_amount }} {{ form.fees_amount.errors }}
 
-          {{ form.industry_name }}
-          {{ form.industry_name.errors }}
+  <!-- Student 2 -->
+  {{ form.email_stu2 }} {{ form.email_stu2.errors }}
+  {{ form.student_2 }} {{ form.student_2.errors }}
+  {{ form.vtu_number_2 }} {{ form.vtu_number_2.errors }}
+  {{ form.department_stu_2 }} {{ form.department_stu_2.errors }}
+  {{ form.contact_number_stu_2 }} {{ form.contact_number_stu_2.errors }}
 
-          {{ form.industry_location }}
-          {{ form.industry_location.errors }}
+  <!-- Student 3 -->
+  {{ form.email_stu3 }} {{ form.email_stu3.errors }}
+  {{ form.student_3 }} {{ form.student_3.errors }}
+  {{ form.vtu_number_3 }} {{ form.vtu_number_3.errors }}
+  {{ form.department_stu_3 }} {{ form.department_stu_3.errors }}
+  {{ form.contact_number_stu_3 }} {{ form.contact_number_stu_3.errors }}
 
-          {{ form.domain_of_work }}
-          {{ form.domain_of_work.errors }}
+  <!-- Student 4 -->
+  {{ form.email_stu4 }} {{ form.email_stu4.errors }}
+  {{ form.student_4 }} {{ form.student_4.errors }}
+  {{ form.vtu_number_4 }} {{ form.vtu_number_4.errors }}
+  {{ form.department_stu_4 }} {{ form.department_stu_4.errors }}
+  {{ form.contact_number_stu_4 }} {{ form.contact_number_stu_4.errors }}
 
-          {{ form.industry_category }}
-          {{ form.industry_category.errors }}
+  <!-- Student 5 -->
+  {{ form.email_stu5 }} {{ form.email_stu5.errors }}
+  {{ form.student_5 }} {{ form.student_5.errors }}
+  {{ form.vtu_number_5 }} {{ form.vtu_number_5.errors }}
+  {{ form.department_stu_5 }} {{ form.department_stu_5.errors }}
+  {{ form.contact_number_stu_5 }} {{ form.contact_number_stu_5.errors }}
 
-          {{ form.referal_person_name }}
-          {{ form.referal_person_name.errors }}
+  <!-- Student 6 -->
+  {{ form.email_stu6 }} {{ form.email_stu6.errors }}
+  {{ form.student_6 }} {{ form.student_6.errors }}
+  {{ form.vtu_number_6 }} {{ form.vtu_number_6.errors }}
+  {{ form.department_stu_6 }} {{ form.department_stu_6.errors }}
+  {{ form.contact_number_stu_6 }} {{ form.contact_number_stu_6.errors }}
 
-          {{ form.referal_person_designation }}
-          {{ form.referal_person_designation.errors }}
+  <!-- Student 7 -->
+  {{ form.email_stu7 }} {{ form.email_stu7.errors }}
+  {{ form.student_7 }} {{ form.student_7.errors }}
+  {{ form.vtu_number_7 }} {{ form.vtu_number_7.errors }}
+  {{ form.department_stu_7 }} {{ form.department_stu_7.errors }}
+  {{ form.contact_number_stu_7 }} {{ form.contact_number_stu_7.errors }}
 
-          {{ form.referal_person_email }}
-          {{ form.referal_person_email.errors }}
+  <!-- Student 8 -->
+  {{ form.email_stu8 }} {{ form.email_stu8.errors }}
+  {{ form.student_8 }} {{ form.student_8.errors }}
+  {{ form.vtu_number_8 }} {{ form.vtu_number_8.errors }}
+  {{ form.department_stu_8 }} {{ form.department_stu_8.errors }}
+  {{ form.contact_number_stu_8 }} {{ form.contact_number_stu_8.errors }}
 
-          {{ form.referal_person_phone_number }}
-          {{ form.referal_person_phone_number.errors }}
+  <!-- Student 9 -->
+  {{ form.email_stu9 }} {{ form.email_stu9.errors }}
+  {{ form.student_9 }} {{ form.student_9.errors }}
+  {{ form.vtu_number_9 }} {{ form.vtu_number_9.errors }}
+  {{ form.department_stu_9 }} {{ form.department_stu_9.errors }}
+  {{ form.contact_number_stu_9 }} {{ form.contact_number_stu_9.errors }}
 
-          {{ form.industry_website }}
-          {{ form.industry_website.errors }}
+  <!-- Student 10 -->
+  {{ form.email_stu10 }} {{ form.email_stu10.errors }}
+  {{ form.student_10 }} {{ form.student_10.errors }}
+  {{ form.vtu_number_10 }} {{ form.vtu_number_10.errors }}
+  {{ form.department_stu_10 }} {{ form.department_stu_10.errors }}
+  {{ form.contact_number_stu_10 }} {{ form.contact_number_stu_10.errors }}
 
-          {{ form.industry_email }}
-          {{ form.industry_email.errors }}
+  <button type="submit" class="btn btn-primary">Submit</button>
+</form>
 
-          {{ form.industry_phone_number }}
-          {{ form.industry_phone_number.errors }}
-
-          {{ form.stipend_provided }}
-          {{ form.stipend_provided.errors }}
-
-          {{ form.stipend_amount }}
-          {{ form.stipend_amount.errors }}
-
-          {{ form.fees_required }}
-          {{ form.fees_required.errors }}
-
-          {{ form.fees_amount }}
-          {{ form.fees_amount.errors }}
-
-          <button type="submit">Submit</button>
-        </form>
       </div>
     </section>
     <script>

@@ -26,6 +26,7 @@ from django.utils import timezone
 from .models import Student, Company, Attendance
 from .forms import CompanyLoginForm
 import datetime
+from django.db.models import Q
 
 
 
@@ -170,6 +171,22 @@ def apply_to_company(request, company_uid):
             if intern.application_approved == "APPROVED" or intern.application_approved == "PENDING":
                 messages.error(request, "Your external company form is either pending or approved. You can only enroll in other companies if it gets rejected.",extra_tags='user')
                 return redirect('home')
+            
+            
+        for i in range(2, 11):  # since student_2 to student_10
+            field_name = f"vtu_number_{i}"
+            Intern_qs = InternshipApplication.objects.filter(**{field_name: roll})
+            if Intern_qs.exists():
+                intern = Intern_qs.first()
+                if intern.application_approved in ["APPROVED", "PENDING"]:
+                    messages.error(
+                        request,
+                        "Your external company form is either pending or approved. "
+                        "You can only enroll in other companies if it gets rejected.",
+                        extra_tags='user'
+                    )
+                    return redirect('home')
+
 
         try:
             # Create the student application and assign it to variable
@@ -409,36 +426,73 @@ def cmpapply_form_view(request):
         if intern.application_approved == "APPROVED" or intern.application_approved == "PENDING":
             messages.error(request,"You’ve already submitted an external application, and it’s either approved or still pending. You can only apply again if it gets rejected.",extra_tags='user')
             return redirect('home')
-        
+    
+    for i in range(2, 11):  # since student_2 to student_10
+        field_name = f"vtu_number_{i}"
+        Intern_qs = InternshipApplication.objects.filter(**{field_name: vtu_number})
+        if Intern_qs.exists():
+            intern = Intern_qs.first()
+            if intern.application_approved in ["APPROVED", "PENDING"]:
+                messages.error(
+                    request,
+                    "Your external company form is either pending or approved. "
+                    "You can only enroll in other companies if it gets rejected.",
+                    extra_tags='user'
+                )
+                return redirect('home')
         
 
     if request.method == 'POST':
         form = InternshipApplicationForm(request.POST)
         if form.is_valid():
-            application = form.save()
+            application = form.save(commit=False)  # don't save yet
 
-            # Optional Email to Admin
-            # try:
-            #     send_mail(
-            #         subject=f"New Internship Application - {application.student_name}",
-            #         message=(
-            #             f"Student: {application.student_name} ({application.vtu_number})\n"
-            #             f"Email: {application.email}\n"
-            #             f"Industry: {application.industry_name}\n"
-            #             f"Location: {application.industry_location}\n"
-            #             f"Domain: {application.domain_of_work}"
-            #         ),
-            #         from_email=settings.DEFAULT_FROM_EMAIL,
-            #         recipient_list=[settings.ADMIN_EMAIL]
-            #     )
-            # except Exception as e:
-            #     print("Error sending email:", e)
+            invalid_vtus = []
+
+            for i in range(1, 11):  # student_1 to student_10
+                vtu_field = f"vtu_number" if i == 1 else f"vtu_number_{i}"
+                vtu_value = getattr(application, vtu_field, None)
+
+                if vtu_value:
+                    # Check Student model
+                    if Student.objects.filter(roll_number=vtu_value).exists():
+                        student = Student.objects.filter(roll_number=vtu_value).first()
+                        if student.applied_company and student.applied_company.name != "Blocked":
+                            invalid_vtus.append(vtu_value)
+
+                    # Check InternshipApplication model
+                    existing_applications = InternshipApplication.objects.filter(
+                        Q(vtu_number=vtu_value) |
+                        Q(vtu_number_2=vtu_value) |
+                        Q(vtu_number_3=vtu_value) |
+                        Q(vtu_number_4=vtu_value) |
+                        Q(vtu_number_5=vtu_value) |
+                        Q(vtu_number_6=vtu_value) |
+                        Q(vtu_number_7=vtu_value) |
+                        Q(vtu_number_8=vtu_value) |
+                        Q(vtu_number_9=vtu_value) |
+                        Q(vtu_number_10=vtu_value)
+                    )
+
+                    for existing in existing_applications:
+                        if existing.application_approved in ["APPROVED", "PENDING"]:
+                            invalid_vtus.append(vtu_value)
+
+            # If there are invalid VTUs, warn user without saving
+            if invalid_vtus:
+                form.add_error(None, f"The following VTU(s) have already applied and cannot be added again: {', '.join(invalid_vtus)}")
+                messages.warning(request, f"Please remove or change the following VTU(s): {', '.join(invalid_vtus)}", extra_tags='user')
+                return render(request, 'internship/internship_form.html', {'form': form})
+
+            # ✅ If no issues, now save
+            application.save()
             messages.success(request, "Application submitted successfully.", extra_tags='user')
             return redirect('home')
     else:
         form = InternshipApplicationForm(initial=initial_data)
 
     return render(request, 'internship/internship_form.html', {'form': form})
+
 
 # === Step 4: Thank You Page ===
 def cmpapply_thank_you(request):

@@ -71,17 +71,40 @@ class UserReportForm(forms.ModelForm):
 from django import forms
 from .models import InternshipApplication
 
+from django import forms
+from .models import InternshipApplication
+
+
 class InternshipApplicationForm(forms.ModelForm):
     class Meta:
         model = InternshipApplication
         fields = [
+            # Main Student
             'email', 'student_name', 'vtu_number', 'department', 'contact_number',
+            
+            # Industry details
             'industry_name', 'industry_location', 'domain_of_work',
             'industry_category', 'industry_website', 'industry_email',
-            'industry_phone_number', 'referal_person_name',
-            'referal_person_designation', 'referal_person_email',
-            'referal_person_phone_number', 'stipend_provided',
-            'stipend_amount', 'fees_required', 'fees_amount'
+            'industry_phone_number',
+
+            # Referral details
+            'referal_person_name', 'referal_person_designation',
+            'referal_person_email', 'referal_person_phone_number',
+
+            # Stipend & Fees
+            'stipend_provided', 'stipend_amount',
+            'fees_required', 'fees_amount',
+
+            # Other students
+            'student_2', 'vtu_number_2', 'contact_number_stu_2', 'department_stu_2',
+            'student_3', 'vtu_number_3', 'contact_number_stu_3', 'department_stu_3',
+            'student_4', 'vtu_number_4', 'contact_number_stu_4', 'department_stu_4',
+            'student_5', 'vtu_number_5', 'contact_number_stu_5', 'department_stu_5',
+            'student_6', 'vtu_number_6', 'contact_number_stu_6', 'department_stu_6',
+            'student_7', 'vtu_number_7', 'contact_number_stu_7', 'department_stu_7',
+            'student_8', 'vtu_number_8', 'contact_number_stu_8', 'department_stu_8',
+            'student_9', 'vtu_number_9', 'contact_number_stu_9', 'department_stu_9',
+             'student_10', 'vtu_number_10', 'contact_number_stu_10', 'department_stu_10',
         ]
 
         widgets = {
@@ -169,7 +192,7 @@ class InternshipApplicationForm(forms.ModelForm):
                 'required': True,
             }),
             'referal_person_phone_number': forms.TextInput(attrs={
-                'placeholder': 'Mobile Number of the Referral Person',
+                'placeholder': 'Referral Person Mobile',
                 'class': 'form-control',
                 'pattern': '[0-9]{10}',
                 'title': 'Enter a valid 10-digit mobile number',
@@ -193,6 +216,27 @@ class InternshipApplicationForm(forms.ModelForm):
                 'class': 'form-control',
             }),
         }
+        
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        # keep choices, only add CSS class
+        self.fields['department'].widget.attrs.update({'class': 'form-control'})
+
+        for i in range(2, 11):
+            self.fields[f'student_{i}'].widget = forms.TextInput(attrs={
+                'placeholder': f'Student {i} Name', 'class': 'form-control'
+            })
+            self.fields[f'vtu_number_{i}'].widget = forms.TextInput(attrs={
+                'placeholder': f'Student {i} VTU Number', 'class': 'form-control'
+            })
+            self.fields[f'contact_number_stu_{i}'].widget = forms.TextInput(attrs={
+                'placeholder': f'Student {i} Contact Number', 'class': 'form-control'
+            })
+
+            # IMPORTANT: keep existing CHOICES; just style the widget
+            self.fields[f'department_stu_{i}'].widget.attrs.update({'class': 'form-control'})
+
 
 
 

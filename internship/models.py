@@ -283,7 +283,117 @@ class InternshipApplication(models.Model):
     )
 
     submitted_at = models.DateTimeField(auto_now_add=True)
+    
+    # Student 2
+    student_2 = models.CharField(max_length=100, verbose_name="Name of the Student", blank=True, null=True)
+    vtu_number_2 = models.CharField(max_length=20, verbose_name="VTU Number", blank=True, null=True)
+    contact_number_stu_2 = models.CharField(max_length=15, verbose_name="Contact Number of the Student", blank=True, null=True)
+    department_stu_2 = models.CharField(
+        max_length=150,
+        choices=DEPARTMENT_CHOICES,
+        verbose_name="Department of the Student",
+        blank=True,
+        null=True,
+    )
 
+    # Student 3
+    student_3 = models.CharField(max_length=100, verbose_name="Name of the Student", blank=True, null=True)
+    vtu_number_3 = models.CharField(max_length=20, verbose_name="VTU Number", blank=True, null=True)
+    contact_number_stu_3 = models.CharField(max_length=15, verbose_name="Contact Number of the Student", blank=True, null=True)
+    department_stu_3 = models.CharField(
+        max_length=150,
+        choices=DEPARTMENT_CHOICES,
+        verbose_name="Department of the Student",
+        blank=True,
+        null=True,
+    )
+
+    # Student 4
+    student_4 = models.CharField(max_length=100, verbose_name="Name of the Student", blank=True, null=True)
+    vtu_number_4 = models.CharField(max_length=20, verbose_name="VTU Number", blank=True, null=True)
+    contact_number_stu_4 = models.CharField(max_length=15, verbose_name="Contact Number of the Student", blank=True, null=True)
+    department_stu_4 = models.CharField(
+        max_length=150,
+        choices=DEPARTMENT_CHOICES,
+        verbose_name="Department of the Student",
+        blank=True,
+        null=True,
+    )
+
+    # Student 5
+    student_5 = models.CharField(max_length=100, verbose_name="Name of the Student", blank=True, null=True)
+    vtu_number_5 = models.CharField(max_length=20, verbose_name="VTU Number", blank=True, null=True)
+    contact_number_stu_5 = models.CharField(max_length=15, verbose_name="Contact Number of the Student", blank=True, null=True)
+    department_stu_5 = models.CharField(
+        max_length=150,
+        choices=DEPARTMENT_CHOICES,
+        verbose_name="Department of the Student",
+        blank=True,
+        null=True,
+    )
+
+    # Student 6
+    student_6 = models.CharField(max_length=100, verbose_name="Name of the Student", blank=True, null=True)
+    vtu_number_6 = models.CharField(max_length=20, verbose_name="VTU Number", blank=True, null=True)
+    contact_number_stu_6 = models.CharField(max_length=15, verbose_name="Contact Number of the Student", blank=True, null=True)
+    department_stu_6 = models.CharField(
+        max_length=150,
+        choices=DEPARTMENT_CHOICES,
+        verbose_name="Department of the Student",
+        blank=True,
+        null=True,
+    )
+
+    # Student 7
+    student_7 = models.CharField(max_length=100, verbose_name="Name of the Student", blank=True, null=True)
+    vtu_number_7 = models.CharField(max_length=20, verbose_name="VTU Number", blank=True, null=True)
+    contact_number_stu_7 = models.CharField(max_length=15, verbose_name="Contact Number of the Student", blank=True, null=True)
+    department_stu_7 = models.CharField(
+        max_length=150,
+        choices=DEPARTMENT_CHOICES,
+        verbose_name="Department of the Student",
+        blank=True,
+        null=True,
+    )
+
+    # Student 8
+    student_8 = models.CharField(max_length=100, verbose_name="Name of the Student", blank=True, null=True)
+    vtu_number_8 = models.CharField(max_length=20, verbose_name="VTU Number", blank=True, null=True)
+    contact_number_stu_8 = models.CharField(max_length=15, verbose_name="Contact Number of the Student", blank=True, null=True)
+    department_stu_8 = models.CharField(
+        max_length=150,
+        choices=DEPARTMENT_CHOICES,
+        verbose_name="Department of the Student",
+        blank=True,
+        null=True,
+    )
+
+    # Student 9
+    student_9 = models.CharField(max_length=100, verbose_name="Name of the Student", blank=True, null=True)
+    vtu_number_9 = models.CharField(max_length=20, verbose_name="VTU Number", blank=True, null=True)
+    contact_number_stu_9 = models.CharField(max_length=15, verbose_name="Contact Number of the Student", blank=True, null=True)
+    department_stu_9 = models.CharField(
+        max_length=150,
+        choices=DEPARTMENT_CHOICES,
+        verbose_name="Department of the Student",
+        blank=True,
+        null=True,
+    )
+
+    # Student 10
+    student_10 = models.CharField(max_length=100, verbose_name="Name of the Student", blank=True, null=True)
+    vtu_number_10 = models.CharField(max_length=20, verbose_name="VTU Number", blank=True, null=True)
+    contact_number_stu_10 = models.CharField(max_length=15, verbose_name="Contact Number of the Student", blank=True, null=True)
+    department_stu_10 = models.CharField(
+        max_length=150,
+        choices=DEPARTMENT_CHOICES,
+        verbose_name="Department of the Student",
+        blank=True,
+        null=True,
+    )
+
+
+    
     # def __str__(self):
     #     return f"{self.student_name} ({self.vtu_number}) - {self.industry_name}"
 

@@ -243,7 +243,19 @@ class InternshipApplicationAdmin(admin.ModelAdmin):
         ('Approval Status', {
             'fields': ('application_approved', 'approval_message'),
         }),
-    )
+        ('Additional Students', {
+            'fields': ('student_2', 'vtu_number_2','contact_number_stu_2', 'department_stu_2',
+                       'student_3', 'vtu_number_3','contact_number_stu_3', 'department_stu_3',
+                       'student_4', 'vtu_number_4', 'contact_number_stu_4', 'department_stu_4',
+                       'student_5', 'vtu_number_5','contact_number_stu_5', 'department_stu_5',
+                       'student_6', 'vtu_number_6','contact_number_stu_6', 'department_stu_6',
+                       'student_7', 'vtu_number_7','contact_number_stu_7', 'department_stu_7',
+                       'student_8', 'vtu_number_8','contact_number_stu_8', 'department_stu_8',
+                       'student_9', 'vtu_number_9','contact_number_stu_9', 'department_stu_9',
+                       'student_10', 'vtu_number_10','contact_number_stu_10', 'department_stu_10'),
+            'classes': ('collapse',),
+        }),
+        )
 
 
 
