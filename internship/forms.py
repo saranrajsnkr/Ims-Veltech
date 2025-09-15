@@ -225,17 +225,17 @@ class InternshipApplicationForm(forms.ModelForm):
 
         for i in range(2, 11):
             self.fields[f'student_{i}'].widget = forms.TextInput(attrs={
-                'placeholder': f'Student {i} Name', 'class': 'form-control'
+                'placeholder': f'Student {i} Name', 'class': f'form-control student-{i}'
             })
             self.fields[f'vtu_number_{i}'].widget = forms.TextInput(attrs={
-                'placeholder': f'Student {i} VTU Number', 'class': 'form-control'
+                'placeholder': f'Student {i} VTU Number', f'class': 'form-control student-{i}',
             })
             self.fields[f'contact_number_stu_{i}'].widget = forms.TextInput(attrs={
-                'placeholder': f'Student {i} Contact Number', 'class': 'form-control'
+                'placeholder': f'Student {i} Contact Number', f'class': 'form-control student-{i}',
             })
 
             # IMPORTANT: keep existing CHOICES; just style the widget
-            self.fields[f'department_stu_{i}'].widget.attrs.update({'class': 'form-control'})
+            self.fields[f'department_stu_{i}'].widget.attrs.update({'class': f'form-control student-{i}'})
 
 
 
