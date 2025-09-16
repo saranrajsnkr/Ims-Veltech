@@ -148,7 +148,7 @@ JAZZMIN_SETTINGS = {
     ],
 
     # Side menu (app ordering)
-    "order_with_respect_to": ["auth", "internship"],
+    "order_with_respect_to": ["internship", "auth",],
 
     # 🎨 ICONS mapping
     "icons": {
@@ -173,8 +173,8 @@ JAZZMIN_SETTINGS = {
     "changeform_format": "horizontal_tabs",  # or "collapsible", "single"
 
     # # UI tweaks
-    # "custom_css": "css/admin_custom.css",  # Optional
-    # "custom_js": "js/admin_custom.js",     # Optional
+    "custom_css": "css/admin_custom.css",  # Optional
+    "custom_js": "js/admin_custom.js",     # Optional
     "use_google_fonts_cdn": True,
     "changeform_format_overrides": {
         "auth.user": "collapsible",
