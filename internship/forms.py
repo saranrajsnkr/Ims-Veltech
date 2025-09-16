@@ -228,10 +228,10 @@ class InternshipApplicationForm(forms.ModelForm):
                 'placeholder': f'Student {i} Name', 'class': f'form-control student-{i}'
             })
             self.fields[f'vtu_number_{i}'].widget = forms.TextInput(attrs={
-                'placeholder': f'Student {i} VTU Number', f'class': 'form-control student-{i}',
+                'placeholder': f'Student {i} VTU Number', f'class': 'form-control student-{i}', 'pattern': '\\d{5}', 'inputmode': 'numeric', 'title': 'Enter a valid 5-digit VTU number',
             })
             self.fields[f'contact_number_stu_{i}'].widget = forms.TextInput(attrs={
-                'placeholder': f'Student {i} Contact Number', f'class': 'form-control student-{i}',
+                'placeholder': f'Student {i} Contact Number', f'class': 'form-control student-{i}', 'pattern': '[0-9]{10}', 'title': 'Enter a valid 10-digit mobile number', 'inputmode': 'numeric',
             })
 
             # IMPORTANT: keep existing CHOICES; just style the widget
