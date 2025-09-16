@@ -499,8 +499,10 @@ def cmpapply_form_view(request):
             return redirect('home')
     else:
         form = InternshipApplicationForm(initial=initial_data)
+    
+    max_students = SiteSetting.objects.first().max_students_per_internship
 
-    return render(request, 'internship/internship_form.html', {'form': form})
+    return render(request, 'internship/internship_form.html', {'form': form, 'max_students': max_students})
 
 
 # === Step 4: Thank You Page ===

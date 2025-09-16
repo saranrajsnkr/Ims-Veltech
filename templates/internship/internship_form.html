@@ -513,7 +513,7 @@ function validateSection(section) {
 
   // ====== ADD / REMOVE STUDENT FIELDS ======
   let studentCount = 1;
-  const maxStudents = 10;
+  const maxStudents = {{ max_students|default:10 }};
   const addStudentBtn = document.getElementById('add-student');
   const extraStudentsDiv = document.getElementById('extra-students');
 

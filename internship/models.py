@@ -130,10 +130,12 @@ MESSAGE_COLOR_CHOICES = [
 
 # models.py
 class SiteSetting(models.Model):
+    SiteSettings = models.CharField(max_length=100, default="Site Settings", editable=False)
     maintenance_mode = models.BooleanField(default=False)
     active_approval_letter = models.BooleanField("Allow Approval Letter Uploads", default=True)
     active_undertaking_letter = models.BooleanField("Allow Undertaking Letter Uploads", default=True)
     active_bonafide_letter = models.BooleanField("Allow Bonafide Letter Uploads", default=True)
+    max_students_per_internship = models.PositiveIntegerField("Max Students per Internship", default=10)
 
     def __str__(self):
         return "Site Settings"

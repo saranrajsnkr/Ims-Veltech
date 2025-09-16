@@ -120,29 +120,27 @@ JAZZMIN_SETTINGS = {
     "welcome_sign": "Welcome to VelTech Internship Admin Panel",
     "copyright": "VelTech",
 
-    # Top menu links
-    "topmenu_links": [
-    {"name": "Dashboard", "url": "admin:index", "permissions": ["auth.view_user"]},
+"topmenu_links": [
+    {"name": "Dashboard", "url": "admin:index", "permissions": ["auth.view_user"], "icon": "fas fa-tachometer-alt"},
 
     # Master Data
-    {"name": "Company List", "model": "internship.company"},
-    {"name": "Student List", "model": "internship.student"},
-    {"name": "Attendance", "model": "internship.attendance"},
-    {"name": "Student Reports", "model": "internship.studentreport"},
-    {"name": "Downloadable Files", "model": "internship.downloadable_files"},
+    {"name": "Company List", "model": "internship.company", "icon": "fas fa-building"},
+    {"name": "Student List", "model": "internship.student", "icon": "fas fa-user-graduate"},
+    {"name": "Attendance", "model": "internship.attendance", "icon": "fas fa-calendar-check"},
+    {"name": "Student Reports", "model": "internship.studentreport", "icon": "fas fa-file-alt"},
+    {"name": "Downloadable Files", "model": "internship.downloadable_files", "icon": "fas fa-download"},
 
     # Applications
-    {"name": "Internship Applications", "model": "internship.internshipapplication"},
+    {"name": "Internship Applications", "model": "internship.internshipapplication", "icon": "fas fa-briefcase"},
 
     # Site Settings & Announcements
-    {"name": "Site Settings", "model": "internship.sitesetting"},
-    {"name": "Announcements", "model": "internship.announcement"},
+    {"name": "Site Settings", "model": "internship.sitesetting", "icon": "fas fa-cogs"},
+    {"name": "Announcements", "model": "internship.announcement", "icon": "fas fa-bullhorn"},
 
     # Feedback / Reports
-    {"name": "User Reports", "model": "internship.userreport"},
+    {"name": "User Reports", "model": "internship.userreport", "icon": "fas fa-chart-line"},
+],
 
-
-    ],
 
     # User menu (top right corner)
     "usermenu_links": [
@@ -152,25 +150,31 @@ JAZZMIN_SETTINGS = {
     # Side menu (app ordering)
     "order_with_respect_to": ["auth", "internship"],
 
-    # App icons
+    # 🎨 ICONS mapping
     "icons": {
         "auth": "fas fa-users-cog",
-        "auth.user": "fas fa-user",
-        "auth.group": "fas fa-users",
         "internship.company": "fas fa-building",
         "internship.student": "fas fa-user-graduate",
+        "internship.attendance": "fas fa-calendar-check",
+        "internship.studentreport": "fas fa-file-alt",
+        "internship.downloadable_files": "fas fa-download",
+        "internship.internshipapplication": "fas fa-briefcase",
+        "internship.sitesetting": "fas fa-cogs",
+        "internship.announcement": "fas fa-bullhorn",
+        "internship.userreport": "fas fa-chart-line",
     },
 
     # Theme and layout options
     "show_sidebar": True,
+    "show_sidebar_expanded": False,
     "navigation_expanded": True,
     "hide_apps": [],
     "hide_models": [],
     "changeform_format": "horizontal_tabs",  # or "collapsible", "single"
 
-    # UI tweaks
-    "custom_css": "css/admin_custom.css",  # Optional
-    "custom_js": "js/admin_custom.js",     # Optional
+    # # UI tweaks
+    # "custom_css": "css/admin_custom.css",  # Optional
+    # "custom_js": "js/admin_custom.js",     # Optional
     "use_google_fonts_cdn": True,
     "changeform_format_overrides": {
         "auth.user": "collapsible",
@@ -183,8 +187,38 @@ JAZZMIN_SETTINGS = {
     ]
 }
 
-
-
+JAZZMIN_SETTINGS["show_ui_builder"] = True
+JAZZMIN_UI_TWEAKS = {
+    "navbar_small_text": False,
+    "footer_small_text": False,
+    "body_small_text": False,
+    "brand_small_text": False,
+    "brand_colour": "navbar-white",
+    "accent": "accent-primary",
+    "navbar": "navbar-white navbar-light",
+    "no_navbar_border": False,
+    "navbar_fixed": False,
+    "layout_boxed": False,
+    "footer_fixed": False,
+    "sidebar_fixed": False,
+    "sidebar": "sidebar-light-primary",
+    "sidebar_nav_small_text": False,
+    "sidebar_disable_expand": True,
+    "sidebar_nav_child_indent": False,
+    "sidebar_nav_compact_style": False,
+    "sidebar_nav_legacy_style": True,
+    "sidebar_nav_flat_style": True,
+    "theme": "lux",
+    "dark_mode_theme": None,
+    "button_classes": {
+        "primary": "btn-primary",
+        "secondary": "btn-secondary",
+        "info": "btn-info",
+        "warning": "btn-warning",
+        "danger": "btn-danger",
+        "success": "btn-success"
+    }
+}
 # Middleware
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

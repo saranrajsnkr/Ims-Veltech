@@ -170,11 +170,11 @@ class StudentAdmin(admin.ModelAdmin):
 
 @admin.register(SiteSetting)
 class SiteSettingAdmin(admin.ModelAdmin):
-    list_display = [ 'maintenance_mode', 'active_approval_letter', 'active_undertaking_letter', 'active_bonafide_letter']
+    list_display = [ 'SiteSettings','maintenance_mode', 'active_approval_letter', 'active_undertaking_letter', 'active_bonafide_letter' ,'max_students_per_internship']
 
     def has_add_permission(self, request):
         # Only allow adding if no announcement exists
-        return not Announcement.objects.exists()
+        return not SiteSetting.objects.exists()
 
 @admin.register(Announcement)
 class AnnouncementAdmin(admin.ModelAdmin):
