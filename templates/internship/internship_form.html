@@ -312,6 +312,13 @@ footer {
   margin-top: 1rem;
 }
 
+        .alert-error {
+          color: #b91c1c;
+          font-weight: 600;
+          margin-top: 1rem;
+          margin-bottom: 1rem;
+        }
+
       /* Paste the entire <style> block from your previous template here with no changes */
       {{ block.super }}
     </style>
@@ -393,9 +400,21 @@ footer {
 
           <!-- Additional Students (hidden initially) -->
           <div id="extra-students"></div>
-
-          <!-- Add Student Button (only in student step) -->
           <button type="button" id="add-student" class="btn btn-secondary" style="margin-top:1rem;">+ Add Student</button>
+
+
+
+            <div class="messages">
+      <div class="alert-error">
+          * Do not submit spam applications or misuse DIND websites. Doing so may lead to blacklisting from all Internship, Training, and Placement activities.  
+          If you are from another department, legal action may also be taken immediately.
+      </div>
+      </div>
+          <label>
+              <input type="checkbox" name="terms" required>
+        I have read and agree to the above terms, and I confirm that the details I have provided are correct. I understand that action may be taken against me if any information is found to be false.
+          </label> <br>
+          <!-- Add Student Button (only in student step) -->
 
           <div class="form-navigation">
             <button type="button" class="btn btn-secondary prev-btn">← Back</button>
@@ -432,25 +451,39 @@ footer {
     if (firstInput) firstInput.focus();
   }
 
-  function validateSection(section) {
-    let valid = true;
-    const controls = Array.from(section.querySelectorAll('input, select, textarea'))
-      .filter(el => el.type !== 'hidden' && el.type !== 'button' && el.type !== 'submit' && el.offsetParent !== null);
-    controls.forEach(input => {
-      const existingError = input.nextElementSibling && input.nextElementSibling.classList.contains('error-message');
-      if (input.hasAttribute('required') && !input.value.trim()) {
-        input.classList.add('error');
-        if (!existingError) {
-          input.insertAdjacentHTML('afterend', `<span class="error-message" style="color:red;font-size:0.85em;">This field is required</span>`);
-        }
-        valid = false;
-      } else {
-        input.classList.remove('error');
-        if (existingError) input.nextElementSibling.remove();
+function validateSection(section) {
+  let valid = true;
+  const controls = Array.from(section.querySelectorAll('input, select, textarea'))
+    .filter(el => el.type !== 'hidden' && el.type !== 'button' && el.type !== 'submit' && el.offsetParent !== null);
+
+  controls.forEach(input => {
+    const existingError = input.nextElementSibling && input.nextElementSibling.classList.contains('error-message');
+
+    // Handle checkboxes separately
+    if (input.type === "checkbox" && input.hasAttribute("required") && !input.checked) {
+      input.classList.add("error");
+      if (!existingError) {
+        input.insertAdjacentHTML('afterend', `<span class="error-message" style="color:red;font-size:0.85em;">You must agree before submitting</span>`);
       }
-    });
-    return valid;
-  }
+      valid = false;
+    }
+    // Normal input/textarea/select validation
+    else if (input.hasAttribute("required") && input.value.trim() === "") {
+      input.classList.add("error");
+      if (!existingError) {
+        input.insertAdjacentHTML('afterend', `<span class="error-message" style="color:red;font-size:0.85em;">This field is required</span>`);
+      }
+      valid = false;
+    } 
+    else {
+      input.classList.remove("error");
+      if (existingError) input.nextElementSibling.remove();
+    }
+  });
+
+  return valid;
+}
+
 
   // Navigation buttons
   document.addEventListener('click', function (e) {
