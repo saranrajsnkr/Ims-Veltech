@@ -5,6 +5,7 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from .admin_forms import CsvImportForm  # Make sure you have this form
 from django.db.models import F
+from django.utils.safestring import mark_safe
 
 
 @admin.register(Company)
@@ -207,57 +208,76 @@ class UserReportAdmin(admin.ModelAdmin):
     #     return False
   
 
-from django.contrib import admin
-from .models import InternshipApplication
+
 
 @admin.register(InternshipApplication)
 class InternshipApplicationAdmin(admin.ModelAdmin):
     list_display = ("student_name", "vtu_number", "industry_name", "application_approved", "submitted_at")
-    list_filter=("application_approved",)
+    list_filter = ("application_approved",)
     search_fields = ("student_name", "vtu_number", "industry_name")
 
-    def get_readonly_fields(self, request, obj=None):
-        if obj:  # editing an existing object
-            all_fields = [field.name for field in obj._meta.fields]
-            return [f for f in all_fields if f not in ("application_approved", "approval_message")]
-        return []  # allow editing all fields while creating a new object
+    # --- HR fields (separate names to avoid duplicates) ---
+    def hr2(self, obj=None): return mark_safe("<hr style='border: 1px solid #ddd; margin: 20px 0;'>")
+    def hr3(self, obj=None): return mark_safe("<hr style='border: 1px solid #ddd; margin: 20px 0;'>")
+    def hr4(self, obj=None): return mark_safe("<hr style='border: 1px solid #ddd; margin: 20px 0;'>")
+    def hr5(self, obj=None): return mark_safe("<hr style='border: 1px solid #ddd; margin: 20px 0;'>")
+    def hr6(self, obj=None): return mark_safe("<hr style='border: 1px solid #ddd; margin: 20px 0;'>")
+    def hr7(self, obj=None): return mark_safe("<hr style='border: 1px solid #ddd; margin: 20px 0;'>")
+    def hr8(self, obj=None): return mark_safe("<hr style='border: 1px solid #ddd; margin: 20px 0;'>")
+    def hr9(self, obj=None): return mark_safe("<hr style='border: 1px solid #ddd; margin: 20px 0;'>")
 
+    hr2.short_description = hr3.short_description = hr4.short_description = ""
+    hr5.short_description = hr6.short_description = hr7.short_description = ""
+    hr8.short_description = hr9.short_description = ""
 
     fieldsets = (
         ('Student Details', {
-            'fields': ('student_name', 'vtu_number', 'department', 'email', 'contact_number')
+            'fields': ('student_name', 'vtu_number', 'department', 'email', 'contact_number', 'submitted_at')
         }),
         ('Industry Details', {
             'fields': (
                 'industry_name', 'industry_location', 'domain_of_work',
-                'industry_category', 'industry_website', 'industry_email', 'industry_phone_number' , 'referal_person_name', 'referal_person_designation' , 'referal_person_email', 'referal_person_phone_number'
+                'industry_category', 'industry_website', 'industry_email', 'industry_phone_number',
+                'referal_person_name', 'referal_person_designation', 'referal_person_email', 'referal_person_phone_number'
             )
         }),
         ('Stipend & Fees', {
             'fields': ('stipend_provided', 'stipend_amount', 'fees_required', 'fees_amount')
         }),
-        ('Meta', {
-            'fields': ('submitted_at',),
+        ('Additional Students', {
+            'fields': (
+                'student_2', 'vtu_number_2', 'contact_number_stu_2', 'department_stu_2',
+                'hr2',
+                'student_3', 'vtu_number_3', 'contact_number_stu_3', 'department_stu_3',
+                'hr3',
+                'student_4', 'vtu_number_4', 'contact_number_stu_4', 'department_stu_4',
+                'hr4',
+                'student_5', 'vtu_number_5', 'contact_number_stu_5', 'department_stu_5',
+                'hr5',
+                'student_6', 'vtu_number_6', 'contact_number_stu_6', 'department_stu_6',
+                'hr6',
+                'student_7', 'vtu_number_7', 'contact_number_stu_7', 'department_stu_7',
+                'hr7',
+                'student_8', 'vtu_number_8', 'contact_number_stu_8', 'department_stu_8',
+                'hr8',
+                'student_9', 'vtu_number_9', 'contact_number_stu_9', 'department_stu_9',
+                'hr9',
+                'student_10', 'vtu_number_10', 'contact_number_stu_10', 'department_stu_10',
+            )
         }),
-        
         ('Approval Status', {
             'fields': ('application_approved', 'approval_message'),
         }),
-        ('Additional Students', {
-            'fields': ('student_2', 'vtu_number_2','contact_number_stu_2', 'department_stu_2',
-                       'student_3', 'vtu_number_3','contact_number_stu_3', 'department_stu_3',
-                       'student_4', 'vtu_number_4', 'contact_number_stu_4', 'department_stu_4',
-                       'student_5', 'vtu_number_5','contact_number_stu_5', 'department_stu_5',
-                       'student_6', 'vtu_number_6','contact_number_stu_6', 'department_stu_6',
-                       'student_7', 'vtu_number_7','contact_number_stu_7', 'department_stu_7',
-                       'student_8', 'vtu_number_8','contact_number_stu_8', 'department_stu_8',
-                       'student_9', 'vtu_number_9','contact_number_stu_9', 'department_stu_9',
-                       'student_10', 'vtu_number_10','contact_number_stu_10', 'department_stu_10'),
-            'classes': ('collapse',),
-        }),
-        )
+    )
 
+    readonly_fields = ("hr2", "hr3", "hr4", "hr5", "hr6", "hr7", "hr8", "hr9")
 
+    def get_readonly_fields(self, request, obj=None):
+        base = ["hr2", "hr3", "hr4", "hr5", "hr6", "hr7", "hr8", "hr9"]
+        if obj:
+            all_fields = [field.name for field in obj._meta.fields]
+            return base + [f for f in all_fields if f not in ("application_approved", "approval_message")]
+        return base
 
 
 

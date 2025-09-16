@@ -230,8 +230,17 @@ def check_application_status(request):
 
 
         # Check InternshipApplication model
-        internship_result = InternshipApplication.objects.filter(vtu_number=roll_number)
-
+        internship_result = InternshipApplication.objects.filter(Q(vtu_number=roll_number) |
+                        Q(vtu_number_2=roll_number) |
+                        Q(vtu_number_3=roll_number) |
+                        Q(vtu_number_4=roll_number) |
+                        Q(vtu_number_5=roll_number) |
+                        Q(vtu_number_6=roll_number) |
+                        Q(vtu_number_7=roll_number) |
+                        Q(vtu_number_8=roll_number) |
+                        Q(vtu_number_9=roll_number) |
+                        Q(vtu_number_10=roll_number)
+                    )
         # Check Student model
         student_result = Student.objects.filter(roll_number=roll_number).select_related('applied_company').first()
 

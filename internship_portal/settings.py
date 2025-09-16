@@ -122,9 +122,26 @@ JAZZMIN_SETTINGS = {
 
     # Top menu links
     "topmenu_links": [
-        {"name": "Dashboard", "url": "admin:index", "permissions": ["auth.view_user"]},
-        {"name": "Company List", "model": "internship.company"},
-        {"name": "Student List", "model": "internship.student"},
+    {"name": "Dashboard", "url": "admin:index", "permissions": ["auth.view_user"]},
+
+    # Master Data
+    {"name": "Company List", "model": "internship.company"},
+    {"name": "Student List", "model": "internship.student"},
+    {"name": "Attendance", "model": "internship.attendance"},
+    {"name": "Student Reports", "model": "internship.studentreport"},
+    {"name": "Downloadable Files", "model": "internship.downloadable_files"},
+
+    # Applications
+    {"name": "Internship Applications", "model": "internship.internshipapplication"},
+
+    # Site Settings & Announcements
+    {"name": "Site Settings", "model": "internship.sitesetting"},
+    {"name": "Announcements", "model": "internship.announcement"},
+
+    # Feedback / Reports
+    {"name": "User Reports", "model": "internship.userreport"},
+
+
     ],
 
     # User menu (top right corner)

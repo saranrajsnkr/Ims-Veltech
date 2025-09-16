@@ -279,7 +279,8 @@ class InternshipApplication(models.Model):
     approval_message = models.TextField(
         blank=True,
         null=True,
-        verbose_name="Message Regarding Approval Status"
+        verbose_name="Message Regarding Approval Status",
+        default="Your application is under review. Please check back later."
     )
 
     submitted_at = models.DateTimeField(auto_now_add=True)

@@ -74,13 +74,53 @@
             {% for application in internship_result %}
             <div class="result-card">
                 <div class="card-header">
-                    <h3><i class="fa-solid fa-user-graduate"></i> Student Application</h3>
+                    <h3><i class="fa-solid fa-user-graduate"></i> External Application</h3>
                 </div>
                 <div class="card-body">
                     <p><strong>Name:</strong> {{ application.student_name }}</p>
                     <p><strong>Vtu Number:</strong> {{ application.vtu_number }}</p>
                     <p><strong>Industry:</strong> {{ application.industry_name }}</p>
                     <p><strong>Location:</strong> {{ application.industry_location }}</p>
+                    {% if application.vtu_number_2 %}
+                    <hr />
+                    <p><strong>Add On Students</strong></p>
+                    {% endif %}
+                    {% if application.vtu_number_2 %}
+                    <p><strong>Name:</strong> {{ application.student_2 }}</p>
+                    <p><strong>Vtu Number:</strong> {{ application.vtu_number_2 }}</p>
+                    {% endif %}
+                    {% if application.vtu_number_3 %}
+                    <p><strong>Name:</strong> {{ application.student_3 }}</p>
+                    <p><strong>Vtu Number:</strong> {{ application.vtu_number_3 }}</p>
+                    {% endif %}
+                    {% if application.vtu_number_4 %}
+                    <p><strong>Name:</strong> {{ application.student_4 }}</p>
+                    <p><strong>Vtu Number:</strong> {{ application.vtu_number_4 }}</p>
+                    {% endif %}
+                    {% if application.vtu_number_5 %}
+                    <p><strong>Name:</strong> {{ application.student_5 }}</p>
+                    <p><strong>Vtu Number:</strong> {{ application.vtu_number_5 }}</p>
+                    {% endif %}
+                    {% if application.vtu_number_6 %}
+                    <p><strong>Name:</strong> {{ application.student_6 }}</p>
+                    <p><strong>Vtu Number:</strong> {{ application.vtu_number_6 }}</p>
+                    {% endif %}
+                    {% if application.vtu_number_7 %}
+                    <p><strong>Name:</strong> {{ application.student_7 }}</p>
+                    <p><strong>Vtu Number:</strong> {{ application.vtu_number_7 }}</p>
+                    {% endif %}
+                    {% if application.vtu_number_8 %}
+                    <p><strong>Name:</strong> {{ application.student_8 }}</p>
+                    <p><strong>Vtu Number:</strong> {{ application.vtu_number_8 }}</p>
+                    {% endif %}
+                    {% if application.vtu_number_9 %}
+                    <p><strong>Name:</strong> {{ application.student_9 }}</p>
+                    <p><strong>Vtu Number:</strong> {{ application.vtu_number_9 }}</p>
+                    {% endif %}
+                    {% if application.vtu_number_10 %}
+                    <p><strong>Name:</strong> {{ application.student_10 }}</p>
+                    <p><strong>Vtu Number:</strong> {{ application.vtu_number_10 }}</p>
+                    {% endif %}
 
                     {% if application.application_approved == 'APPROVED' %}
                         <div class="status-tag approved">
@@ -107,7 +147,7 @@
         {% if student_result %}
         <div class="result-card">
             <div class="card-header">
-                <h3><i class="fa-solid fa-school"></i> College Mode Application</h3>
+                <h3><i class="fa-solid fa-school"></i> Collage Entry</h3>
             </div>
             <div class="card-body">
                 <p><strong>Name:</strong> {{ student_result.name }}</p>
