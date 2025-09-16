@@ -1,2223 +1,877 @@
-<p align="center">
-<img width="1920" height="1080" alt="Screenshot (94)" src="https://github.com/user-attachments/assets/ee5ad5ba-e128-4a44-aba8-efb5f1f81a9e" />
+# Internship Portal - Complete Project Analysis & User Manual
 
-</p>
-<p align="center">
-	<em><code>❯ REPLACE-ME</code></em>
-</p>
-<p align="center">
-	<img src="https://img.shields.io/github/license/Saran24875/IMS-VELTECH?style=default&logo=opensourceinitiative&logoColor=white&color=0080ff" alt="license">
-	<img src="https://img.shields.io/github/last-commit/Saran24875/IMS-VELTECH?style=default&logo=git&logoColor=white&color=0080ff" alt="last-commit">
-	<img src="https://img.shields.io/github/languages/top/Saran24875/IMS-VELTECH?style=default&color=0080ff" alt="repo-top-language">
-	<img src="https://img.shields.io/github/languages/count/Saran24875/IMS-VELTECH?style=default&color=0080ff" alt="repo-language-count">
-</p>
-<p align="center"><!-- default option, no dependency badges. -->
-</p>
-<p align="center">
-	<!-- default option, no dependency badges. -->
-</p>
-<br>
+## Overview
 
-## 🔗 Table of Contents
+The **Internship Portal** is a comprehensive Django-based web application designed for educational institutions (specifically VelTech University) to manage student internships, company partnerships, and administrative workflows. This system streamlines the entire internship lifecycle from application to attendance tracking.
 
-- [📍 Overview](#-overview)
-- [👾 Features](#-features)
-- [📁 Project Structure](#-project-structure)
-  - [📂 Project Index](#-project-index)
-- [🚀 Getting Started](#-getting-started)
-  - [☑️ Prerequisites](#-prerequisites)
-  - [⚙️ Installation](#-installation)
-  - [🤖 Usage](#🤖-usage)
-  - [🧪 Testing](#🧪-testing)
-- [📌 Project Roadmap](#-project-roadmap)
-- [🔰 Contributing](#-contributing)
-- [🎗 License](#-license)
-- [🙌 Acknowledgments](#-acknowledgments)
+## Technology Stack & Dependencies
 
----
+### Core Framework
+- **Backend**: Django 5.2.5 (Python 3.11)
+- **Database**: PostgreSQL (via psycopg2-binary)
+- **Web Server**: Gunicorn with gevent workers
+- **Containerization**: Docker
+- **Static Files**: Whitenoise with compression
 
-## 📍 Overview
+### Key Integrations
+- **Authentication**: Django Allauth (Google OAuth2)
+- **Admin Interface**: Django Jazzmin + Django Admin Interface
+- **File Storage**: Cloudinary (PDF document storage)
+- **Email**: SMTP (Gmail)
+- **Spreadsheet Sync**: Google Sheets API
+- **Data Export**: Django Import/Export
+- **Rate Limiting**: Django Ratelimit
+- **Scheduling**: Django Crontab
 
-<code>❯ REPLACE-ME</code>
+### Frontend Technologies
+- **CSS Frameworks**: Bootstrap 5.3, Font Awesome
+- **Icons**: Bootstrap Icons, Font Awesome
+- **Responsive Design**: Mobile-first approach
+- **JavaScript**: Vanilla JS for form interactions
 
----
+## Architecture
 
-## 👾 Features
+### Database Schema
 
-<code>❯ REPLACE-ME</code>
-
----
-
-## 📁 Project Structure
-
-```sh
-└── IMS-VELTECH/
-    ├── Dockerfile
-    ├── docker-compose.yml
-    ├── internship
-    │   ├── __init__.py
-    │   ├── admin.py
-    │   ├── admin_forms.py
-    │   ├── apps.py
-    │   ├── forms.py
-    │   ├── middleware.py
-    │   ├── migrations
-    │   ├── models.py
-    │   ├── signals.py
-    │   ├── templates
-    │   ├── urls.py
-    │   ├── utils
-    │   └── views.py
-    ├── internship_portal
-    │   ├── __init__.py
-    │   ├── asgi.py
-    │   ├── middleware.py
-    │   ├── settings.py
-    │   ├── urls.py
-    │   └── wsgi.py
-    ├── manage.py
-    ├── requirements.txt
-    ├── static
-    │   ├── css
-    │   ├── images
-    │   └── js
-    ├── staticfiles
-    │   ├── account
-    │   ├── admin
-    │   ├── css
-    │   ├── images
-    │   ├── import_export
-    │   ├── jazzmin
-    │   ├── js
-    │   ├── staticfiles.json
-    │   └── vendor
-    └── templates
-        ├── account
-        ├── admin
-        ├── base.html
-        ├── internship
-        ├── maintenance.html
-        ├── report
-        └── reports
+```mermaid
+erDiagram
+    Company ||--o{ Student : "offers_internship"
+    Company ||--o{ Attendance : "tracks"
+    Student ||--o{ Attendance : "records"
+    Student ||--o{ InternshipApplication : "submits"
+    
+    Company {
+        uuid uid PK
+        string name
+        string cgpa
+        string fees
+        string duration
+        string domain
+        text description
+        text skill_required
+        string location
+        integer vacancy
+        boolean active
+        string username
+        string password
+    }
+    
+    Student {
+        integer id PK
+        string name
+        string roll_number UK
+        string mobile_number
+        string department
+        string fee
+        string house
+        cloudinary_field approval_letter
+        boolean approval_letter_got
+        cloudinary_field undertaking_letter
+        boolean undertaking_letter_got
+        cloudinary_field bonafide_letter
+        boolean bonafide_letter_got
+        foreign_key applied_company FK
+    }
+    
+    InternshipApplication {
+        integer id PK
+        email email
+        string student_name
+        string vtu_number
+        string department
+        string contact_number
+        string industry_name
+        string industry_location
+        string domain_of_work
+        string industry_category
+        string industry_website
+        email industry_email
+        string industry_phone_number
+        string referal_person_name
+        string referal_person_designation
+        email referal_person_email
+        string referal_person_phone_number
+        string stipend_provided
+        string stipend_amount
+        string fees_required
+        string fees_amount
+        string application_approved
+        text approval_message
+        datetime submitted_at
+        string student_2_to_10
+        string vtu_number_2_to_10
+        string contact_number_stu_2_to_10
+        string department_stu_2_to_10
+    }
+    
+    Attendance {
+        integer id PK
+        foreign_key student FK
+        string vtu_number
+        foreign_key company FK
+        date date
+        string status
+    }
+    
+    Announcement {
+        integer id PK
+        text message1
+        boolean is_message1_active
+        string message1_color
+        text message2
+        boolean is_message2_active
+        string message2_color
+    }
+    
+    SiteSetting {
+        integer id PK
+        boolean maintenance_mode
+        boolean active_approval_letter
+        boolean active_undertaking_letter
+        boolean active_bonafide_letter
+    }
+    
+    UserReport {
+        integer id PK
+        string name
+        string roll_number
+        email email
+        text problem
+        datetime submitted_at
+    }
+    
+    StudentReport {
+        integer id PK
+        string roll_number UK
+        string report_status
+    }
+    
+    downloadable_files {
+        integer id PK
+        string file_name
+        url file_link
+    }
 ```
 
+### Application Flow Architecture
 
-### 📂 Project Index
-<details open>
-	<summary><b><code>IMS-VELTECH/</code></b></summary>
-	<details> <!-- __root__ Submodule -->
-		<summary><b>__root__</b></summary>
-		<blockquote>
-			<table>
-			<tr>
-				<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/manage.py'>manage.py</a></b></td>
-				<td><code>❯ REPLACE-ME</code></td>
-			</tr>
-			<tr>
-				<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/requirements.txt'>requirements.txt</a></b></td>
-				<td><code>❯ REPLACE-ME</code></td>
-			</tr>
-			<tr>
-				<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/docker-compose.yml'>docker-compose.yml</a></b></td>
-				<td><code>❯ REPLACE-ME</code></td>
-			</tr>
-			<tr>
-				<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/Dockerfile'>Dockerfile</a></b></td>
-				<td><code>❯ REPLACE-ME</code></td>
-			</tr>
-			</table>
-		</blockquote>
-	</details>
-	<details> <!-- templates Submodule -->
-		<summary><b>templates</b></summary>
-		<blockquote>
-			<table>
-			<tr>
-				<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/templates/maintenance.html'>maintenance.html</a></b></td>
-				<td><code>❯ REPLACE-ME</code></td>
-			</tr>
-			<tr>
-				<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/templates/base.html'>base.html</a></b></td>
-				<td><code>❯ REPLACE-ME</code></td>
-			</tr>
-			</table>
-			<details>
-				<summary><b>internship</b></summary>
-				<blockquote>
-					<table>
-					<tr>
-						<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/templates/internship/internship_form.html'>internship_form.html</a></b></td>
-						<td><code>❯ REPLACE-ME</code></td>
-					</tr>
-					<tr>
-						<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/templates/internship/verify_otp.html'>verify_otp.html</a></b></td>
-						<td><code>❯ REPLACE-ME</code></td>
-					</tr>
-					<tr>
-						<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/templates/internship/thank_you.html'>thank_you.html</a></b></td>
-						<td><code>❯ REPLACE-ME</code></td>
-					</tr>
-					<tr>
-						<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/templates/internship/email_login.html'>email_login.html</a></b></td>
-						<td><code>❯ REPLACE-ME</code></td>
-					</tr>
-					</table>
-				</blockquote>
-			</details>
-			<details>
-				<summary><b>account</b></summary>
-				<blockquote>
-					<table>
-					<tr>
-						<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/templates/account/login.html'>login.html</a></b></td>
-						<td><code>❯ REPLACE-ME</code></td>
-					</tr>
-					</table>
-				</blockquote>
-			</details>
-			<details>
-				<summary><b>report</b></summary>
-				<blockquote>
-					<table>
-					<tr>
-						<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/templates/report/student_thank_you.html'>student_thank_you.html</a></b></td>
-						<td><code>❯ REPLACE-ME</code></td>
-					</tr>
-					<tr>
-						<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/templates/report/student_verify_otp.html'>student_verify_otp.html</a></b></td>
-						<td><code>❯ REPLACE-ME</code></td>
-					</tr>
-					<tr>
-						<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/templates/report/student_report_form.html'>student_report_form.html</a></b></td>
-						<td><code>❯ REPLACE-ME</code></td>
-					</tr>
-					<tr>
-						<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/templates/report/student_login.html'>student_login.html</a></b></td>
-						<td><code>❯ REPLACE-ME</code></td>
-					</tr>
-					</table>
-				</blockquote>
-			</details>
-			<details>
-				<summary><b>reports</b></summary>
-				<blockquote>
-					<table>
-					<tr>
-						<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/templates/reports/report_form.html'>report_form.html</a></b></td>
-						<td><code>❯ REPLACE-ME</code></td>
-					</tr>
-					<tr>
-						<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/templates/reports/verify_otp.html'>verify_otp.html</a></b></td>
-						<td><code>❯ REPLACE-ME</code></td>
-					</tr>
-					<tr>
-						<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/templates/reports/thank_you.html'>thank_you.html</a></b></td>
-						<td><code>❯ REPLACE-ME</code></td>
-					</tr>
-					<tr>
-						<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/templates/reports/login.html'>login.html</a></b></td>
-						<td><code>❯ REPLACE-ME</code></td>
-					</tr>
-					</table>
-				</blockquote>
-			</details>
-			<details>
-				<summary><b>admin</b></summary>
-				<blockquote>
-					<table>
-					<tr>
-						<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/templates/admin/csv_upload.html'>csv_upload.html</a></b></td>
-						<td><code>❯ REPLACE-ME</code></td>
-					</tr>
-					</table>
-					<details>
-						<summary><b>internship</b></summary>
-						<blockquote>
-							<details>
-								<summary><b>student</b></summary>
-								<blockquote>
-									<table>
-									<tr>
-										<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/templates/admin/internship/student/changelist.html'>changelist.html</a></b></td>
-										<td><code>❯ REPLACE-ME</code></td>
-									</tr>
-									</table>
-								</blockquote>
-							</details>
-						</blockquote>
-					</details>
-				</blockquote>
-			</details>
-		</blockquote>
-	</details>
-	<details> <!-- internship Submodule -->
-		<summary><b>internship</b></summary>
-		<blockquote>
-			<table>
-			<tr>
-				<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/internship/admin_forms.py'>admin_forms.py</a></b></td>
-				<td><code>❯ REPLACE-ME</code></td>
-			</tr>
-			<tr>
-				<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/internship/forms.py'>forms.py</a></b></td>
-				<td><code>❯ REPLACE-ME</code></td>
-			</tr>
-			<tr>
-				<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/internship/views.py'>views.py</a></b></td>
-				<td><code>❯ REPLACE-ME</code></td>
-			</tr>
-			<tr>
-				<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/internship/apps.py'>apps.py</a></b></td>
-				<td><code>❯ REPLACE-ME</code></td>
-			</tr>
-			<tr>
-				<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/internship/signals.py'>signals.py</a></b></td>
-				<td><code>❯ REPLACE-ME</code></td>
-			</tr>
-			<tr>
-				<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/internship/urls.py'>urls.py</a></b></td>
-				<td><code>❯ REPLACE-ME</code></td>
-			</tr>
-			<tr>
-				<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/internship/middleware.py'>middleware.py</a></b></td>
-				<td><code>❯ REPLACE-ME</code></td>
-			</tr>
-			<tr>
-				<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/internship/admin.py'>admin.py</a></b></td>
-				<td><code>❯ REPLACE-ME</code></td>
-			</tr>
-			<tr>
-				<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/internship/models.py'>models.py</a></b></td>
-				<td><code>❯ REPLACE-ME</code></td>
-			</tr>
-			</table>
-			<details>
-				<summary><b>templates</b></summary>
-				<blockquote>
-					<table>
-					<tr>
-						<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/internship/templates/dept_login.html'>dept_login.html</a></b></td>
-						<td><code>❯ REPLACE-ME</code></td>
-					</tr>
-					<tr>
-						<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/internship/templates/dept_dashboard.html'>dept_dashboard.html</a></b></td>
-						<td><code>❯ REPLACE-ME</code></td>
-					</tr>
-					</table>
-					<details>
-						<summary><b>internship</b></summary>
-						<blockquote>
-							<table>
-							<tr>
-								<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/internship/templates/internship/home.html'>home.html</a></b></td>
-								<td><code>❯ REPLACE-ME</code></td>
-							</tr>
-							<tr>
-								<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/internship/templates/internship/check_status.html'>check_status.html</a></b></td>
-								<td><code>❯ REPLACE-ME</code></td>
-							</tr>
-							<tr>
-								<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/internship/templates/internship/downloadable_files.html'>downloadable_files.html</a></b></td>
-								<td><code>❯ REPLACE-ME</code></td>
-							</tr>
-							<tr>
-								<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/internship/templates/internship/common_csrf_failure.html'>common_csrf_failure.html</a></b></td>
-								<td><code>❯ REPLACE-ME</code></td>
-							</tr>
-							<tr>
-								<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/internship/templates/internship/submit_attendance.html'>submit_attendance.html</a></b></td>
-								<td><code>❯ REPLACE-ME</code></td>
-							</tr>
-							<tr>
-								<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/internship/templates/internship/site_login.html'>site_login.html</a></b></td>
-								<td><code>❯ REPLACE-ME</code></td>
-							</tr>
-							<tr>
-								<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/internship/templates/internship/company_list.html'>company_list.html</a></b></td>
-								<td><code>❯ REPLACE-ME</code></td>
-							</tr>
-							<tr>
-								<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/internship/templates/internship/attendance_page.html'>attendance_page.html</a></b></td>
-								<td><code>❯ REPLACE-ME</code></td>
-							</tr>
-							<tr>
-								<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/internship/templates/internship/dashboard.html'>dashboard.html</a></b></td>
-								<td><code>❯ REPLACE-ME</code></td>
-							</tr>
-							<tr>
-								<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/internship/templates/internship/company_login.html'>company_login.html</a></b></td>
-								<td><code>❯ REPLACE-ME</code></td>
-							</tr>
-							<tr>
-								<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/internship/templates/internship/apply_form.html'>apply_form.html</a></b></td>
-								<td><code>❯ REPLACE-ME</code></td>
-							</tr>
-							<tr>
-								<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/internship/templates/internship/csrf_failure.html'>csrf_failure.html</a></b></td>
-								<td><code>❯ REPLACE-ME</code></td>
-							</tr>
-							</table>
-						</blockquote>
-					</details>
-					<details>
-						<summary><b>student</b></summary>
-						<blockquote>
-							<table>
-							<tr>
-								<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/internship/templates/student/upload_documents.html'>upload_documents.html</a></b></td>
-								<td><code>❯ REPLACE-ME</code></td>
-							</tr>
-							</table>
-						</blockquote>
-					</details>
-					<details>
-						<summary><b>errors</b></summary>
-						<blockquote>
-							<table>
-							<tr>
-								<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/internship/templates/errors/403.html'>403.html</a></b></td>
-								<td><code>❯ REPLACE-ME</code></td>
-							</tr>
-							<tr>
-								<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/internship/templates/errors/error_style.html'>error_style.html</a></b></td>
-								<td><code>❯ REPLACE-ME</code></td>
-							</tr>
-							<tr>
-								<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/internship/templates/errors/400.html'>400.html</a></b></td>
-								<td><code>❯ REPLACE-ME</code></td>
-							</tr>
-							<tr>
-								<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/internship/templates/errors/500.html'>500.html</a></b></td>
-								<td><code>❯ REPLACE-ME</code></td>
-							</tr>
-							<tr>
-								<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/internship/templates/errors/404.html'>404.html</a></b></td>
-								<td><code>❯ REPLACE-ME</code></td>
-							</tr>
-							</table>
-						</blockquote>
-					</details>
-				</blockquote>
-			</details>
-			<details>
-				<summary><b>migrations</b></summary>
-				<blockquote>
-					<table>
-					<tr>
-						<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/internship/migrations/0001_initial.py'>0001_initial.py</a></b></td>
-						<td><code>❯ REPLACE-ME</code></td>
-					</tr>
-					<tr>
-						<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/internship/migrations/0003_remove_sitesetting_active_file_upload_and_more.py'>0003_remove_sitesetting_active_file_upload_and_more.py</a></b></td>
-						<td><code>❯ REPLACE-ME</code></td>
-					</tr>
-					<tr>
-						<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/internship/migrations/0002_sitesetting_active_approval_letter_and_more.py'>0002_sitesetting_active_approval_letter_and_more.py</a></b></td>
-						<td><code>❯ REPLACE-ME</code></td>
-					</tr>
-					</table>
-				</blockquote>
-			</details>
-			<details>
-				<summary><b>utils</b></summary>
-				<blockquote>
-					<table>
-					<tr>
-						<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/internship/utils/account_adapter.py'>account_adapter.py</a></b></td>
-						<td><code>❯ REPLACE-ME</code></td>
-					</tr>
-					<tr>
-						<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/internship/utils/google_sheets.py'>google_sheets.py</a></b></td>
-						<td><code>❯ REPLACE-ME</code></td>
-					</tr>
-					<tr>
-						<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/internship/utils/sync.py'>sync.py</a></b></td>
-						<td><code>❯ REPLACE-ME</code></td>
-					</tr>
-					</table>
-				</blockquote>
-			</details>
-		</blockquote>
-	</details>
-	<details> <!-- staticfiles Submodule -->
-		<summary><b>staticfiles</b></summary>
-		<blockquote>
-			<table>
-			<tr>
-				<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/staticfiles.json'>staticfiles.json</a></b></td>
-				<td><code>❯ REPLACE-ME</code></td>
-			</tr>
-			</table>
-			<details>
-				<summary><b>css</b></summary>
-				<blockquote>
-					<table>
-					<tr>
-						<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/css/admin_custom.10ebcbf46bb8.css'>admin_custom.10ebcbf46bb8.css</a></b></td>
-						<td><code>❯ REPLACE-ME</code></td>
-					</tr>
-					<tr>
-						<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/css/admin_custom.4b2c4e78e570.css'>admin_custom.4b2c4e78e570.css</a></b></td>
-						<td><code>❯ REPLACE-ME</code></td>
-					</tr>
-					<tr>
-						<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/css/styles.22b510a5f74a.css'>styles.22b510a5f74a.css</a></b></td>
-						<td><code>❯ REPLACE-ME</code></td>
-					</tr>
-					<tr>
-						<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/css/admin_custom.css'>admin_custom.css</a></b></td>
-						<td><code>❯ REPLACE-ME</code></td>
-					</tr>
-					<tr>
-						<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/css/styles.css'>styles.css</a></b></td>
-						<td><code>❯ REPLACE-ME</code></td>
-					</tr>
-					</table>
-				</blockquote>
-			</details>
-			<details>
-				<summary><b>js</b></summary>
-				<blockquote>
-					<table>
-					<tr>
-						<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/js/admin_custom.d41d8cd98f00.js'>admin_custom.d41d8cd98f00.js</a></b></td>
-						<td><code>❯ REPLACE-ME</code></td>
-					</tr>
-					<tr>
-						<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/js/admin_custom.js'>admin_custom.js</a></b></td>
-						<td><code>❯ REPLACE-ME</code></td>
-					</tr>
-					</table>
-				</blockquote>
-			</details>
-			<details>
-				<summary><b>account</b></summary>
-				<blockquote>
-					<details>
-						<summary><b>js</b></summary>
-						<blockquote>
-							<table>
-							<tr>
-								<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/account/js/onload.js'>onload.js</a></b></td>
-								<td><code>❯ REPLACE-ME</code></td>
-							</tr>
-							<tr>
-								<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/account/js/account.js'>account.js</a></b></td>
-								<td><code>❯ REPLACE-ME</code></td>
-							</tr>
-							</table>
-						</blockquote>
-					</details>
-				</blockquote>
-			</details>
-			<details>
-				<summary><b>import_export</b></summary>
-				<blockquote>
-					<table>
-					<tr>
-						<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/import_export/export.css'>export.css</a></b></td>
-						<td><code>❯ REPLACE-ME</code></td>
-					</tr>
-					<tr>
-						<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/import_export/import.css'>import.css</a></b></td>
-						<td><code>❯ REPLACE-ME</code></td>
-					</tr>
-					<tr>
-						<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/import_export/import.f3b70b0d21bb.css'>import.f3b70b0d21bb.css</a></b></td>
-						<td><code>❯ REPLACE-ME</code></td>
-					</tr>
-					<tr>
-						<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/import_export/guess_format.js'>guess_format.js</a></b></td>
-						<td><code>❯ REPLACE-ME</code></td>
-					</tr>
-					<tr>
-						<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/import_export/export_selectable_fields.js'>export_selectable_fields.js</a></b></td>
-						<td><code>❯ REPLACE-ME</code></td>
-					</tr>
-					<tr>
-						<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/import_export/export.48d7162c89e2.css'>export.48d7162c89e2.css</a></b></td>
-						<td><code>❯ REPLACE-ME</code></td>
-					</tr>
-					<tr>
-						<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/import_export/guess_format.1e929842623e.js'>guess_format.1e929842623e.js</a></b></td>
-						<td><code>❯ REPLACE-ME</code></td>
-					</tr>
-					<tr>
-						<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/import_export/export_selectable_fields.a08e5265f672.js'>export_selectable_fields.a08e5265f672.js</a></b></td>
-						<td><code>❯ REPLACE-ME</code></td>
-					</tr>
-					</table>
-				</blockquote>
-			</details>
-			<details>
-				<summary><b>jazzmin</b></summary>
-				<blockquote>
-					<details>
-						<summary><b>css</b></summary>
-						<blockquote>
-							<table>
-							<tr>
-								<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/jazzmin/css/main.css'>main.css</a></b></td>
-								<td><code>❯ REPLACE-ME</code></td>
-							</tr>
-							<tr>
-								<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/jazzmin/css/main.cf2fffa061df.css'>main.cf2fffa061df.css</a></b></td>
-								<td><code>❯ REPLACE-ME</code></td>
-							</tr>
-							</table>
-						</blockquote>
-					</details>
-					<details>
-						<summary><b>js</b></summary>
-						<blockquote>
-							<table>
-							<tr>
-								<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/jazzmin/js/change_list.2eae2b0ceeb1.js'>change_list.2eae2b0ceeb1.js</a></b></td>
-								<td><code>❯ REPLACE-ME</code></td>
-							</tr>
-							<tr>
-								<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/jazzmin/js/change_list.js'>change_list.js</a></b></td>
-								<td><code>❯ REPLACE-ME</code></td>
-							</tr>
-							<tr>
-								<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/jazzmin/js/main.js'>main.js</a></b></td>
-								<td><code>❯ REPLACE-ME</code></td>
-							</tr>
-							<tr>
-								<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/jazzmin/js/related-modal.js'>related-modal.js</a></b></td>
-								<td><code>❯ REPLACE-ME</code></td>
-							</tr>
-							<tr>
-								<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/jazzmin/js/main.6e1d05b7124e.js'>main.6e1d05b7124e.js</a></b></td>
-								<td><code>❯ REPLACE-ME</code></td>
-							</tr>
-							<tr>
-								<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/jazzmin/js/change_form.eceb0685ea6b.js'>change_form.eceb0685ea6b.js</a></b></td>
-								<td><code>❯ REPLACE-ME</code></td>
-							</tr>
-							<tr>
-								<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/jazzmin/js/related-modal.de3109c39eaf.js'>related-modal.de3109c39eaf.js</a></b></td>
-								<td><code>❯ REPLACE-ME</code></td>
-							</tr>
-							<tr>
-								<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/jazzmin/js/ui-builder.aceb68a42987.js'>ui-builder.aceb68a42987.js</a></b></td>
-								<td><code>❯ REPLACE-ME</code></td>
-							</tr>
-							<tr>
-								<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/jazzmin/js/ui-builder.js'>ui-builder.js</a></b></td>
-								<td><code>❯ REPLACE-ME</code></td>
-							</tr>
-							<tr>
-								<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/jazzmin/js/change_form.js'>change_form.js</a></b></td>
-								<td><code>❯ REPLACE-ME</code></td>
-							</tr>
-							</table>
-						</blockquote>
-					</details>
-					<details>
-						<summary><b>plugins</b></summary>
-						<blockquote>
-							<details>
-								<summary><b>bootstrap-show-modal</b></summary>
-								<blockquote>
-									<table>
-									<tr>
-										<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/jazzmin/plugins/bootstrap-show-modal/bootstrap-show-modal.min.ccb42b054814.js'>bootstrap-show-modal.min.ccb42b054814.js</a></b></td>
-										<td><code>❯ REPLACE-ME</code></td>
-									</tr>
-									<tr>
-										<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/jazzmin/plugins/bootstrap-show-modal/bootstrap-show-modal.min.js'>bootstrap-show-modal.min.js</a></b></td>
-										<td><code>❯ REPLACE-ME</code></td>
-									</tr>
-									</table>
-								</blockquote>
-							</details>
-						</blockquote>
-					</details>
-				</blockquote>
-			</details>
-			<details>
-				<summary><b>vendor</b></summary>
-				<blockquote>
-					<details>
-						<summary><b>adminlte</b></summary>
-						<blockquote>
-							<details>
-								<summary><b>css</b></summary>
-								<blockquote>
-									<table>
-									<tr>
-										<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/vendor/adminlte/css/adminlte.min.css'>adminlte.min.css</a></b></td>
-										<td><code>❯ REPLACE-ME</code></td>
-									</tr>
-									<tr>
-										<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/vendor/adminlte/css/adminlte.min.css.913b65a84402.map'>adminlte.min.css.913b65a84402.map</a></b></td>
-										<td><code>❯ REPLACE-ME</code></td>
-									</tr>
-									<tr>
-										<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/vendor/adminlte/css/adminlte.min.37aa1bb734e4.css'>adminlte.min.37aa1bb734e4.css</a></b></td>
-										<td><code>❯ REPLACE-ME</code></td>
-									</tr>
-									<tr>
-										<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/vendor/adminlte/css/adminlte.min.css.map'>adminlte.min.css.map</a></b></td>
-										<td><code>❯ REPLACE-ME</code></td>
-									</tr>
-									</table>
-								</blockquote>
-							</details>
-							<details>
-								<summary><b>js</b></summary>
-								<blockquote>
-									<table>
-									<tr>
-										<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/vendor/adminlte/js/adminlte.min.js.map'>adminlte.min.js.map</a></b></td>
-										<td><code>❯ REPLACE-ME</code></td>
-									</tr>
-									<tr>
-										<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/vendor/adminlte/js/adminlte.min.js.6bffd73625d6.map'>adminlte.min.js.6bffd73625d6.map</a></b></td>
-										<td><code>❯ REPLACE-ME</code></td>
-									</tr>
-									<tr>
-										<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/vendor/adminlte/js/adminlte.min.f3266ba33fca.js'>adminlte.min.f3266ba33fca.js</a></b></td>
-										<td><code>❯ REPLACE-ME</code></td>
-									</tr>
-									<tr>
-										<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/vendor/adminlte/js/adminlte.min.js'>adminlte.min.js</a></b></td>
-										<td><code>❯ REPLACE-ME</code></td>
-									</tr>
-									</table>
-								</blockquote>
-							</details>
-						</blockquote>
-					</details>
-					<details>
-						<summary><b>bootstrap</b></summary>
-						<blockquote>
-							<details>
-								<summary><b>js</b></summary>
-								<blockquote>
-									<table>
-									<tr>
-										<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/vendor/bootstrap/js/bootstrap.min.js.88b1b3454b97.map'>bootstrap.min.js.88b1b3454b97.map</a></b></td>
-										<td><code>❯ REPLACE-ME</code></td>
-									</tr>
-									<tr>
-										<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/vendor/bootstrap/js/bootstrap.min.js'>bootstrap.min.js</a></b></td>
-										<td><code>❯ REPLACE-ME</code></td>
-									</tr>
-									<tr>
-										<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/vendor/bootstrap/js/bootstrap.min.9dcd9b21766b.js'>bootstrap.min.9dcd9b21766b.js</a></b></td>
-										<td><code>❯ REPLACE-ME</code></td>
-									</tr>
-									<tr>
-										<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/vendor/bootstrap/js/bootstrap.min.js.map'>bootstrap.min.js.map</a></b></td>
-										<td><code>❯ REPLACE-ME</code></td>
-									</tr>
-									</table>
-								</blockquote>
-							</details>
-						</blockquote>
-					</details>
-					<details>
-						<summary><b>bootswatch</b></summary>
-						<blockquote>
-							<details>
-								<summary><b>darkly</b></summary>
-								<blockquote>
-									<table>
-									<tr>
-										<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/vendor/bootswatch/darkly/bootstrap.min.css'>bootstrap.min.css</a></b></td>
-										<td><code>❯ REPLACE-ME</code></td>
-									</tr>
-									<tr>
-										<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/vendor/bootswatch/darkly/bootstrap.min.7c535026a93a.css'>bootstrap.min.7c535026a93a.css</a></b></td>
-										<td><code>❯ REPLACE-ME</code></td>
-									</tr>
-									</table>
-								</blockquote>
-							</details>
-							<details>
-								<summary><b>flatly</b></summary>
-								<blockquote>
-									<table>
-									<tr>
-										<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/vendor/bootswatch/flatly/bootstrap.min.css'>bootstrap.min.css</a></b></td>
-										<td><code>❯ REPLACE-ME</code></td>
-									</tr>
-									<tr>
-										<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/vendor/bootswatch/flatly/bootstrap.min.41d7fde23c9d.css'>bootstrap.min.41d7fde23c9d.css</a></b></td>
-										<td><code>❯ REPLACE-ME</code></td>
-									</tr>
-									</table>
-								</blockquote>
-							</details>
-							<details>
-								<summary><b>journal</b></summary>
-								<blockquote>
-									<table>
-									<tr>
-										<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/vendor/bootswatch/journal/bootstrap.min.css'>bootstrap.min.css</a></b></td>
-										<td><code>❯ REPLACE-ME</code></td>
-									</tr>
-									<tr>
-										<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/vendor/bootswatch/journal/bootstrap.min.b9da48eb0f1d.css'>bootstrap.min.b9da48eb0f1d.css</a></b></td>
-										<td><code>❯ REPLACE-ME</code></td>
-									</tr>
-									</table>
-								</blockquote>
-							</details>
-							<details>
-								<summary><b>superhero</b></summary>
-								<blockquote>
-									<table>
-									<tr>
-										<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/vendor/bootswatch/superhero/bootstrap.min.css'>bootstrap.min.css</a></b></td>
-										<td><code>❯ REPLACE-ME</code></td>
-									</tr>
-									<tr>
-										<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/vendor/bootswatch/superhero/bootstrap.min.6f5599014a4d.css'>bootstrap.min.6f5599014a4d.css</a></b></td>
-										<td><code>❯ REPLACE-ME</code></td>
-									</tr>
-									</table>
-								</blockquote>
-							</details>
-							<details>
-								<summary><b>litera</b></summary>
-								<blockquote>
-									<table>
-									<tr>
-										<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/vendor/bootswatch/litera/bootstrap.min.css'>bootstrap.min.css</a></b></td>
-										<td><code>❯ REPLACE-ME</code></td>
-									</tr>
-									<tr>
-										<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/vendor/bootswatch/litera/bootstrap.min.3f3f2f85980d.css'>bootstrap.min.3f3f2f85980d.css</a></b></td>
-										<td><code>❯ REPLACE-ME</code></td>
-									</tr>
-									</table>
-								</blockquote>
-							</details>
-							<details>
-								<summary><b>cerulean</b></summary>
-								<blockquote>
-									<table>
-									<tr>
-										<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/vendor/bootswatch/cerulean/bootstrap.min.css'>bootstrap.min.css</a></b></td>
-										<td><code>❯ REPLACE-ME</code></td>
-									</tr>
-									<tr>
-										<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/vendor/bootswatch/cerulean/bootstrap.min.3c8c23470f53.css'>bootstrap.min.3c8c23470f53.css</a></b></td>
-										<td><code>❯ REPLACE-ME</code></td>
-									</tr>
-									</table>
-								</blockquote>
-							</details>
-							<details>
-								<summary><b>yeti</b></summary>
-								<blockquote>
-									<table>
-									<tr>
-										<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/vendor/bootswatch/yeti/bootstrap.min.css'>bootstrap.min.css</a></b></td>
-										<td><code>❯ REPLACE-ME</code></td>
-									</tr>
-									<tr>
-										<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/vendor/bootswatch/yeti/bootstrap.min.18b640625a6a.css'>bootstrap.min.18b640625a6a.css</a></b></td>
-										<td><code>❯ REPLACE-ME</code></td>
-									</tr>
-									</table>
-								</blockquote>
-							</details>
-							<details>
-								<summary><b>spacelab</b></summary>
-								<blockquote>
-									<table>
-									<tr>
-										<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/vendor/bootswatch/spacelab/bootstrap.min.css'>bootstrap.min.css</a></b></td>
-										<td><code>❯ REPLACE-ME</code></td>
-									</tr>
-									<tr>
-										<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/vendor/bootswatch/spacelab/bootstrap.min.e97aa0d03017.css'>bootstrap.min.e97aa0d03017.css</a></b></td>
-										<td><code>❯ REPLACE-ME</code></td>
-									</tr>
-									</table>
-								</blockquote>
-							</details>
-							<details>
-								<summary><b>solar</b></summary>
-								<blockquote>
-									<table>
-									<tr>
-										<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/vendor/bootswatch/solar/bootstrap.min.css'>bootstrap.min.css</a></b></td>
-										<td><code>❯ REPLACE-ME</code></td>
-									</tr>
-									<tr>
-										<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/vendor/bootswatch/solar/bootstrap.min.198ef0d13070.css'>bootstrap.min.198ef0d13070.css</a></b></td>
-										<td><code>❯ REPLACE-ME</code></td>
-									</tr>
-									</table>
-								</blockquote>
-							</details>
-							<details>
-								<summary><b>simplex</b></summary>
-								<blockquote>
-									<table>
-									<tr>
-										<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/vendor/bootswatch/simplex/bootstrap.min.css'>bootstrap.min.css</a></b></td>
-										<td><code>❯ REPLACE-ME</code></td>
-									</tr>
-									<tr>
-										<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/vendor/bootswatch/simplex/bootstrap.min.9e236a0b5e00.css'>bootstrap.min.9e236a0b5e00.css</a></b></td>
-										<td><code>❯ REPLACE-ME</code></td>
-									</tr>
-									</table>
-								</blockquote>
-							</details>
-							<details>
-								<summary><b>slate</b></summary>
-								<blockquote>
-									<table>
-									<tr>
-										<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/vendor/bootswatch/slate/bootstrap.min.css'>bootstrap.min.css</a></b></td>
-										<td><code>❯ REPLACE-ME</code></td>
-									</tr>
-									<tr>
-										<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/vendor/bootswatch/slate/bootstrap.min.ae15f595b05c.css'>bootstrap.min.ae15f595b05c.css</a></b></td>
-										<td><code>❯ REPLACE-ME</code></td>
-									</tr>
-									</table>
-								</blockquote>
-							</details>
-							<details>
-								<summary><b>lux</b></summary>
-								<blockquote>
-									<table>
-									<tr>
-										<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/vendor/bootswatch/lux/bootstrap.min.css'>bootstrap.min.css</a></b></td>
-										<td><code>❯ REPLACE-ME</code></td>
-									</tr>
-									<tr>
-										<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/vendor/bootswatch/lux/bootstrap.min.8de413fffc37.css'>bootstrap.min.8de413fffc37.css</a></b></td>
-										<td><code>❯ REPLACE-ME</code></td>
-									</tr>
-									</table>
-								</blockquote>
-							</details>
-							<details>
-								<summary><b>minty</b></summary>
-								<blockquote>
-									<table>
-									<tr>
-										<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/vendor/bootswatch/minty/bootstrap.min.css'>bootstrap.min.css</a></b></td>
-										<td><code>❯ REPLACE-ME</code></td>
-									</tr>
-									<tr>
-										<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/vendor/bootswatch/minty/bootstrap.min.b239dbb9e5e6.css'>bootstrap.min.b239dbb9e5e6.css</a></b></td>
-										<td><code>❯ REPLACE-ME</code></td>
-									</tr>
-									</table>
-								</blockquote>
-							</details>
-							<details>
-								<summary><b>default</b></summary>
-								<blockquote>
-									<table>
-									<tr>
-										<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/vendor/bootswatch/default/bootstrap.min.css'>bootstrap.min.css</a></b></td>
-										<td><code>❯ REPLACE-ME</code></td>
-									</tr>
-									<tr>
-										<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/vendor/bootswatch/default/bootstrap.min.56a2daefedc7.css'>bootstrap.min.56a2daefedc7.css</a></b></td>
-										<td><code>❯ REPLACE-ME</code></td>
-									</tr>
-									</table>
-								</blockquote>
-							</details>
-							<details>
-								<summary><b>sandstone</b></summary>
-								<blockquote>
-									<table>
-									<tr>
-										<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/vendor/bootswatch/sandstone/bootstrap.min.css'>bootstrap.min.css</a></b></td>
-										<td><code>❯ REPLACE-ME</code></td>
-									</tr>
-									<tr>
-										<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/vendor/bootswatch/sandstone/bootstrap.min.7d1f1c61d89e.css'>bootstrap.min.7d1f1c61d89e.css</a></b></td>
-										<td><code>❯ REPLACE-ME</code></td>
-									</tr>
-									</table>
-								</blockquote>
-							</details>
-							<details>
-								<summary><b>sketchy</b></summary>
-								<blockquote>
-									<table>
-									<tr>
-										<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/vendor/bootswatch/sketchy/bootstrap.min.css'>bootstrap.min.css</a></b></td>
-										<td><code>❯ REPLACE-ME</code></td>
-									</tr>
-									<tr>
-										<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/vendor/bootswatch/sketchy/bootstrap.min.88c6e4095583.css'>bootstrap.min.88c6e4095583.css</a></b></td>
-										<td><code>❯ REPLACE-ME</code></td>
-									</tr>
-									</table>
-								</blockquote>
-							</details>
-							<details>
-								<summary><b>cosmo</b></summary>
-								<blockquote>
-									<table>
-									<tr>
-										<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/vendor/bootswatch/cosmo/bootstrap.min.css'>bootstrap.min.css</a></b></td>
-										<td><code>❯ REPLACE-ME</code></td>
-									</tr>
-									<tr>
-										<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/vendor/bootswatch/cosmo/bootstrap.min.039ad78474a5.css'>bootstrap.min.039ad78474a5.css</a></b></td>
-										<td><code>❯ REPLACE-ME</code></td>
-									</tr>
-									</table>
-								</blockquote>
-							</details>
-							<details>
-								<summary><b>materia</b></summary>
-								<blockquote>
-									<table>
-									<tr>
-										<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/vendor/bootswatch/materia/bootstrap.min.css'>bootstrap.min.css</a></b></td>
-										<td><code>❯ REPLACE-ME</code></td>
-									</tr>
-									<tr>
-										<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/vendor/bootswatch/materia/bootstrap.min.9a68e649ed05.css'>bootstrap.min.9a68e649ed05.css</a></b></td>
-										<td><code>❯ REPLACE-ME</code></td>
-									</tr>
-									</table>
-								</blockquote>
-							</details>
-							<details>
-								<summary><b>united</b></summary>
-								<blockquote>
-									<table>
-									<tr>
-										<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/vendor/bootswatch/united/bootstrap.min.4aac1238791f.css'>bootstrap.min.4aac1238791f.css</a></b></td>
-										<td><code>❯ REPLACE-ME</code></td>
-									</tr>
-									<tr>
-										<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/vendor/bootswatch/united/bootstrap.min.css'>bootstrap.min.css</a></b></td>
-										<td><code>❯ REPLACE-ME</code></td>
-									</tr>
-									</table>
-								</blockquote>
-							</details>
-							<details>
-								<summary><b>pulse</b></summary>
-								<blockquote>
-									<table>
-									<tr>
-										<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/vendor/bootswatch/pulse/bootstrap.min.css'>bootstrap.min.css</a></b></td>
-										<td><code>❯ REPLACE-ME</code></td>
-									</tr>
-									<tr>
-										<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/vendor/bootswatch/pulse/bootstrap.min.f9c9fa299f5e.css'>bootstrap.min.f9c9fa299f5e.css</a></b></td>
-										<td><code>❯ REPLACE-ME</code></td>
-									</tr>
-									</table>
-								</blockquote>
-							</details>
-							<details>
-								<summary><b>lumen</b></summary>
-								<blockquote>
-									<table>
-									<tr>
-										<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/vendor/bootswatch/lumen/bootstrap.min.css'>bootstrap.min.css</a></b></td>
-										<td><code>❯ REPLACE-ME</code></td>
-									</tr>
-									<tr>
-										<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/vendor/bootswatch/lumen/bootstrap.min.c7dc4dd8e294.css'>bootstrap.min.c7dc4dd8e294.css</a></b></td>
-										<td><code>❯ REPLACE-ME</code></td>
-									</tr>
-									</table>
-								</blockquote>
-							</details>
-							<details>
-								<summary><b>cyborg</b></summary>
-								<blockquote>
-									<table>
-									<tr>
-										<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/vendor/bootswatch/cyborg/bootstrap.min.css'>bootstrap.min.css</a></b></td>
-										<td><code>❯ REPLACE-ME</code></td>
-									</tr>
-									<tr>
-										<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/vendor/bootswatch/cyborg/bootstrap.min.ce3f719cb63e.css'>bootstrap.min.ce3f719cb63e.css</a></b></td>
-										<td><code>❯ REPLACE-ME</code></td>
-									</tr>
-									</table>
-								</blockquote>
-							</details>
-						</blockquote>
-					</details>
-					<details>
-						<summary><b>select2</b></summary>
-						<blockquote>
-							<details>
-								<summary><b>css</b></summary>
-								<blockquote>
-									<table>
-									<tr>
-										<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/vendor/select2/css/select2.min.e71c39430469.css'>select2.min.e71c39430469.css</a></b></td>
-										<td><code>❯ REPLACE-ME</code></td>
-									</tr>
-									<tr>
-										<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/vendor/select2/css/select2.min.css'>select2.min.css</a></b></td>
-										<td><code>❯ REPLACE-ME</code></td>
-									</tr>
-									</table>
-								</blockquote>
-							</details>
-							<details>
-								<summary><b>js</b></summary>
-								<blockquote>
-									<table>
-									<tr>
-										<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/vendor/select2/js/select2.min.3e6e33cd306b.js'>select2.min.3e6e33cd306b.js</a></b></td>
-										<td><code>❯ REPLACE-ME</code></td>
-									</tr>
-									<tr>
-										<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/vendor/select2/js/select2.min.js'>select2.min.js</a></b></td>
-										<td><code>❯ REPLACE-ME</code></td>
-									</tr>
-									</table>
-								</blockquote>
-							</details>
-						</blockquote>
-					</details>
-					<details>
-						<summary><b>fontawesome-free</b></summary>
-						<blockquote>
-							<details>
-								<summary><b>css</b></summary>
-								<blockquote>
-									<table>
-									<tr>
-										<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/vendor/fontawesome-free/css/all.min.ef9b4e3129e4.css'>all.min.ef9b4e3129e4.css</a></b></td>
-										<td><code>❯ REPLACE-ME</code></td>
-									</tr>
-									<tr>
-										<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/vendor/fontawesome-free/css/all.min.css'>all.min.css</a></b></td>
-										<td><code>❯ REPLACE-ME</code></td>
-									</tr>
-									</table>
-								</blockquote>
-							</details>
-							<details>
-								<summary><b>webfonts</b></summary>
-								<blockquote>
-									<table>
-									<tr>
-										<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/vendor/fontawesome-free/webfonts/fa-solid-900.0a95f951745b.ttf'>fa-solid-900.0a95f951745b.ttf</a></b></td>
-										<td><code>❯ REPLACE-ME</code></td>
-									</tr>
-									<tr>
-										<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/vendor/fontawesome-free/webfonts/fa-regular-400.3c264849ff4e.ttf'>fa-regular-400.3c264849ff4e.ttf</a></b></td>
-										<td><code>❯ REPLACE-ME</code></td>
-									</tr>
-									<tr>
-										<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/vendor/fontawesome-free/webfonts/fa-v4compatibility.ttf'>fa-v4compatibility.ttf</a></b></td>
-										<td><code>❯ REPLACE-ME</code></td>
-									</tr>
-									<tr>
-										<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/vendor/fontawesome-free/webfonts/fa-solid-900.ttf'>fa-solid-900.ttf</a></b></td>
-										<td><code>❯ REPLACE-ME</code></td>
-									</tr>
-									<tr>
-										<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/vendor/fontawesome-free/webfonts/fa-brands-400.ttf'>fa-brands-400.ttf</a></b></td>
-										<td><code>❯ REPLACE-ME</code></td>
-									</tr>
-									<tr>
-										<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/vendor/fontawesome-free/webfonts/fa-brands-400.b7dee83cb5ee.ttf'>fa-brands-400.b7dee83cb5ee.ttf</a></b></td>
-										<td><code>❯ REPLACE-ME</code></td>
-									</tr>
-									<tr>
-										<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/vendor/fontawesome-free/webfonts/fa-regular-400.ttf'>fa-regular-400.ttf</a></b></td>
-										<td><code>❯ REPLACE-ME</code></td>
-									</tr>
-									<tr>
-										<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/vendor/fontawesome-free/webfonts/fa-v4compatibility.95b97efa98f9.ttf'>fa-v4compatibility.95b97efa98f9.ttf</a></b></td>
-										<td><code>❯ REPLACE-ME</code></td>
-									</tr>
-									</table>
-								</blockquote>
-							</details>
-						</blockquote>
-					</details>
-				</blockquote>
-			</details>
-			<details>
-				<summary><b>admin</b></summary>
-				<blockquote>
-					<details>
-						<summary><b>css</b></summary>
-						<blockquote>
-							<table>
-							<tr>
-								<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/css/responsive_rtl.css'>responsive_rtl.css</a></b></td>
-								<td><code>❯ REPLACE-ME</code></td>
-							</tr>
-							<tr>
-								<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/css/login.css'>login.css</a></b></td>
-								<td><code>❯ REPLACE-ME</code></td>
-							</tr>
-							<tr>
-								<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/css/base.css'>base.css</a></b></td>
-								<td><code>❯ REPLACE-ME</code></td>
-							</tr>
-							<tr>
-								<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/css/forms.css'>forms.css</a></b></td>
-								<td><code>❯ REPLACE-ME</code></td>
-							</tr>
-							<tr>
-								<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/css/login.586129c60a93.css'>login.586129c60a93.css</a></b></td>
-								<td><code>❯ REPLACE-ME</code></td>
-							</tr>
-							<tr>
-								<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/css/nav_sidebar.css'>nav_sidebar.css</a></b></td>
-								<td><code>❯ REPLACE-ME</code></td>
-							</tr>
-							<tr>
-								<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/css/dashboard.css'>dashboard.css</a></b></td>
-								<td><code>❯ REPLACE-ME</code></td>
-							</tr>
-							<tr>
-								<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/css/responsive.f6533dab034d.css'>responsive.f6533dab034d.css</a></b></td>
-								<td><code>❯ REPLACE-ME</code></td>
-							</tr>
-							<tr>
-								<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/css/rtl.512d4b53fc59.css'>rtl.512d4b53fc59.css</a></b></td>
-								<td><code>❯ REPLACE-ME</code></td>
-							</tr>
-							<tr>
-								<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/css/widgets.ee33ab26c7c2.css'>widgets.ee33ab26c7c2.css</a></b></td>
-								<td><code>❯ REPLACE-ME</code></td>
-							</tr>
-							<tr>
-								<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/css/forms.c14e1cb06392.css'>forms.c14e1cb06392.css</a></b></td>
-								<td><code>❯ REPLACE-ME</code></td>
-							</tr>
-							<tr>
-								<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/css/dark_mode.ef27a31af300.css'>dark_mode.ef27a31af300.css</a></b></td>
-								<td><code>❯ REPLACE-ME</code></td>
-							</tr>
-							<tr>
-								<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/css/responsive.css'>responsive.css</a></b></td>
-								<td><code>❯ REPLACE-ME</code></td>
-							</tr>
-							<tr>
-								<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/css/unusable_password_field.css'>unusable_password_field.css</a></b></td>
-								<td><code>❯ REPLACE-ME</code></td>
-							</tr>
-							<tr>
-								<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/css/changelists.9237a1ac391b.css'>changelists.9237a1ac391b.css</a></b></td>
-								<td><code>❯ REPLACE-ME</code></td>
-							</tr>
-							<tr>
-								<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/css/base.523eb49842a7.css'>base.523eb49842a7.css</a></b></td>
-								<td><code>❯ REPLACE-ME</code></td>
-							</tr>
-							<tr>
-								<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/css/rtl.css'>rtl.css</a></b></td>
-								<td><code>❯ REPLACE-ME</code></td>
-							</tr>
-							<tr>
-								<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/css/responsive_rtl.7d1130848605.css'>responsive_rtl.7d1130848605.css</a></b></td>
-								<td><code>❯ REPLACE-ME</code></td>
-							</tr>
-							<tr>
-								<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/css/autocomplete.4a81fc4242d0.css'>autocomplete.4a81fc4242d0.css</a></b></td>
-								<td><code>❯ REPLACE-ME</code></td>
-							</tr>
-							<tr>
-								<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/css/changelists.css'>changelists.css</a></b></td>
-								<td><code>❯ REPLACE-ME</code></td>
-							</tr>
-							<tr>
-								<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/css/widgets.css'>widgets.css</a></b></td>
-								<td><code>❯ REPLACE-ME</code></td>
-							</tr>
-							<tr>
-								<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/css/dashboard.e90f2068217b.css'>dashboard.e90f2068217b.css</a></b></td>
-								<td><code>❯ REPLACE-ME</code></td>
-							</tr>
-							<tr>
-								<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/css/dark_mode.css'>dark_mode.css</a></b></td>
-								<td><code>❯ REPLACE-ME</code></td>
-							</tr>
-							<tr>
-								<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/css/nav_sidebar.269a1bd44627.css'>nav_sidebar.269a1bd44627.css</a></b></td>
-								<td><code>❯ REPLACE-ME</code></td>
-							</tr>
-							<tr>
-								<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/css/autocomplete.css'>autocomplete.css</a></b></td>
-								<td><code>❯ REPLACE-ME</code></td>
-							</tr>
-							</table>
-							<details>
-								<summary><b>vendor</b></summary>
-								<blockquote>
-									<details>
-										<summary><b>select2</b></summary>
-										<blockquote>
-											<table>
-											<tr>
-												<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/css/vendor/select2/select2.min.9f54e6414f87.css'>select2.min.9f54e6414f87.css</a></b></td>
-												<td><code>❯ REPLACE-ME</code></td>
-											</tr>
-											<tr>
-												<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/css/vendor/select2/select2.css'>select2.css</a></b></td>
-												<td><code>❯ REPLACE-ME</code></td>
-											</tr>
-											<tr>
-												<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/css/vendor/select2/select2.a2194c262648.css'>select2.a2194c262648.css</a></b></td>
-												<td><code>❯ REPLACE-ME</code></td>
-											</tr>
-											<tr>
-												<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/css/vendor/select2/select2.min.css'>select2.min.css</a></b></td>
-												<td><code>❯ REPLACE-ME</code></td>
-											</tr>
-											</table>
-										</blockquote>
-									</details>
-								</blockquote>
-							</details>
-						</blockquote>
-					</details>
-					<details>
-						<summary><b>js</b></summary>
-						<blockquote>
-							<table>
-							<tr>
-								<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/change_form.9d8ca4f96b75.js'>change_form.9d8ca4f96b75.js</a></b></td>
-								<td><code>❯ REPLACE-ME</code></td>
-							</tr>
-							<tr>
-								<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/SelectBox.js'>SelectBox.js</a></b></td>
-								<td><code>❯ REPLACE-ME</code></td>
-							</tr>
-							<tr>
-								<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/inlines.js'>inlines.js</a></b></td>
-								<td><code>❯ REPLACE-ME</code></td>
-							</tr>
-							<tr>
-								<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/prepopulate_init.6cac7f3105b8.js'>prepopulate_init.6cac7f3105b8.js</a></b></td>
-								<td><code>❯ REPLACE-ME</code></td>
-							</tr>
-							<tr>
-								<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/autocomplete.01591ab27be7.js'>autocomplete.01591ab27be7.js</a></b></td>
-								<td><code>❯ REPLACE-ME</code></td>
-							</tr>
-							<tr>
-								<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/theme.js'>theme.js</a></b></td>
-								<td><code>❯ REPLACE-ME</code></td>
-							</tr>
-							<tr>
-								<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/SelectFilter2.bdb8d0cc579e.js'>SelectFilter2.bdb8d0cc579e.js</a></b></td>
-								<td><code>❯ REPLACE-ME</code></td>
-							</tr>
-							<tr>
-								<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/prepopulate.bd2361dfd64d.js'>prepopulate.bd2361dfd64d.js</a></b></td>
-								<td><code>❯ REPLACE-ME</code></td>
-							</tr>
-							<tr>
-								<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/actions.js'>actions.js</a></b></td>
-								<td><code>❯ REPLACE-ME</code></td>
-							</tr>
-							<tr>
-								<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/unusable_password_field.js'>unusable_password_field.js</a></b></td>
-								<td><code>❯ REPLACE-ME</code></td>
-							</tr>
-							<tr>
-								<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/nav_sidebar.js'>nav_sidebar.js</a></b></td>
-								<td><code>❯ REPLACE-ME</code></td>
-							</tr>
-							<tr>
-								<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/core.js'>core.js</a></b></td>
-								<td><code>❯ REPLACE-ME</code></td>
-							</tr>
-							<tr>
-								<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/calendar.f8a5d055eb33.js'>calendar.f8a5d055eb33.js</a></b></td>
-								<td><code>❯ REPLACE-ME</code></td>
-							</tr>
-							<tr>
-								<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/urlify.js'>urlify.js</a></b></td>
-								<td><code>❯ REPLACE-ME</code></td>
-							</tr>
-							<tr>
-								<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/core.cf103cd04ebf.js'>core.cf103cd04ebf.js</a></b></td>
-								<td><code>❯ REPLACE-ME</code></td>
-							</tr>
-							<tr>
-								<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/prepopulate_init.js'>prepopulate_init.js</a></b></td>
-								<td><code>❯ REPLACE-ME</code></td>
-							</tr>
-							<tr>
-								<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/autocomplete.js'>autocomplete.js</a></b></td>
-								<td><code>❯ REPLACE-ME</code></td>
-							</tr>
-							<tr>
-								<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/theme.ab270f56bb9c.js'>theme.ab270f56bb9c.js</a></b></td>
-								<td><code>❯ REPLACE-ME</code></td>
-							</tr>
-							<tr>
-								<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/SelectBox.7d3ce5a98007.js'>SelectBox.7d3ce5a98007.js</a></b></td>
-								<td><code>❯ REPLACE-ME</code></td>
-							</tr>
-							<tr>
-								<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/filters.js'>filters.js</a></b></td>
-								<td><code>❯ REPLACE-ME</code></td>
-							</tr>
-							<tr>
-								<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/actions.eac7e3441574.js'>actions.eac7e3441574.js</a></b></td>
-								<td><code>❯ REPLACE-ME</code></td>
-							</tr>
-							<tr>
-								<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/prepopulate.js'>prepopulate.js</a></b></td>
-								<td><code>❯ REPLACE-ME</code></td>
-							</tr>
-							<tr>
-								<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/jquery.init.b7781a0897fc.js'>jquery.init.b7781a0897fc.js</a></b></td>
-								<td><code>❯ REPLACE-ME</code></td>
-							</tr>
-							<tr>
-								<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/collapse.js'>collapse.js</a></b></td>
-								<td><code>❯ REPLACE-ME</code></td>
-							</tr>
-							<tr>
-								<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/popup_response.9454eacaef07.js'>popup_response.9454eacaef07.js</a></b></td>
-								<td><code>❯ REPLACE-ME</code></td>
-							</tr>
-							<tr>
-								<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/calendar.js'>calendar.js</a></b></td>
-								<td><code>❯ REPLACE-ME</code></td>
-							</tr>
-							<tr>
-								<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/collapse.f84e7410290f.js'>collapse.f84e7410290f.js</a></b></td>
-								<td><code>❯ REPLACE-ME</code></td>
-							</tr>
-							<tr>
-								<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/urlify.ae970a820212.js'>urlify.ae970a820212.js</a></b></td>
-								<td><code>❯ REPLACE-ME</code></td>
-							</tr>
-							<tr>
-								<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/SelectFilter2.js'>SelectFilter2.js</a></b></td>
-								<td><code>❯ REPLACE-ME</code></td>
-							</tr>
-							<tr>
-								<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/jquery.init.js'>jquery.init.js</a></b></td>
-								<td><code>❯ REPLACE-ME</code></td>
-							</tr>
-							<tr>
-								<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/cancel.js'>cancel.js</a></b></td>
-								<td><code>❯ REPLACE-ME</code></td>
-							</tr>
-							<tr>
-								<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/cancel.8367e564ac40.js'>cancel.8367e564ac40.js</a></b></td>
-								<td><code>❯ REPLACE-ME</code></td>
-							</tr>
-							<tr>
-								<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/change_form.js'>change_form.js</a></b></td>
-								<td><code>❯ REPLACE-ME</code></td>
-							</tr>
-							<tr>
-								<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/inlines.22d4d93c00b4.js'>inlines.22d4d93c00b4.js</a></b></td>
-								<td><code>❯ REPLACE-ME</code></td>
-							</tr>
-							<tr>
-								<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/filters.0e360b7a9f80.js'>filters.0e360b7a9f80.js</a></b></td>
-								<td><code>❯ REPLACE-ME</code></td>
-							</tr>
-							<tr>
-								<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/nav_sidebar.3b9190d420b1.js'>nav_sidebar.3b9190d420b1.js</a></b></td>
-								<td><code>❯ REPLACE-ME</code></td>
-							</tr>
-							<tr>
-								<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/popup_response.js'>popup_response.js</a></b></td>
-								<td><code>❯ REPLACE-ME</code></td>
-							</tr>
-							</table>
-							<details>
-								<summary><b>vendor</b></summary>
-								<blockquote>
-									<details>
-										<summary><b>select2</b></summary>
-										<blockquote>
-											<table>
-											<tr>
-												<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/select2.full.min.fcd7500d8e13.js'>select2.full.min.fcd7500d8e13.js</a></b></td>
-												<td><code>❯ REPLACE-ME</code></td>
-											</tr>
-											<tr>
-												<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/select2.full.c2afdeda3058.js'>select2.full.c2afdeda3058.js</a></b></td>
-												<td><code>❯ REPLACE-ME</code></td>
-											</tr>
-											<tr>
-												<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/select2.full.min.js'>select2.full.min.js</a></b></td>
-												<td><code>❯ REPLACE-ME</code></td>
-											</tr>
-											<tr>
-												<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/select2.full.js'>select2.full.js</a></b></td>
-												<td><code>❯ REPLACE-ME</code></td>
-											</tr>
-											</table>
-											<details>
-												<summary><b>i18n</b></summary>
-												<blockquote>
-													<table>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/ka.js'>ka.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/ps.38dfa47af9e0.js'>ps.38dfa47af9e0.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/en.cf932ba09a98.js'>en.cf932ba09a98.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/mk.dabbb9087130.js'>mk.dabbb9087130.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/fa.3b5bd1961cfd.js'>fa.3b5bd1961cfd.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/sq.5636b60d29c9.js'>sq.5636b60d29c9.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/hy.c7babaeef5a6.js'>hy.c7babaeef5a6.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/cs.js'>cs.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/bg.39b8be30d4f0.js'>bg.39b8be30d4f0.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/gl.js'>gl.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/zh-CN.2cff662ec5f9.js'>zh-CN.2cff662ec5f9.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/is.js'>is.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/az.270c257daf81.js'>az.270c257daf81.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/hu.js'>hu.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/th.js'>th.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/pl.js'>pl.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/nl.js'>nl.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/ca.a166b745933a.js'>ca.a166b745933a.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/mk.js'>mk.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/de.8a1c222b0204.js'>de.8a1c222b0204.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/es.js'>es.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/pl.6031b4f16452.js'>pl.6031b4f16452.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/bn.6d42b4dd5665.js'>bn.6d42b4dd5665.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/nb.da2fce143f27.js'>nb.da2fce143f27.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/da.js'>da.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/ne.3d79fd3f08db.js'>ne.3d79fd3f08db.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/sr-Cyrl.f254bb8c4c7c.js'>sr-Cyrl.f254bb8c4c7c.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/dsb.56372c92d2f1.js'>dsb.56372c92d2f1.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/nb.js'>nb.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/sv.js'>sv.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/sk.js'>sk.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/ro.f75cb460ec3b.js'>ro.f75cb460ec3b.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/hi.70640d41628f.js'>hi.70640d41628f.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/af.js'>af.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/ms.4ba82c9a51ce.js'>ms.4ba82c9a51ce.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/bg.js'>bg.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/km.js'>km.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/sr.js'>sr.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/lv.js'>lv.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/hi.js'>hi.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/ru.js'>ru.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/es.66dbc2652fb1.js'>es.66dbc2652fb1.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/bn.js'>bn.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/hu.6ec6039cb8a3.js'>hu.6ec6039cb8a3.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/uk.js'>uk.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/et.2b96fd98289d.js'>et.2b96fd98289d.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/ca.js'>ca.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/pt.js'>pt.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/fr.js'>fr.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/lt.js'>lt.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/el.27097f071856.js'>el.27097f071856.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/dsb.js'>dsb.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/az.js'>az.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/tr.js'>tr.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/sl.131a78bc0752.js'>sl.131a78bc0752.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/fa.js'>fa.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/ka.2083264a54f0.js'>ka.2083264a54f0.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/km.c23089cb06ca.js'>km.c23089cb06ca.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/ro.js'>ro.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/he.js'>he.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/sl.js'>sl.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/tk.7c572a68c78f.js'>tk.7c572a68c78f.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/id.js'>id.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/pt.33b4a3b44d43.js'>pt.33b4a3b44d43.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/uk.8cede7f4803c.js'>uk.8cede7f4803c.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/hr.js'>hr.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/hy.js'>hy.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/he.e420ff6cd3ed.js'>he.e420ff6cd3ed.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/hsb.js'>hsb.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/bs.js'>bs.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/ar.js'>ar.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/sv.7a9c2f71e777.js'>sv.7a9c2f71e777.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/it.js'>it.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/en.js'>en.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/tk.js'>tk.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/vi.097a5b75b3e1.js'>vi.097a5b75b3e1.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/ru.934aa95f5b5f.js'>ru.934aa95f5b5f.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/ms.js'>ms.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/gl.d99b1fedaa86.js'>gl.d99b1fedaa86.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/bs.91624382358e.js'>bs.91624382358e.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/sq.js'>sq.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/sk.33d02cef8d11.js'>sk.33d02cef8d11.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/hr.a2b092cc1147.js'>hr.a2b092cc1147.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/el.js'>el.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/sr.5ed85a48f483.js'>sr.5ed85a48f483.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/zh-CN.js'>zh-CN.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/ko.js'>ko.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/sr-Cyrl.js'>sr-Cyrl.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/zh-TW.js'>zh-TW.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/ar.65aa8e36bf5d.js'>ar.65aa8e36bf5d.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/fi.614ec42aa9ba.js'>fi.614ec42aa9ba.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/it.be4fe8d365b5.js'>it.be4fe8d365b5.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/zh-TW.04554a227c2b.js'>zh-TW.04554a227c2b.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/id.04debded514d.js'>id.04debded514d.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/de.js'>de.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/hsb.fa3b55265efe.js'>hsb.fa3b55265efe.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/ja.js'>ja.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/fi.js'>fi.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/is.3ddd9a6a97e9.js'>is.3ddd9a6a97e9.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/eu.js'>eu.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/ps.js'>ps.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/lt.23c7ce903300.js'>lt.23c7ce903300.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/af.4f6fcd73488c.js'>af.4f6fcd73488c.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/fr.05e0542fcfe6.js'>fr.05e0542fcfe6.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/et.js'>et.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/nl.997868a37ed8.js'>nl.997868a37ed8.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/ne.js'>ne.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/da.766346afe4dd.js'>da.766346afe4dd.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/ko.e7be6c20e673.js'>ko.e7be6c20e673.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/lv.08e62128eac1.js'>lv.08e62128eac1.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/pt-BR.e1b294433e7f.js'>pt-BR.e1b294433e7f.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/ja.170ae885d74f.js'>ja.170ae885d74f.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/eu.adfe5c97b72c.js'>eu.adfe5c97b72c.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/pt-BR.js'>pt-BR.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/vi.js'>vi.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/th.f38c20b0221b.js'>th.f38c20b0221b.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/cs.4f43e8e7d33a.js'>cs.4f43e8e7d33a.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													<tr>
-														<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/select2/i18n/tr.b5a0643d1545.js'>tr.b5a0643d1545.js</a></b></td>
-														<td><code>❯ REPLACE-ME</code></td>
-													</tr>
-													</table>
-												</blockquote>
-											</details>
-										</blockquote>
-									</details>
-									<details>
-										<summary><b>xregexp</b></summary>
-										<blockquote>
-											<table>
-											<tr>
-												<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/xregexp/LICENSE.txt'>LICENSE.txt</a></b></td>
-												<td><code>❯ REPLACE-ME</code></td>
-											</tr>
-											<tr>
-												<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/xregexp/xregexp.efda034b9537.js'>xregexp.efda034b9537.js</a></b></td>
-												<td><code>❯ REPLACE-ME</code></td>
-											</tr>
-											<tr>
-												<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/xregexp/xregexp.min.js'>xregexp.min.js</a></b></td>
-												<td><code>❯ REPLACE-ME</code></td>
-											</tr>
-											<tr>
-												<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/xregexp/xregexp.min.b0439563a5d3.js'>xregexp.min.b0439563a5d3.js</a></b></td>
-												<td><code>❯ REPLACE-ME</code></td>
-											</tr>
-											<tr>
-												<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/xregexp/LICENSE.bf79e414957a.txt'>LICENSE.bf79e414957a.txt</a></b></td>
-												<td><code>❯ REPLACE-ME</code></td>
-											</tr>
-											<tr>
-												<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/xregexp/xregexp.js'>xregexp.js</a></b></td>
-												<td><code>❯ REPLACE-ME</code></td>
-											</tr>
-											</table>
-										</blockquote>
-									</details>
-									<details>
-										<summary><b>jquery</b></summary>
-										<blockquote>
-											<table>
-											<tr>
-												<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/jquery/LICENSE.txt'>LICENSE.txt</a></b></td>
-												<td><code>❯ REPLACE-ME</code></td>
-											</tr>
-											<tr>
-												<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/jquery/jquery.min.641dd1437010.js'>jquery.min.641dd1437010.js</a></b></td>
-												<td><code>❯ REPLACE-ME</code></td>
-											</tr>
-											<tr>
-												<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/jquery/jquery.js'>jquery.js</a></b></td>
-												<td><code>❯ REPLACE-ME</code></td>
-											</tr>
-											<tr>
-												<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/jquery/LICENSE.de877aa6d744.txt'>LICENSE.de877aa6d744.txt</a></b></td>
-												<td><code>❯ REPLACE-ME</code></td>
-											</tr>
-											<tr>
-												<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/jquery/jquery.min.js'>jquery.min.js</a></b></td>
-												<td><code>❯ REPLACE-ME</code></td>
-											</tr>
-											<tr>
-												<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/vendor/jquery/jquery.0208b96062ba.js'>jquery.0208b96062ba.js</a></b></td>
-												<td><code>❯ REPLACE-ME</code></td>
-											</tr>
-											</table>
-										</blockquote>
-									</details>
-								</blockquote>
-							</details>
-							<details>
-								<summary><b>admin</b></summary>
-								<blockquote>
-									<table>
-									<tr>
-										<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/admin/RelatedObjectLookups.js'>RelatedObjectLookups.js</a></b></td>
-										<td><code>❯ REPLACE-ME</code></td>
-									</tr>
-									<tr>
-										<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/admin/DateTimeShortcuts.js'>DateTimeShortcuts.js</a></b></td>
-										<td><code>❯ REPLACE-ME</code></td>
-									</tr>
-									<tr>
-										<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/admin/DateTimeShortcuts.9f6e209cebca.js'>DateTimeShortcuts.9f6e209cebca.js</a></b></td>
-										<td><code>❯ REPLACE-ME</code></td>
-									</tr>
-									<tr>
-										<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/js/admin/RelatedObjectLookups.8609f99b9ab2.js'>RelatedObjectLookups.8609f99b9ab2.js</a></b></td>
-										<td><code>❯ REPLACE-ME</code></td>
-									</tr>
-									</table>
-								</blockquote>
-							</details>
-						</blockquote>
-					</details>
-					<details>
-						<summary><b>img</b></summary>
-						<blockquote>
-							<table>
-							<tr>
-								<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/img/README.txt'>README.txt</a></b></td>
-								<td><code>❯ REPLACE-ME</code></td>
-							</tr>
-							<tr>
-								<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/img/README.a70711a38d87.txt'>README.a70711a38d87.txt</a></b></td>
-								<td><code>❯ REPLACE-ME</code></td>
-							</tr>
-							<tr>
-								<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/staticfiles/admin/img/LICENSE.2c54f4e1ca1c'>LICENSE.2c54f4e1ca1c</a></b></td>
-								<td><code>❯ REPLACE-ME</code></td>
-							</tr>
-							</table>
-						</blockquote>
-					</details>
-				</blockquote>
-			</details>
-		</blockquote>
-	</details>
-	<details> <!-- internship_portal Submodule -->
-		<summary><b>internship_portal</b></summary>
-		<blockquote>
-			<table>
-			<tr>
-				<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/internship_portal/settings.py'>settings.py</a></b></td>
-				<td><code>❯ REPLACE-ME</code></td>
-			</tr>
-			<tr>
-				<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/internship_portal/urls.py'>urls.py</a></b></td>
-				<td><code>❯ REPLACE-ME</code></td>
-			</tr>
-			<tr>
-				<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/internship_portal/middleware.py'>middleware.py</a></b></td>
-				<td><code>❯ REPLACE-ME</code></td>
-			</tr>
-			<tr>
-				<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/internship_portal/asgi.py'>asgi.py</a></b></td>
-				<td><code>❯ REPLACE-ME</code></td>
-			</tr>
-			<tr>
-				<td><b><a href='https://github.com/Saran24875/IMS-VELTECH/blob/master/internship_portal/wsgi.py'>wsgi.py</a></b></td>
-				<td><code>❯ REPLACE-ME</code></td>
-			</tr>
-			</table>
-		</blockquote>
-	</details>
-</details>
-
----
-## 🚀 Getting Started
-
-### ☑️ Prerequisites
-
-Before getting started with IMS-VELTECH, ensure your runtime environment meets the following requirements:
-
-- **Programming Language:** JavaScript
-- **Package Manager:** Pip
-- **Container Runtime:** Docker
-
-
-### ⚙️ Installation
-
-Install IMS-VELTECH using one of the following methods:
-
-**Build from source:**
-
-1. Clone the IMS-VELTECH repository:
-```sh
-❯ git clone https://github.com/Saran24875/IMS-VELTECH
+```mermaid
+flowchart TD
+    A[Student Login via Google OAuth] --> B{Authentication Type}
+    B -->|VTU Email| C[Dashboard Access]
+    B -->|Non-VTU Email| D[Access Denied]
+    
+    C --> E[View Available Companies]
+    C --> F[Check Application Status]
+    C --> G[External Company Application]
+    C --> H[Support/Report Issues]
+    C --> I[Upload Documents]
+    
+    E --> J[Apply to Company]
+    J --> K{Vacancy Available?}
+    K -->|Yes| L[Create Application]
+    K -->|No| M[Show Error Message]
+    
+    G --> N[OTP Verification]
+    N --> O[External Application Form]
+    O --> P[Admin Review Required]
+    
+    Q[Company Login] --> R[Attendance Management]
+    R --> S[Mark Daily Attendance]
+    
+    T[Department Login] --> U[Department Dashboard]
+    U --> V[View Student Analytics]
+    U --> W[Document Status Tracking]
+    
+    X[Admin Panel] --> Y[Manage Companies]
+    X --> Z[Manage Students]
+    X --> AA[Review Applications]
+    X --> BB[System Settings]
 ```
 
-2. Navigate to the project directory:
-```sh
-❯ cd IMS-VELTECH
+### Component Architecture
+
+```mermaid
+graph TB
+    subgraph "Frontend Layer"
+        A[Base Template]
+        B[Navigation Component]
+        C[Form Components]
+        D[Dashboard Views]
+        E[Error Pages]
+    end
+    
+    subgraph "Middleware Layer"
+        F[Authentication Middleware]
+        G[Domain Restriction]
+        H[Maintenance Mode]
+        I[Session Management]
+        J[Rate Limiting]
+    end
+    
+    subgraph "Views Layer"
+        K[Student Views]
+        L[Company Views]
+        M[Department Views]
+        N[Admin Views]
+        O[API Views]
+    end
+    
+    subgraph "Business Logic"
+        P[Application Logic]
+        Q[Attendance Logic]
+        R[Document Management]
+        S[Email Notifications]
+        T[Google Sheets Sync]
+    end
+    
+    subgraph "Data Layer"
+        U[Django Models]
+        V[PostgreSQL Database]
+        W[Cloudinary Storage]
+        X[Session Store]
+    end
+    
+    A --> F
+    F --> K
+    K --> P
+    P --> U
+    U --> V
 ```
 
-3. Install the project dependencies:
+## User Roles & Access Control
 
+### Student Role
+**Access Requirements:**
+- Must use VTU email (@veltech.edu.in)
+- Google OAuth2 authentication required
+- Automatic role assignment based on email domain
 
-**Using `pip`** &nbsp; [<img align="center" src="" />]()
+**Permissions:**
+- View available internship companies
+- Apply to internal companies (limited to one)
+- Submit external company applications
+- Check application status
+- Upload required documents (approval letter, undertaking, bonafide)
+- Submit support reports
+- View personal dashboard and attendance records
 
-```sh
-❯ echo 'INSERT-INSTALL-COMMAND-HERE'
+### Company Role
+**Access Requirements:**
+- Username/password authentication
+- Credentials auto-generated during company creation
+- Session-based authentication (no persistent login)
+
+**Permissions:**
+- Mark daily attendance for assigned students
+- View student list for their company
+- Access attendance management interface
+
+### Department Role
+**Access Requirements:**
+- Department-specific username/password
+- Manual credential setup required
+- Department-specific access control
+
+**Permissions:**
+- View all students from their department
+- Monitor document submission status
+- Track attendance analytics
+- View department-wide statistics
+
+### Administrator Role
+**Access Requirements:**
+- Django superuser privileges
+- Full system access
+
+**Permissions:**
+- Complete CRUD operations on all models
+- Manage companies, students, applications
+- Configure site settings and announcements
+- Export data to CSV
+- Import student data via CSV
+- Review and approve/reject external applications
+- Manage downloadable files
+
+## Feature Documentation
+
+### Authentication System
+
+#### Google OAuth2 Integration
+```python
+# Configuration in settings.py
+SOCIALACCOUNT_PROVIDERS = {
+    "google": {
+        "SCOPE": ["profile", "email"],
+        "AUTH_PARAMS": {"access_type": "online"},
+        "APP": {
+            "client_id": os.getenv("SOCIAL_AUTH_GOOGLE_OAUTH2_KEY"),
+            "secret": os.getenv("SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET"),
+        }
+    }
+}
 ```
 
+**Email Domain Restriction:**
+- Only @veltech.edu.in emails allowed
+- Automatic role assignment based on email prefix
+- VTU number extraction from email (vtu24875@veltech.edu.in → 24875)
 
-**Using `docker`** &nbsp; [<img align="center" src="https://img.shields.io/badge/Docker-2CA5E0.svg?style={badge_style}&logo=docker&logoColor=white" />](https://www.docker.com/)
+#### OTP-Based Verification
+For external applications and support system:
+- 6-digit OTP generation
+- Email delivery via SMTP
+- Session-based verification
+- Bypass option for specific test accounts
 
-```sh
-❯ docker build -t Saran24875/IMS-VELTECH .
+### Company Management
+
+#### Company Registration
+**Automatic Credential Generation:**
+```python
+def save(self, *args, **kwargs):
+    if not self.username:
+        base_username = slugify(self.name).replace("-", "")[:10].lower()
+        count = Company.objects.filter(username__startswith=base_username).count()
+        self.username = f"{base_username}{count+1}" if count else base_username
+    
+    if not self.password:
+        prefix = self.username[:4]
+        year = "2025"
+        count = Company.objects.filter(username__startswith=prefix).count()
+        self.password = f"{prefix}{year}{count+1}"
 ```
 
+**Company Features:**
+- Vacancy management with atomic operations
+- Active/inactive status control
+- Automatic credential generation
+- Domain and skill requirements specification
+- Location and fee information
 
+### Application System
 
+#### Internal Company Applications
+**Process Flow:**
+1. Student browses active companies with vacancies
+2. Single application per student (prevents multiple enrollments)
+3. Atomic transaction ensures data consistency
+4. Vacancy count decreases automatically
+5. Immediate enrollment confirmation
 
-### 🤖 Usage
-Run IMS-VELTECH using the following command:
-**Using `pip`** &nbsp; [<img align="center" src="" />]()
+**Validation Rules:**
+- No duplicate applications
+- Vacancy availability check
+- Blacklist verification (blocked students)
+- External application conflict check
 
-```sh
-❯ echo 'INSERT-RUN-COMMAND-HERE'
+#### External Company Applications
+**Multi-step Process:**
+1. Email-based OTP verification
+2. Comprehensive application form (up to 10 students)
+3. Industry and referral person details
+4. Stipend and fee information
+5. Admin review and approval workflow
+
+**Group Application Support:**
+```python
+# Supports up to 10 students in single application
+for i in range(2, 11):
+    field_name = f"vtu_number_{i}"
+    student_field = f"student_{i}"
+    contact_field = f"contact_number_stu_{i}"
+    dept_field = f"department_stu_{i}"
 ```
 
+### Document Management
 
-**Using `docker`** &nbsp; [<img align="center" src="https://img.shields.io/badge/Docker-2CA5E0.svg?style={badge_style}&logo=docker&logoColor=white" />](https://www.docker.com/)
+#### Cloudinary Integration
+**Document Types:**
+- Approval Letter (Department approval)
+- Undertaking Letter (Student commitment)
+- Bonafide Certificate (Institution verification)
 
-```sh
-❯ docker run -it {image_name}
+**Upload Configuration:**
+```python
+approval_letter = CloudinaryField(
+    resource_type="raw",
+    folder="APPROVAL_LETTERS",
+    public_id=lambda instance: f"{instance.name}_{instance.roll_number}_approval",
+    blank=True, null=True
+)
 ```
 
+**Validation Rules:**
+- Maximum file size: 2MB
+- Format restriction: PDF only
+- MIME type verification
+- Automatic file naming convention
 
-### 🧪 Testing
-Run the test suite using the following command:
-**Using `pip`** &nbsp; [<img align="center" src="" />]()
+### Attendance System
 
-```sh
-❯ echo 'INSERT-TEST-COMMAND-HERE'
+#### Company Portal
+**Features:**
+- Daily attendance marking
+- Student list filtering
+- Date-specific attendance records
+- Bulk attendance submission
+- Attendance history view
+
+**Data Model:**
+```python
+class Attendance(models.Model):
+    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    company = models.ForeignKey(Company, on_delete=models.CASCADE)
+    date = models.DateField(default=timezone.now)
+    status = models.CharField(choices=[("Present", "Present"), ("Absent", "Absent")])
+    
+    class Meta:
+        unique_together = ("student", "company", "date")
 ```
 
+#### Department Analytics
+**Dashboard Features:**
+- Department-wise student listing
+- Attendance percentage calculation
+- Document submission tracking
+- Performance analytics
+- Export capabilities
 
----
-## 📌 Project Roadmap
+### Google Sheets Integration
 
-- [X] **`Task 1`**: <strike>Implement feature one.</strike>
-- [ ] **`Task 2`**: Implement feature two.
-- [ ] **`Task 3`**: Implement feature three.
+#### Automated Synchronization
+**Configuration:**
+```python
+SCOPES = ["https://www.googleapis.com/auth/spreadsheets"]
+creds = Credentials.from_service_account_info(settings.GOOGLE_CONFIG, scopes=SCOPES)
+client = gspread.authorize(creds)
+sheet = client.open_by_key(settings.GOOGLE_SHEET_ID).sheet1
+```
 
----
+**Sync Features:**
+- Automatic data synchronization
+- Cron job scheduling
+- Error handling and recovery
+- Real-time data updates
 
-## 🔰 Contributing
+### Admin Panel Features
 
-- **💬 [Join the Discussions](https://github.com/Saran24875/IMS-VELTECH/discussions)**: Share your insights, provide feedback, or ask questions.
-- **🐛 [Report Issues](https://github.com/Saran24875/IMS-VELTECH/issues)**: Submit bugs found or log feature requests for the `IMS-VELTECH` project.
-- **💡 [Submit Pull Requests](https://github.com/Saran24875/IMS-VELTECH/blob/main/CONTRIBUTING.md)**: Review open PRs, and submit your own PRs.
+#### Django Jazzmin Customization
+**Interface Enhancements:**
+- Custom branding and logos
+- Organized navigation menu
+- Role-based menu visibility
+- Performance dashboard
+- Quick action buttons
 
-<details closed>
-<summary>Contributing Guidelines</summary>
+**Data Management:**
+- CSV import/export functionality
+- Bulk operations
+- Advanced filtering and search
+- Relationship management
+- Audit trail capabilities
 
-1. **Fork the Repository**: Start by forking the project repository to your github account.
-2. **Clone Locally**: Clone the forked repository to your local machine using a git client.
-   ```sh
-   git clone https://github.com/Saran24875/IMS-VELTECH
-   ```
-3. **Create a New Branch**: Always work on a new branch, giving it a descriptive name.
-   ```sh
-   git checkout -b new-feature-x
-   ```
-4. **Make Your Changes**: Develop and test your changes locally.
-5. **Commit Your Changes**: Commit with a clear message describing your updates.
-   ```sh
-   git commit -m 'Implemented new feature x.'
-   ```
-6. **Push to github**: Push the changes to your forked repository.
-   ```sh
-   git push origin new-feature-x
-   ```
-7. **Submit a Pull Request**: Create a PR against the original project repository. Clearly describe the changes and their motivations.
-8. **Review**: Once your PR is reviewed and approved, it will be merged into the main branch. Congratulations on your contribution!
-</details>
+### Email System
 
-<details closed>
-<summary>Contributor Graph</summary>
-<br>
-<p align="left">
-   <a href="https://github.com{/Saran24875/IMS-VELTECH/}graphs/contributors">
-      <img src="https://contrib.rocks/image?repo=Saran24875/IMS-VELTECH">
-   </a>
-</p>
-</details>
+#### SMTP Configuration
+**Email Features:**
+- OTP delivery for verification
+- Application status notifications
+- Admin notification system
+- Support ticket creation
+- Automated responses
 
----
+**Configuration:**
+```python
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+```
 
-## 🎗 License
+### Security Features
 
-This project is protected under the [SELECT-A-LICENSE](https://choosealicense.com/licenses) License. For more details, refer to the [LICENSE](https://choosealicense.com/licenses/) file.
+#### Authentication Security
+- Domain-restricted access (@veltech.edu.in only)
+- Session timeout (30 minutes)
+- CSRF protection
+- Rate limiting on sensitive endpoints
+- Secure cookie configuration
 
----
+#### Data Protection
+- Input validation and sanitization
+- SQL injection prevention
+- XSS protection
+- File upload security
+- Environment variable protection
 
-## 🙌 Acknowledgments
+### Site Configuration
 
-- List any resources, contributors, inspiration, etc. here.
+#### Maintenance Mode
+**Global System Control:**
+```python
+class SiteSetting(models.Model):
+    maintenance_mode = models.BooleanField(default=False)
+    active_approval_letter = models.BooleanField(default=True)
+    active_undertaking_letter = models.BooleanField(default=True)
+    active_bonafide_letter = models.BooleanField(default=True)
+```
 
----
+#### Announcement System
+**Dynamic Content Management:**
+- Dual message system
+- Color-coded announcements
+- Conditional display logic
+- Admin-controlled visibility
+
+## Installation & Setup
+
+### Prerequisites
+- Docker and Docker Compose
+- PostgreSQL database
+- Google Cloud Console account
+- Cloudinary account
+- Gmail SMTP access
+
+### Environment Configuration
+```bash
+# Required environment variables
+SECRET_KEY=your-secret-key
+DEBUG=False
+DATABASE_URL=postgresql://user:pass@host:port/dbname
+ALLOWED_HOSTS=yourdomain.com,localhost
+
+# Google OAuth2
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY=your-client-id
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET=your-client-secret
+
+# Email Configuration
+EMAIL_HOST_USER=your-email@gmail.com
+EMAIL_HOST_PASSWORD=your-app-password
+ADMIN_EMAIL=admin@veltech.edu.in
+
+# Cloudinary
+CLOUDINARY_CLOUD_NAME=your-cloud-name
+CLOUDINARY_API_KEY=your-api-key
+CLOUDINARY_API_SECRET=your-api-secret
+
+# Google Sheets
+GOOGLE_SHEET_ID=your-sheet-id
+GOOGLE_TYPE=service_account
+GOOGLE_PROJECT_ID=your-project-id
+GOOGLE_PRIVATE_KEY_ID=your-private-key-id
+GOOGLE_PRIVATE_KEY=your-private-key
+GOOGLE_CLIENT_EMAIL=your-service-account-email
+GOOGLE_CLIENT_ID=your-client-id
+
+# Django Superuser
+DJANGO_SUPERUSER_USERNAME=admin
+DJANGO_SUPERUSER_PASSWORD=secure-password
+DJANGO_SUPERUSER_EMAIL=admin@veltech.edu.in
+```
+
+### Docker Deployment
+```bash
+# Build the container
+docker build -t internship_portal .
+
+# Run with environment variables
+docker run -it -p 8000:8000 \
+  -e SECRET_KEY=your-secret-key \
+  -e DATABASE_URL=your-database-url \
+  internship_portal
+```
+
+### Local Development
+```bash
+# Install dependencies
+pip install -r requirements.txt
+
+# Run migrations
+python manage.py migrate
+
+# Create superuser
+python manage.py createsuperuser
+
+# Collect static files
+python manage.py collectstatic
+
+# Start development server
+python manage.py runserver
+```
+
+## Usage Guide
+
+### For Students
+
+#### Getting Started
+1. **Login Process:**
+   - Visit the portal homepage
+   - Click "Accounts & Logout" in navigation
+   - Use Google OAuth with VTU email (@veltech.edu.in)
+   - Access dashboard upon successful authentication
+
+2. **Applying for Internal Internships:**
+   - Navigate to "Internships" in main menu
+   - Browse available companies with vacancies
+   - Click "Apply" on desired company
+   - Fill required information (name, mobile, department)
+   - Submit application (instant confirmation)
+
+3. **External Company Applications:**
+   - Click "External Application" in navigation
+   - Enter VTU email for OTP verification
+   - Complete comprehensive application form
+   - Include industry details and referral information
+   - Add additional students (up to 10 total)
+   - Submit for admin review
+
+4. **Document Upload:**
+   - Access "Upload Documents" from dashboard
+   - Upload required PDFs (max 2MB each):
+     - Approval Letter (department approval)
+     - Undertaking Letter (student commitment)
+     - Bonafide Certificate (institution verification)
+   - Monitor upload status on dashboard
+
+5. **Checking Status:**
+   - Use "Application Status" in navigation
+   - Enter VTU number to view:
+     - Internal company enrollment status
+     - External application review status
+     - Document submission progress
+     - Attendance records
+
+#### Dashboard Features
+- **Profile Information:** Name, VTU number, email, account status
+- **Application Status:** Current enrollment and application progress
+- **Document Status:** Upload progress for required documents
+- **Attendance Records:** Daily attendance history with company
+- **Quick Actions:** Apply for internships, upload documents, logout
+
+### For Companies
+
+#### Attendance Management
+1. **Login Process:**
+   - Visit `/company/login/` endpoint
+   - Enter auto-generated username and password
+   - Access attendance management interface
+
+2. **Daily Attendance:**
+   - View list of assigned students
+   - Select attendance date (defaults to today)
+   - Mark each student as Present/Absent
+   - Submit attendance for the day
+   - View previous attendance records
+
+3. **Student Information:**
+   - Access student details (name, VTU number, contact)
+   - View attendance history
+   - Track overall attendance patterns
+
+#### Session Management
+- Sessions expire after period of inactivity
+- No persistent login (security measure)
+- Must re-login for each session
+
+### For Department Staff
+
+#### Department Dashboard
+1. **Login Process:**
+   - Visit `/dept/login/` endpoint
+   - Use department-specific credentials
+   - Access department dashboard
+
+2. **Student Monitoring:**
+   - View all department students with internships
+   - Monitor document submission status
+   - Track attendance percentages
+   - Export student data
+
+3. **Analytics:**
+   - Department-wide statistics
+   - Attendance trends
+   - Document compliance rates
+   - Company distribution
+
+### For Administrators
+
+#### System Administration
+1. **Admin Panel Access:**
+   - Visit `/admin/` endpoint
+   - Login with superuser credentials
+   - Access comprehensive management interface
+
+2. **Company Management:**
+   - Add/edit/delete companies
+   - Set vacancy limits
+   - Activate/deactivate companies
+   - Export company data
+   - View login credentials
+
+3. **Student Management:**
+   - Import students via CSV
+   - Manual student creation/editing
+   - Document status monitoring
+   - Enrollment tracking
+   - Export student data
+
+4. **Application Review:**
+   - Review external applications
+   - Approve/reject with messages
+   - View student group applications
+   - Track application status
+
+5. **System Configuration:**
+   - Site maintenance mode control
+   - Document requirement toggles
+   - Announcement management
+   - Downloadable files management
+
+#### Data Import/Export
+**CSV Import Process:**
+1. Navigate to Student admin page
+2. Click "Upload CSV" button
+3. Select properly formatted CSV file
+4. Review import results
+5. Handle any errors or duplicates
+
+**Export Options:**
+- Student data with company assignments
+- Company information with credentials
+- Attendance records by date range
+- Application data for analysis
+
+## API Endpoints
+
+### Public Endpoints
+- `/` - Homepage
+- `/Internships/` - Company listing
+- `/check-status/` - Application status check
+- `/apply/` - External application process
+- `/support-login/` - Support system access
+
+### Authenticated Endpoints
+- `/dashboard/` - Student dashboard
+- `/apply/<uuid>/` - Internal company application
+- `/student/upload/documents/` - Document upload
+- `/downloadable-files/` - File downloads
+
+### Company Endpoints
+- `/company/login/` - Company authentication
+- `/company/attendance/` - Attendance management
+
+### Department Endpoints
+- `/dept/login/` - Department authentication
+- `/dept/dashboard/` - Department dashboard
+
+### Admin Endpoints
+- `/admin/` - Django admin panel
+- `/server-stats/` - System performance metrics
+
+## Troubleshooting
+
+### Common Issues
+
+#### Authentication Problems
+**Issue:** Students cannot login with VTU email
+**Solution:**
+- Verify Google OAuth2 configuration
+- Check email domain restrictions
+- Ensure proper redirect URIs in Google Console
+
+#### Application Errors
+**Issue:** Students cannot apply to companies
+**Solution:**
+- Check company vacancy availability
+- Verify student eligibility (no existing applications)
+- Review blacklist status
+
+#### Document Upload Issues
+**Issue:** PDF uploads failing
+**Solution:**
+- Verify file size (max 2MB)
+- Ensure PDF format
+- Check Cloudinary configuration
+- Review file permissions
+
+#### Attendance System Problems
+**Issue:** Company cannot mark attendance
+**Solution:**
+- Verify company login credentials
+- Check student-company assignments
+- Review session timeout settings
+
+### Error Handling
+
+#### Custom Error Pages
+- **400 Bad Request:** Invalid request format
+- **403 Forbidden:** Access denied
+- **404 Not Found:** Page not found
+- **500 Server Error:** Internal server error
+
+#### CSRF Protection
+- Custom CSRF failure pages for different user types
+- Automatic token refresh
+- Secure cookie configuration
+
+### Performance Optimization
+
+#### Database Optimization
+- Proper indexing on frequently queried fields
+- Query optimization with select_related and prefetch_related
+- Database connection pooling
+
+#### Static Files Management
+- Whitenoise for static file serving
+- Compressed manifest storage
+- CDN integration ready
+
+#### Caching Strategy
+- Session-based caching
+- Database query caching
+- Static file caching headers
+
+## Security Considerations
+
+### Data Protection
+- Environment variable usage for sensitive data
+- SQL injection prevention
+- XSS protection
+- CSRF token validation
+- Secure file upload handling
+
+### Access Control
+- Role-based permissions
+- Domain-restricted authentication
+- Session timeout management
+- Rate limiting on critical endpoints
+
+### File Security
+- PDF-only uploads
+- File size limitations
+- Virus scanning ready
+- Secure cloud storage
+
+## Future Enhancement Opportunities
+
+### Scalability Improvements
+- Database sharding strategies
+- Microservices architecture migration
+- Load balancing implementation
+- Caching layer enhancement
+
+### Feature Additions
+- Real-time notifications
+- Mobile application
+- Advanced analytics dashboard
+- Integration with university ERP systems
+- Automated certificate generation
+
+### Performance Enhancements
+- Background task processing
+- API optimization
+- Database query optimization
+- Frontend performance improvements
+
+This comprehensive manual provides complete documentation for understanding, deploying, and maintaining the Internship Portal system. The modular architecture and comprehensive feature set make it suitable for educational institutions seeking to streamline their internship management processes.
